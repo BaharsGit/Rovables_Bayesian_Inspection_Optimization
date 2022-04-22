@@ -1,0 +1,256 @@
+
+#VRML_SIM V8.0.1 utf8
+# Physics capable model of the Lily self-assembling robot
+# LilySeparate
+
+PROTO Lily [
+  field SFVec3f translation 0 0 0
+  field SFRotation rotation  0 1 0 0
+  field SFString controller "void"
+  field SFString name "lily"
+  field MFNode immersionProperties [ ImmersionProperties { fluidName "fluid" referenceArea "immersed area"} ]
+  #field MFNode connector [ Connector {type "symmetric" numberOfRotations   1 unilateralLock FALSE unilateralUnlock TRUE isLocked TRUE autoLock TRUE snap TRUE axisTolerance       3.14 rotationTolerance   3.14 distanceTolerance   0.02 latchTensileStrength -1} ]
+  #field MFNode emitter [ Emitter {range 0.0005 channel 1} ]
+  field SFString   type                "symmetric"
+  field SFInt32    numberOfRotations   1
+  field SFBool     unilateralLock FALSE
+  field SFBool     unilateralUnlock TRUE
+  #field SFBool     isLocked TRUE
+  field SFBool     autoLock TRUE
+  field SFBool     snap TRUE
+  field SFFloat    axisTolerance       0.2   # [0,pi)
+  field SFFloat    rotationTolerance   0.2   # [0,pi)
+  field SFFloat    distanceTolerance   0.005  # [0,inf)
+  field SFFloat latchTensileStrength -1 #0.1
+  # field SFFloat latchShearStrength 0.05
+  # EPM parameters
+  field SFFloat EPMRange 0.001
+  # Lily internal state, [internal state, most recent EPM]
+  field SFString   la_ln "0 0 0 0 0"
+]
+{
+  Supervisor {
+    description "Created by B. Haghighat"
+    translation IS translation
+    rotation IS rotation
+    controller IS controller
+    synchronization TRUE
+    name IS name
+    immersionProperties IS immersionProperties
+    model "Lily"
+    data IS la_ln
+    children [
+    LightSensor {
+      translation 0 0.034 -0.01
+      colorFilter 0.0745098 1 0.0745098
+    }
+    DEF Radio_Rx Receiver {
+      translation 0 0.034 0
+      rotation 1 0 0 -1.5708
+      name "Radio_Rx"
+      channel 11
+    }
+    DEF Radio_Tx Emitter {
+      translation 0 0.034 0
+      rotation 1 0 0 -1.5708
+      name "Radio_Tx"
+      channel 11
+    }
+    DEF EPM1_Rx Receiver {
+      translation -0.005 0.01825 0.0175
+      name "EPM1_Rx"
+      channel 1
+    }
+    DEF EPM2_Rx Receiver {
+      translation 0.0175 0.01825 0.005
+      name "EPM2_Rx"
+      channel 1
+    }
+    DEF EPM3_Rx Receiver {
+      translation 0.005 0.01825 -0.0175
+      name "EPM3_Rx"
+      channel 1
+    }
+    DEF EPM4_Rx Receiver {
+      translation -0.0175 0.01825 -0.005
+      name "EPM4_Rx"
+      channel 1
+    }
+    DEF EPM1_Tx Emitter {
+      translation -0.005 0.01825 0.0175
+      name "EPM1_Tx"
+      range IS EPMRange
+      channel 1
+    }
+    DEF EPM2_Tx Emitter {
+      translation 0.0175 0.01825 0.005
+      rotation 0 1 0 1.5708
+      name "EPM2_Tx"
+      range IS EPMRange
+      channel 1
+    }
+    DEF EPM3_Tx Emitter {
+      translation 0.005 0.01825 -0.0175
+      rotation 0 1 0 3.14159
+      name "EPM3_Tx"
+      range IS EPMRange
+      channel 1
+    }
+    DEF EPM4_Tx Emitter {
+      translation -0.0175 0.01825 -0.005
+      rotation 0 1 0 -1.5708
+      name "EPM4_Tx"
+      range IS EPMRange
+      channel 1
+    }
+    DEF EPM1 Connector {
+      translation -0.005 0.01825 0.0175
+      name "EPM1"
+      model "EPM"
+      type IS type
+      numberOfRotations IS numberOfRotations
+      isLocked TRUE
+      autoLock IS autoLock
+      unilateralLock IS unilateralLock
+      unilateralUnlock IS unilateralUnlock
+      axisTolerance IS axisTolerance
+      rotationTolerance IS rotationTolerance
+      distanceTolerance IS distanceTolerance
+      tensileStrength IS latchTensileStrength
+      snap IS snap
+    }
+    DEF EPM2 Connector {
+      translation 0.0175 0.01825 0.005
+      rotation 0 1 0 1.5708
+      name "EPM2"
+      model "EPM"
+      type IS type
+      numberOfRotations IS numberOfRotations
+      isLocked TRUE
+      autoLock IS autoLock
+      unilateralLock IS unilateralLock
+      unilateralUnlock IS unilateralUnlock
+      axisTolerance IS axisTolerance
+      rotationTolerance IS rotationTolerance
+      distanceTolerance IS distanceTolerance
+      tensileStrength IS latchTensileStrength
+      snap IS snap
+    }
+    DEF EPM3 Connector {
+      translation 0.005 0.01825 -0.0175
+      rotation 0 1 0 3.14159
+      name "EPM3"
+      model "EPM"
+      type IS type
+      numberOfRotations IS numberOfRotations
+      isLocked TRUE
+      autoLock IS autoLock
+      unilateralLock IS unilateralLock
+      unilateralUnlock IS unilateralUnlock
+      axisTolerance IS axisTolerance
+      rotationTolerance IS rotationTolerance
+      distanceTolerance IS distanceTolerance
+      tensileStrength IS latchTensileStrength
+      snap IS snap
+    }
+    DEF EPM4 Connector {
+      translation -0.0175 0.01825 -0.005
+      rotation 0 1 0 -1.5708
+      name "EPM4"
+      model "EPM"
+      type IS type
+      numberOfRotations IS numberOfRotations
+      isLocked TRUE
+      autoLock IS autoLock
+      unilateralLock IS unilateralLock
+      unilateralUnlock IS unilateralUnlock
+      axisTolerance IS axisTolerance
+      rotationTolerance IS rotationTolerance
+      distanceTolerance IS distanceTolerance
+      tensileStrength IS latchTensileStrength
+      snap IS snap
+    }
+    DEF LILY_SHAPE Shape {
+      appearance Appearance {
+        material Material {
+          ambientIntensity 1
+          diffuseColor 1 1 1
+          shininess 0.31
+          specularColor 1 1 1
+        }
+      }
+      geometry IndexedFaceSet {
+        coord Coordinate {
+          point [
+            -0.022606 0 0.012152
+            -0.022606 0.034 0.012152
+            -0.0175 0 -0.012754
+            -0.0175 0 0.002746
+            -0.0175 0.034 -0.012754
+            -0.0175 0.034 0.002746
+            -0.012754 0 0.0175
+            -0.012754 0.034 0.0175
+            -0.012152 0 -0.022606
+            -0.012152 0.034 -0.022606
+            -0.002746 0 -0.0175
+            -0.002746 0.034 -0.0175
+            0.002746 0 0.0175
+            0.002746 0.034 0.0175
+            0.012152 0 0.022606
+            0.012152 0.034 0.022606
+            0.012754 0 -0.0175
+            0.012754 0.034 -0.0175
+            0.0175 0 -0.002746
+            0.0175 0 0.012754
+            0.0175 0.034 -0.002746
+            0.0175 0.034 0.012754
+            0.022606 0 -0.012152
+            0.022606 0.034 -0.012152
+          ]
+        }
+        coordIndex [
+          5, 4, 3, -1, 3, 4, 2, -1, 1, 5
+          0, -1, 0, 5, 3, -1, 7, 1, 6, -1
+          6, 1, 0, -1, 13, 7, 12, -1, 12, 7
+          6, -1, 15, 13, 14, -1, 14, 13, 12, -1
+          21, 15, 19, -1, 19, 15, 14, -1, 20, 21
+          18, -1, 18, 21, 19, -1, 23, 20, 22, -1
+          22, 20, 18, -1, 17, 23, 16, -1, 16, 23
+          22, -1, 11, 17, 10, -1, 10, 17, 16, -1
+          9, 11, 8, -1, 8, 11, 10, -1, 4, 9
+          2, -1, 2, 9, 8, -1, 5, 1, 7, -1
+          20, 23, 17, -1, 11, 9, 4, -1, 13, 15
+          21, -1, 4, 5, 11, -1, 11, 5, 7, -1
+          11, 7, 17, -1, 17, 7, 13, -1, 17, 13
+          20, -1, 20, 13, 21, -1, 6, 0, 3, -1
+          16, 22, 18, -1, 2, 8, 3, -1, 3, 8
+          10, -1, 3, 10, 6, -1, 6, 10, 12, -1
+          19, 14, 18, -1, 18, 14, 12, -1, 18, 12
+          16, -1, 16, 12, 10, -1
+        ]
+      }
+    }
+  ]
+  contactMaterial "lily"
+  boundingObject USE LILY_SHAPE
+  physics Physics {
+    density -1
+    mass 0.035
+    damping Damping {
+      linear      0.332
+      angular     0.12
+    }
+    centerOfMass [
+      0 0.006 0
+    ]
+    #inertiaMatrix [
+    #  2.2394e-05 1.0073e-05 2.2394e-05
+    #  0 0 0
+    #]
+    }
+  }
+}
+
+​
+
+
