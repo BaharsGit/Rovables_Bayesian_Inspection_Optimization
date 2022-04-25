@@ -524,7 +524,7 @@ void apply_rule(void)
   // printf("resetting update \n");
   sprintf(data_struct2, "%x %d %d", internalStateEPM_la[engaged_epm], internalStateEPM_ln[engaged_epm],0);  
   strcat(data_struct,data_struct2);
-  wb_robot_set_data(data_struct);
+  wb_robot_set_custom_data(data_struct);
   
   // stay latched, or unlatch
   switch(rule_type) 
