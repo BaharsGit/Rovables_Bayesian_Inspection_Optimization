@@ -6,4 +6,4 @@
 
 # Run experiment according to the seed and simulation parameters
 echo "Running Webots instance"
-webots --batch --stdout --stderr --mode=fast /usr/local/efs/pso_self-assembly_aws/worlds/24Lilies_LaLn.wbt 
+xvfb-run webots --batch --stdout --stderr --mode=fast --no-rendering /usr/local/efs/pso_self-assembly_aws/worlds/24Lilies_LaLn.wbt

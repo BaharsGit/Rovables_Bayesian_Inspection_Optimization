@@ -210,9 +210,8 @@ void webots_physics_init(dWorldID world_, dSpaceID space_,
   fclose(fid2);
   char *pPath;
   pPath = getenv("WB_WORKING_DIR");
-  if (pPath != NULL)
-  // if (0)
-  {
+  // if (pPath != NULL)
+  if (0) {
     printf("The current path is: %s\n", pPath);
     sprintf(Parameters, "%s/prob.txt", pPath);
   } else {
