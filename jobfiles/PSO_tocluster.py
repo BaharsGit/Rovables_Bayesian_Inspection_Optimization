@@ -153,7 +153,7 @@ class PSO():
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, mode='w') as myfile:
                     myfile.write('\n'.join(str(p_w) for p_w in swarm[j].position_i))
-                launch_webots(i, j)
+                #launch_webots(i, j)
 
             #debug
             #outs = ''
@@ -162,44 +162,21 @@ class PSO():
             not_evaluated = list(range(0, num_particles))
  #           print(not_evaluated)
             while ok < num_particles:
-                jobs = subprocess.Popen(['qstat'], stdout=subprocess.PIPE, shell=True)
-                outs, errs = jobs.communicate()
-                # wait till all jobs are done
-                while len(outs) != 0:
-                    time.sleep(1)
-                    jobs = subprocess.Popen(['qstat'], stdout=subprocess.PIPE, shell=True)
-                    outs, errs = jobs.communicate()
-                    ii += 1
-                    if ii > 60:
-                        #print(outs)
-                        print("\nwaiting for qstat to be empty, current time is:")
-                        print (datetime.now())
-                        print("number of jobs remaining is:")
-                        print(len(outs))
-                        ii = 0
-
-                print("jobs done: \n ")
-                # check if all jobs are done successfully, relaunch the ones who are not successful
-
-                for kk in range (0,len(not_evaluated)):                    
-                    j=not_evaluated[0]
-			
-                    file_path = "Generation_%d/local_fitness_%d.txt" % (i, j)
-                    print(file_path)
-                    if not os.path.exists(file_path):
-                        print("path does not exist \n")
+                # wait for all jobs to be finished
+                j=not_evaluated[0]
+  
+                file_path = "Generation_%d/local_fitness_%d.txt" % (i, j)
+                if os.path.exists(file_path):
+                    success = swarm[j].evaluate(costFunc, i, j)
+                    print("evaluating \n")
+                    if success == 0:
+                        print("local_fitness.txt does not exist or is empty")
                         #launch_webots(i, j)
                     else:
-                        success = swarm[j].evaluate(costFunc, i, j)
-                        print("evaluating \n")
-                        if success == 0:
-                            print("local_fitness.txt does not exist")
-                            #launch_webots(i, j)
-                        else:
-                            ok += 1
-                            print("remove individ  "+str(not_evaluated))
-                           # print(not_evaluated)
-                            not_evaluated.remove(j)
+                        ok += 1
+                        print("remove individ  "+str(j))
+                        # print(not_evaluated)
+                        not_evaluated.remove(j)
 
             # read the local fitnesss of each individual
             # determine if current particle is the best (globally)
