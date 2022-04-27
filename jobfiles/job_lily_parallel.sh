@@ -28,7 +28,7 @@ OUTPUT_DIR=Generation_${GEN_ID}
 echo ${OUTPUT_DIR}
 
 # set the job base directory 
-JOB_BASE_DIR=/home/yannick/Documents/cyberbotics/AWS-project/self-assembly/PSO_15_lilies_RAS_cross/tmp/job${GEN_ID}_${INDIVID_ID}
+JOB_BASE_DIR=$(pwd)/tmp/job${GEN_ID}_${INDIVID_ID}
  
 
 # create the working directory
@@ -80,7 +80,7 @@ do
 
    
    # launch webots
-   timeout $WB_TIMEOUT  /home/yannick/Documents/cyberbotics/webotsdev/webots --batch --mode=fast --stdout --stderr $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt
+   timeout $WB_TIMEOUT  xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt
  
 
    # waiting just a while before copying the output

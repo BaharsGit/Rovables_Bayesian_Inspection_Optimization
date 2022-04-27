@@ -8,6 +8,7 @@ import time
 import os.path
 from datetime import datetime
 import statistics
+import argparse
 #import sys
 #import fileinput
 
@@ -224,6 +225,13 @@ class PSO():
 if __name__ == "__PSO__":
     main()
 
+# argument for number of particles
+parser = argparse.ArgumentParser(description='Run PSO to optimize parameters in the context of self-assembling robots')
+parser.add_argument("-n", "--nb_particles", required=False, type=int, default="15", help="number of particles for PSO")
+args = parser.parse_args()
+if args.nb_particles < 1:
+    parser.error("Minimum number of particles is 1")
+
 # --- RUN ----------------------------------------------------------------------+
 
 # initial=[5,5]               # initial starting location [x1,x2...]
@@ -231,7 +239,7 @@ bounds = [0,0.5]  # input bounds [(x1_min,x1_max)]
 num_dimensions = 3
 x0=[0.01,0.005,0.000025]
 startTime=datetime.now()
-PSO(x0, fitness_evaluation, bounds, num_particles=15, maxiter=30)
+PSO(x0, fitness_evaluation, bounds, num_particles=args.nb_particles, maxiter=30)
 print (datetime.now()-startTime)
 duration = "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)
