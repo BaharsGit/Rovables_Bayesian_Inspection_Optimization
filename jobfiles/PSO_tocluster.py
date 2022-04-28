@@ -229,8 +229,8 @@ if __name__ == "__PSO__":
 parser = argparse.ArgumentParser(description='Run PSO to optimize parameters in the context of self-assembling robots')
 parser.add_argument("-n", "--nb_particles", required=False, type=int, default="15", help="number of particles for PSO")
 args = parser.parse_args()
-if args.nb_particles < 1:
-    parser.error("Minimum number of particles is 1")
+if args.nb_particles < 2:
+    parser.error("Minimum number of particles is 2")
 
 # --- RUN ----------------------------------------------------------------------+
 
