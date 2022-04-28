@@ -40,7 +40,7 @@ def launch_webots(i, j):
 
 # ---- Read fitness files-------------------------------------------------------+
 def fitness_evaluation(i, j):
-    filename = "Generation_%d/local_fitness_%d.txt" % (i, j)
+    filename = run_dir + "Generation_%d/local_fitness_%d.txt" % (i, j)
     # os.makedirs(os.path.dirname(filename), exist_ok=True)
     # with open( filename, mode='w') as filemy:
     #	filemy.write("1\n")
@@ -149,7 +149,7 @@ class PSO():
             particles_fit = []
             # cycle through particles in swarm and evaluate fitness
             for j in range(0, num_particles):
-                filename = "Generation_%d/prob_%d.txt" % (i, j)
+                filename = run_dir + "Generation_%d/prob_%d.txt" % (i, j)
                 print("Launching the new Generation")
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, mode='w') as myfile:
@@ -166,7 +166,7 @@ class PSO():
                 # wait for all jobs to be finished
                 j=not_evaluated[0]
   
-                file_path = "Generation_%d/local_fitness_%d.txt" % (i, j)
+                file_path = run_dir + "Generation_%d/local_fitness_%d.txt" % (i, j)
                 if os.path.exists(file_path):
                     success = swarm[j].evaluate(costFunc, i, j)
                     print("evaluating \n")
@@ -192,21 +192,21 @@ class PSO():
                 swarm[j].update_position(bounds)
 
 
-            results = "Generation_%d/Parameters.txt" %(i)
+            results = run_dir + "Generation_%d/Parameters.txt" %(i)
             os.makedirs(os.path.dirname(results), exist_ok=True)
             with open(results, mode='w') as myfile2:
                 for j in range(0, num_particles):
                     myfile2.write(str(str(i)+'\t'+ str(j) + '\n'+'\t'.join(str(e) for e in swarm[j].velocity_i) + '\n' + '\t'.join(str(ee) for ee in swarm[j].pos_best_i) + '\n'+str(swarm[j].fit_best_i)+'\n'))
                     particles_fit.append(swarm[j].fit_best_i)
             # write back to the files
-            fileresults = "Final_Results/best_results.txt"
+            fileresults = run_dir + "Final_Results/best_results.txt"
             os.makedirs(os.path.dirname(fileresults), exist_ok=True)
             with open(fileresults, mode='a') as myfile:
                 myfile.write(str(str(i) + '\t'+'\t'.join(str(e) for e in pos_best_g) + '\t' + str(fit_best_g) + '\n'))
 
 
             # write back to the files
-            fileresults = "Final_Results/average_results.txt"
+            fileresults = run_dir + "Final_Results/average_results.txt"
             os.makedirs(os.path.dirname(fileresults), exist_ok=True)
             with open(fileresults, mode='a') as myfile:
                 myfile.write(str(statistics.mean(particles_fit)) + '\t'+str(statistics.stdev(particles_fit))+'\n')
@@ -232,6 +232,15 @@ args = parser.parse_args()
 if args.nb_particles < 2:
     parser.error("Minimum number of particles is 2")
 
+# new result directory
+run_dirs = [x for x in os.listdir(".") if x.startswith('Run_')]
+if len(run_dirs): 
+  last_run_id = int(sorted(run_dirs).pop()[4:])
+else:
+  last_run_id = -1
+run_dir = "Run_" + str(last_run_id+1) + "/"
+os.mkdir(run_dir)
+
 # --- RUN ----------------------------------------------------------------------+
 
 # initial=[5,5]               # initial starting location [x1,x2...]
@@ -241,7 +250,7 @@ x0=[0.01,0.005,0.000025]
 startTime=datetime.now()
 PSO(x0, fitness_evaluation, bounds, num_particles=args.nb_particles, maxiter=30)
 print (datetime.now()-startTime)
-duration = "Final_Results/time_performance.txt"
+duration = run_dir + "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)
 with open(duration, mode='w') as myfil:
     myfil.write(str(datetime.now()-startTime))

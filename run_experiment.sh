@@ -26,12 +26,15 @@ else
   GEN_ID=0
   INDIVID_ID=$(($MY_ID-1))
 
+  RUN_DIR=$(ls -td */| head -1)
+  cd $RUN_DIR
+  
   while true 
   do
     if [ -f "Generation_${GEN_ID}/prob_${INDIVID_ID}.txt" ]; then
       # Start one local Webots instance
       echo "Starting a Webots instance for particle evaluation"
-      bash job_lily_parallel.sh $GEN_ID $INDIVID_ID
+      bash ../job_lily_parallel.sh $GEN_ID $INDIVID_ID
       ((GEN_ID++))
     fi
   done
