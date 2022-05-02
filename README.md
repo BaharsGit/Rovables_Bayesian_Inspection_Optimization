@@ -105,7 +105,25 @@ The global implementation in the Amazon cloud is shown in the diagram below.
   
 </div>
 
-Three services are involved in the final solution: Elastic Cloud Compute (EC2), Elastic File System (EFS) and AWS Batch. The simulation files are stored in an EFS file system, as well as log files resulting from a finished simulation. This storage can be accessed by the user through an EC2 instance, basically an OS based server, by mounting the file system to it. This way the user can edit the files and access to the results. AWS Batch uses Docker images to deploy container nodes to temporary server instances. The official Webots Docker image is used and retrieved by AWS Batch. AWS Batch is the core of the implementation, as it is responsible for running the multiple containers in parallel with the help of the EFS providing the simulation files.
+Three services are involved in the final solution: Elastic Cloud Compute (EC2), Elastic File System (EFS) and AWS Batch. The simulation files are stored in an EFS file system, as well as log files resulting from a finished simulation. This storage can be accessed by the user through an EC2 instance, basically an OS based server, by mounting the file system to it. This way the user can edit the files and access to the results. AWS Batch uses Docker images to deploy container nodes to temporary server instances. The official Webots Docker image is used and retrieved by AWS Batch. AWS Batch is the core of the implementation, as it is responsible for running the multiple containers in parallel with the help of the EFS providing the simulation files. The user starts the distributed process directly from the AWS Batch console.
 
 ### 3.2 New file structure for AWS
+The deployement of the distributed nodes on AWS Batch requires a few modifications to the file system structure. The new architecture is the following.
 
+<div align = center>
+
+<img src="https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/aws_file_structure.png" width=700/>
+  
+</div>
+
+The strategy is to use the _multi-node parallel jobs_ feature of AWS Batch. It allows to start several nodes, including a main one and all other children. Each node gets an environment variable with its index number and one with the index of the main node. The main node runs the PSO algorithm while the children nodes each evaluate one particle of the swarm. Therefore, the number of nodes deployed is equal to (N+1), with N the number of particles in the swarm.
+
+A new `run_experiment.sh` script is started in each node and is responsible for running the correct script in function of the node index. In the main node, the Python PSO script `PSO_tocluster.py` is started, while, in the children nodes, the `job_lily_parallel.sh` file is executed (see [comment1](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407227), [comment2](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407269) and [comment3](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407324)).  
+
+As can be observed, the original `job_lily_parallel.sub` file has been replaced by an equivalent `job_lily_parallel.sh` file. The global code is kept the same. The local Webots working directory is now a `tmp/job#_#` directory defined by the generation and particles indexes ([comment1](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407091)). The command to start Webots is also adapted ([comment2](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407126)). The script is still responsible for copying the `prob.txt` and `local_fitness.txt` files between the result directory and the temporary working directory.
+
+The number of particles to be used in the PSO alogrithm is automatically defined by the number of nodes started from AWS Batch. To run PSO with 15 particles, 16 nodes should be executed. This functionality has been added in the following commits: [comment1](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407059) and [comment2](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72665836).
+
+The communication between nodes is provided by the file system.
+
+Finally, to avoid confusion and problems Run
