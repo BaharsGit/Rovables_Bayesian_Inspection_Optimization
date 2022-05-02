@@ -8,12 +8,13 @@ This repository describes the steps to deploy multiple distributed Webots simula
     * 2.1 [Simulation description](#21-simulation-description)<br>
     * 2.2 [File structure](#22-file-structure)<br>
     * 2.3 [Conversion to Webots R2022a](#23-conversion-to-webots-r2022a)<br>
-    * 2.4 [New file structure for AWS](#24-new-file-structure-for-aws)<br>
+* 3 [Global cloud solution](#3-global-cloud-solution)<br>
+    * 3.1 [Diagram](#31-diagram)<br> 
+    * 3.2 [New file structure for AWS](#32-new-file-structure-for-aws)<br>
 * 3 [Docker container](#3-docker-container)<br>
     * 3.1 [Docker containers](#31-docker-containers)<br>
     * 3.2 [For this project](#32-for-this-project)<br>
 * 4 [Amazon account](#4-amazon-account)<br>
-* 5 [Global cloud solution](#5-global-cloud-solution)<br>
 * 6 [Elastic Container Registry (ECR)](#6-elastic-container-registry-ecr)<br>
     * 6.1 [Description](#61-description)<br>
     * 6.2 [Create repository](#62-create-repository)<br>
@@ -94,7 +95,17 @@ The original simulation was running on Webots 8.5.4, which was released early 20
 | **New command to reload a simulation** <br> The previous command to reload a simulation was wb_supervisor_simulation_revert(). It has be changed to wb_supervisor_world_reload(). |       [`supervisor_track_LaLn`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/9b76090af9b1793b1250c4b631654bbe3fea94bf#r71880323) |
 | **Fixed a crash in the plugin** <br> The Parameters[] variable was declared as const but values are assigned further in the code, involving a crash at Webots startup. |       [`15Lilies`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/b058b90f2307f7aae7d616e40a12fb2445197b88#r71883468) |
  
+## 3 Global cloud solution
+### 3.1 Diagram
+The global implementation in the Amazon cloud is shown in the diagram below.
 
+<div align = center>
 
-### 2.4 New file structure for AWS
+<img src="https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/aws_solution_diagram.png" width=700/>
+  
+</div>
+
+Three services are involved in the final solution: Elastic Cloud Compute (EC2), Elastic File System (EFS) and AWS Batch. The simulation files are stored in an EFS file system, as well as log files resulting from a finished simulation. This storage can be accessed by the user through an EC2 instance, basically an OS based server, by mounting the file system to it. This way the user can edit the files and access to the results. AWS Batch uses Docker images to deploy container nodes to temporary server instances. The official Webots Docker image is used and retrieved by AWS Batch. AWS Batch is the core of the implementation, as it is responsible for running the multiple containers in parallel with the help of the EFS providing the simulation files.
+
+### 3.2 New file structure for AWS
 
