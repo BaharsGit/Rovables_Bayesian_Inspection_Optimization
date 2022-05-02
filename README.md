@@ -87,16 +87,16 @@ The original simulation was running on Webots 8.5.4, which was released early 20
 ## 3 Amazon account
 Create an account on the [AWS welcome page](https://aws.amazon.com/?nc1=h_ls).
 * Click on _Create an AWS account_ <br>
-![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/create_account.png) 
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/images/create_account.png) 
 * Enter your email, password and username
 * Enter your personal informations
 * Enter your credit card informations
 * Confirm your identity using your phone number
 * Choose a free or paying support plan
 * Head to the management console<br>
-![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/manage_console.png) 
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/images/manage_console.png) 
 * Lastly, set your region on the upper-right corner of the console <br>
-![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/region_select1.png) 
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/images/region_select1.png) 
 
 ## 4 Global cloud solution
 ### 4.1 Diagram
