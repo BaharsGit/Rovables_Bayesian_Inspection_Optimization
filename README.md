@@ -12,18 +12,6 @@ This repository describes the steps to deploy multiple distributed Webots simula
 * 4 [Global cloud solution](#4-global-cloud-solution)<br>
     * 4.1 [Diagram](#41-diagram)<br> 
     * 4.2 [New file structure for AWS](#42-new-file-structure-for-aws)<br>
-* 3 [Docker container](#3-docker-container)<br>
-    * 3.1 [Docker containers](#31-docker-containers)<br>
-    * 3.2 [For this project](#32-for-this-project)<br>
-
-* 6 [Elastic Container Registry (ECR)](#6-elastic-container-registry-ecr)<br>
-    * 6.1 [Description](#61-description)<br>
-    * 6.2 [Create repository](#62-create-repository)<br>
-        * 6.2.1 [Private repository](#621-private-repository)<br>
-        * 6.2.2 [Public repository](#622-public-repository)<br>
-    * 6.3 [IAM authorization](#63-iam-authorization)<br>
-    * 6.4 [Configure AWS CLI](#64-configure-aws-cli)<br>
-    * 6.5 [Upload Docker image](#65-upload-docker-image)<br>
 * 7 [Elastic File System (EFS)](#7-elastic-file-system-efs)<br>
     * 7.1. [Description](#71-description)<br>
     * 7.2. [Create a file system](#72-create-a-file-system)<br>
@@ -142,3 +130,5 @@ The number of particles to be used in the PSO alogrithm is automatically defined
 The communication between nodes is provided by the file system. When the `prob_#.txt` files are created by the PSO algorithm in the main node, the `run_experiment.sh` script in the children nodes detects it and runs `job_lily_parallel.sh` to start a Webots instance. In the same way, when a child node has finished its job, the `local_fitness_#.txt` file is copied back to the `Generation_#` directory and the PSO algorithm can tell that this particular child is ready for the next generation. The simplified detection in `PSO_tocluster.py` is done here: [comment1](https://github.com/cyberbotics/pso_self-assembly_aws/commit/9131699c7afbaeb770d5d3f4d5282633df812676#r72406859). In `run_experiment.sh`, the detection is done here: [comment2](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72667405). When a child node has finished its particle job, it turns to idle mode, increases the generation index and waits for the following iteration to run a new particle (see [comment3](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72667403)). 
 
 Since the communication is based solely on the file system, the different runs of the PSO must be distinguished using different folders. The Python script is therefore responsible for creating a `Run_#` folder to store all `Generation_#` directories and the resulting files ([comment1](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72407963)). The paths of other scripts are also updated to remain consistent ([comment2](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72408012), [comment3](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72408041) and [comment4](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72408076)).
+
+
