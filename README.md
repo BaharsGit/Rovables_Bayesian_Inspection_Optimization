@@ -364,16 +364,16 @@ A job definition allows to define a set of parameters for future job executions.
 * Choose and arbitrary name for the job definition, such as _multi-pso-job_. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_name.png)
 
-* In the _Multi-node configuration_ panel, choose the default number of nodes to be started. This number can be overriden later when starting the job. Also choose 0 as main node index.<br>
+* In the _Multi-node configuration_ panel, choose the default number of nodes to be started. This number can be overriden later when starting the job. Also choose 0 as main node index. This parameter corresponds to the number of particles in the PSO algorithm (+ the main node). <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_nodes.png)
 
 *  Add a new node range. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_add_group.png)
     
-* In the new group panel, select all nodes as target nodes (0:). Write the url of the latest official Webots Docker image. Also write the command to execute in each started container. <br>
+* In the new group panel, select all nodes as target nodes (0:). Write the URL of the latest official Webots Docker image. Also write the command to execute in each started container. This will start the `run_experiment.sh` script in each container. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config1.png)
     
-* Select the compute resources to allocate for each container. Some tests have shown that 2 vCPUs and 4GiB of memory is sufficient to run the containers. No GPU is needed. The optimal instances will be launched according to these parameters. <br>
+* Select the compute resources to allocate for each container. Some tests have shown that 2 vCPUs and 4GiB of memory is sufficient to run the containers. No GPU is needed. The optimal instances will be automatically launched according to these parameters. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config2.png)
     
 * The next step consists in mounting the EFS file system to the container. First add the mount point to the container. Then, choose the EFS file system as volume. Names defined in both sections must be the same. The file system ID can be found in the [EFS console](https://us-east-2.console.aws.amazon.com/efs/home?region=us-east-2#/file-systems) (see second illustration below). <br>
