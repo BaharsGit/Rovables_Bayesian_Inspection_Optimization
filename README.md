@@ -230,30 +230,30 @@ For this work, only a simple Ubuntu server is needed to mount a file system. Kee
 
 * To create an EC2 instance, head to [AWS EC2](https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#Instances:sort=desc:instanceState) and click on launch instances.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_launch_instances.png)
-* Choose a name for the instance, like _EFSMount_.
+* Choose a name for the instance, like _EFSMount_.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_name.png)
 * Choose Ubuntu 20.04 in the list of AMIs.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_AMI_choice.png)
 * Further, keep the default _t2.micro_ type of instance. We only need to mount a file system so no more resources are needed.<br>
-* Next, you can choose a SSH key pair. In case you already have an existing one and still have the .pem associated file you can choose it from the drop-down menu. If not, click on _Create new key pair_.
+* Next, you can choose a SSH key pair. In case you already have an existing one and still have the .pem associated file you can choose it from the drop-down menu. If not, click on _Create new key pair_.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_key_pair.png)
 * A pop-up window will show up asking you to configure a new SSH key pair. Create a new RSA key pair, give it a name. The .pem associated file will be automatically downloaded and useful to access the instance via SSH. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_new_key_pair.png)
 * In the _Network settings_, click on _Edit_.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_edit_network_button.png)
-* If you use the _internet-vpc_ VPC, apply the following configuration. Be sure to choose a public subnet and enable the public IP address.
+* If you use the _internet-vpc_ VPC, apply the following configuration. Be sure to choose a public subnet and enable the public IP address.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_vpc_internet.png)
-* If you use the default VPC, apply the following configuration. Choose one of the subnets and enable the public IP address.
+* If you use the default VPC, apply the following configuration. Choose one of the subnets and enable the public IP address.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_vpc_no_internet.png)
-* Create a new security group, to allow SSH connections and the NFS protocol. The security group should look as follows.
+* Create a new security group, to allow SSH connections and the NFS protocol. The security group should look as follows.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_security_groups.png)
 * In _Configure storage_, click on _Edit_ next to _0x File system_ to add a file system.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_edit_fs.png)
 * Click on _Add shared file system_.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_add_shared_file_system.png)
-* Select the file system you have created in EFS. Mount it to `/home/ubuntu/efs/` and uncheck the box about automatic security groups.
+* Select the file system you have created in EFS. Mount it to `/home/ubuntu/efs/` and uncheck the box about automatic security groups.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_efs_config.png)
-* Finally, click on _Launch instance_.
+* Finally, click on _Launch instance_.<br>
 * Your EC2 console should now contain a launched instance. Note the public IPv4 address needed for SSH connection. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_launched_instance.png)
 
