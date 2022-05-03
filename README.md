@@ -291,7 +291,7 @@ sudo chown ubuntu efs
 
 * You can now copy simulation files from your local machine to the EFS.
 ``` console
-scp -r local_folder ec2efs:~/efs
+scp -r pso_self_assembly_aws ec2efs:~/efs
 ```
 
 Note that **the Webots controllers cannot be compiled on the EC2 instance** (unless you install Webots on it, which is not necessarily the easiest option). Therefore, the best way to proceed is to modify and compile the controllers locally. Once the controller is built, the entire folder can be transferred to the EC2 instance via SSH using the corresponding command above.
@@ -307,7 +307,7 @@ Once implemented, steps of sections 6.1 to 6.5 must not be executed anymore. The
 
 ``` console
 ssh ec2efs
-scp -r local_folder ec2efs:~/efs
+scp -r file/folder ec2efs:~/efs
 ```
 
 ## 7 AWS Batch Service
