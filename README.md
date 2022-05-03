@@ -74,7 +74,7 @@ The actual simulation is made of the following important files.
 </div>
 
 ### 2.3 Conversion to Webots R2022a
-The original simulation was running on Webots 8.5.4, which was released early 2017. Therefore, a few modifications must be applied for the project to run on Webots R2022a. The changes are commented directly on the files in the commits of the repository. The following description of changes contains links to the various comments.
+The original simulation was running on Webots 8.5.4, which was released early 2017. Therefore, a few modifications must be applied to the project to run on Webots R2022a. The changes are commented directly on the files in the commits of the repository. The following description of changes contains links to the various comments.
 
 | Modification  | Related comments |
 | ------------- | ------------- |
@@ -182,25 +182,28 @@ The following steps taken from the [AWS documentation](https://docs.aws.amazon.c
 ### 6.1 Description
 The next step consists in using the Elastic File System (EFS) provided by Amazon to store the simulation files so that the container can access them at runtime.
 
-EFS is a secure and fully managed file system. You can create multiple separate storages and scale as much as you want, without lowering the performances. Each file system can be accessed from many instances through the Network File System (NFS) protocol, which allows a computer to access external files over a network. EFS can be mounted on EC2 instances (see [EC2 Instances](#64-ec2-instance) section) and Docker containers.
+EFS is a secure and fully managed file system. You can create multiple separate storages and scale as much as you want, without lowering the performances. Each file system can be accessed from many instances through the Network File System (NFS) protocol, which allows a computer to access external files over a network. EFS can be mounted on EC2 instances (see [6.4 EC2 Instances](#64-ec2-instance)) and Docker containers.
 
 EFS are created in specific regions and must be assigned to a Virtual Private Cloud (VPC). VPCs can be defined in different regions and allow to create an isolated cloud environment for a user. To get access to a file system, a container or a EC2 instance must be configured in the same VPC. By default, a VPC is already created on a fresh AWS account. If you followed instructions of [5.2 With internet access](#52-with-internet-access), you have created a custom one for this project.
 
 <div align = center>
 
-  <img src="https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/efs_structure.png" width="500"/>
+  <img src="https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_structure.png" width="600"/>
   
   source: [EFS - How it works ?](https://docs.aws.amazon.com/efs/latest/ug/how-it-works.html)
 </div>
 
 ### 6.2 Create a file system
 To create a file system head to [Elastic File System](https://us-east-2.console.aws.amazon.com/efs/get-started?region=us-east-2#/get-started) and click on _Create file system_.<br>
-![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/efs_create.png)
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_create.png)
 
-In the pop-up window, indicate a name for your file system and select the default VPC.<br>
+In the pop-up window, indicate a name for your file system and select a VPC.<br>
 <div align = center>
-<img src="https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/efs_create_popup.png" width="500"/>
+<img src="https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_create_popup.png" width="500"/>
 </div>
+
+If you want to use internet in your containers, choose the newly created _internet-vpc_. If not, you can choose the default one.
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_internet_vpc.png)
 
 Now, to access our file system from a local machine, the following workflow must be applied:
 1. Enable NFS to the file system.
@@ -211,13 +214,15 @@ Now, to access our file system from a local machine, the following workflow must
 ### 6.3 Enable NFS in your security group
 A created file system is automatically assigned to a default security group. Security groups act as firewalls to define authorized in and out connections and protocols. In our case, we need the NFS protocol to be activated to access the EFS via NFS from SSH or from the Docker container.
 
-* Get to your [Security Groups](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#securityGroups:) and click on your default security group.
-    ![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/sg_default_list.png)
+* Get to your [Security Groups](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#securityGroups:) and click on your default security group. If you have multiple ones, choose the one associated with the VPC you have selected in the last step, when creating the file system.
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_default_list.png)
  
 * Click on _Edit inbound rules_. <br>
-    ![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/sg_edit_inbound.png)
-* Add a new NFS rule as shown in the illustration below. <br>
-    ![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/sg_nfs_rule.png)
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_edit_inbound.png)
+* Click on _Add Rule_. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_add_rule.png)
+* Add a new NFS rule as shown in the illustration below. (Source = Anywhere - IPv4) <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_nfs_rule.png)
     
 ### 6.4 EC2 Instance
 Elastic Compute Cloud (EC2) is one of the main services provided by AWS. It allows to create a virtual server which is hosted on EC2 to launch applications. Amazon offers all types of servers, with different operating systems, storage sizes, machine power and network infrastructure. Instances are created from Amazon Machine Images (AMI) which are provided by Amazon or can be found on the Marketplace. Example AMIs are different releases of Ubuntu or Windows or specific environments made available by other companies.
