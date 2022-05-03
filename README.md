@@ -118,7 +118,7 @@ The deployement of the distributed nodes on AWS Batch requires a few modificatio
 
 <div align = center>
 
-<img src="https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/aws_file_structure.png" width=700/>
+<img src="https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/aws_file_structure.png" width=800/>
   
 </div>
 
@@ -198,11 +198,9 @@ To create a file system head to [Elastic File System](https://us-east-2.console.
 ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_create.png)
 
 In the pop-up window, indicate a name for your file system and select a VPC.<br>
-<div align = center>
-<img src="https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_create_popup.png" width="500"/>
-</div>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_create_popup.png)
 
-If you want to use internet in your containers, choose the newly created _internet-vpc_. If not, you can choose the default one.
+If you want to use internet in your containers, choose the newly created _internet-vpc_. If not, you can choose the default one.<br>
 ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_internet_vpc.png)
 
 Now, to access our file system from a local machine, the following workflow must be applied:
@@ -221,8 +219,9 @@ A created file system is automatically assigned to a default security group. Sec
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_edit_inbound.png)
 * Click on _Add Rule_. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_add_rule.png)
-* Add a new NFS rule as shown in the illustration below. (Source = Anywhere - IPv4) <br>
+* Add a new NFS rule as shown in the illustration below. (Source = **Anywhere - IPv4**) <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_nfs_rule.png)
+* Click on _Save rules_.
     
 ### 6.4 EC2 Instance
 Elastic Compute Cloud (EC2) is one of the main services provided by AWS. It allows to create a virtual server which is hosted on EC2 to launch applications. Amazon offers all types of servers, with different operating systems, storage sizes, machine power and network infrastructure. Instances are created from Amazon Machine Images (AMI) which are provided by Amazon or can be found on the Marketplace. Example AMIs are different releases of Ubuntu or Windows or specific environments made available by other companies.
@@ -230,24 +229,33 @@ Elastic Compute Cloud (EC2) is one of the main services provided by AWS. It allo
 For this work, only a simple Ubuntu server is needed to mount a file system. Keep in mind that this part is only about accessing the file system from a local machine and not running containers on these instances. Running the simulations is discussed in a further section.
 
 * To create an EC2 instance, head to [AWS EC2](https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#Instances:sort=desc:instanceState) and click on launch instances.<br>
-    ![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/ec2_launch_instances.png)
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_launch_instances.png)
+* Choose a name for the instance, like _EFSMount_.
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_name.png)
 * Choose Ubuntu 20.04 in the list of AMIs.<br>
-    ![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/ec2_ubuntu20.png)
-* At step 2, choose a _t2.micro_ type of instance. We only need to mount a file system so no more resources are needed.<br>
-    ![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/ec2_instance_type.png)
-* Step 3 (details) and step 4 (storage) can be left as default.
-* Add a name tag to your instance, EFSMount for example.<br>
-    ![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/ec2_tag.png)
-* Step 6 is about security groups. Create a new security group with a NFS rule accessible anywhere. This way the instance allows the NFS protocol to mount the EFS.<br>
-    ![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/ec2_security_group.png)
-* Step 7 allows you to review your instance, simply click on the _Launch_ button.
-* A pop-up window will show up asking you to configure a SSH key pair. Create a new RSA key pair, give it a name and download it using the corresponding button. The downloaded file will be useful to access the instance via SSH. Once done, launch the new instance. <br>
-    <div align = center>
-    <img src="https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/ec2_ssh_key.png" width="500"/>
-    </div>
-    
-* Your EC2 console should now contain a launched instance. Note the public IPv4 address needed for ssh connection. <br>
-    ![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/ec2_launched_instance.png)
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_AMI_choice.png)
+* Further, keep the default _t2.micro_ type of instance. We only need to mount a file system so no more resources are needed.<br>
+* Next, you can choose a SSH key pair. In case you already have an existing one and still have the .pem associated file you can choose it from the drop-down menu. If not, click on _Create new key pair_.
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_key_pair.png)
+* A pop-up window will show up asking you to configure a new SSH key pair. Create a new RSA key pair, give it a name. The .pem associated file will be automatically downloaded and useful to access the instance via SSH. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_new_key_pair.png)
+* In the _Network settings_, click on _Edit_.<br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_edit_network_button.png)
+* If you use the _internet-vpc_ VPC, apply the following configuration. Be sure to choose a public subnet and enable the public IP address.
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_vpc_internet.png)
+* If you use the default VPC, apply the following configuration. Choose one of the subnets and enable the public IP address.
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_vpc_no_internet.png)
+* Create a new security group, to allow SSH connections and the NFS protocol. The security group should look as follows.
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_security_groups.png)
+* In _Configure storage_, click on _Edit_ next to _0x File system_ to add a file system.<br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_edit_fs.png)
+* Click on _Add shared file system_.<br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_add_shared_file_system.png)
+* Select the file system you have created in EFS. Mount it to `/home/ubuntu/efs/` and uncheck the box about automatic security groups.
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_efs_config.png)
+* Finally, click on _Launch instance_.
+* Your EC2 console should now contain a launched instance. Note the public IPv4 address needed for SSH connection. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_launched_instance.png)
 
 ### 6.5 Transfer files to EFS
 Now that the Ubuntu server is active, a SSH connection can be established.
