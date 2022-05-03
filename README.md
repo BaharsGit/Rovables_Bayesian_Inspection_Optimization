@@ -22,12 +22,12 @@ This repository describes the steps to deploy multiple distributed Webots simula
     * 6.4. [EC2 Instance](#64-ec2-instance)<br>
     * 6.5. [Transfer files to EFS](#65-transfer-files-to-efs)<br>
     * 6.6. [Important information about EC2 instances](#66-important-information-about-ec2-instances)<br>
-* 8 [AWS Batch Service](#8-aws-batch-service)<br>
-    * 8.1 [Description](#81-description)<br>
-    * 8.2 [Configuration](#82-configuration)<br>
-        * 8.2.1 [Compute environment](#821-compute-environment)<br>
-        * 8.2.2 [Job queue](#822-job-queue)<br>
-        * 8.2.3 [Job definition](#823-job-definition)<br>
+* 7 [AWS Batch Service](#7-aws-batch-service)<br>
+    * 7.1 [Description](#71-description)<br>
+    * 7.2 [Configuration](#72-configuration)<br>
+        * 7.2.1 [Compute environment](#721-compute-environment)<br>
+        * 7.2.2 [Job queue](#722-job-queue)<br>
+        * 7.2.3 [Job definition](#723-job-definition)<br>
 * 9 [Run simulations](#9-run-simulations)<br>
 * 10 [Results](#10-results)<br>
       
@@ -259,54 +259,138 @@ For this work, only a simple Ubuntu server is needed to mount a file system. Kee
 
 ### 6.5 Transfer files to EFS
 Now that the Ubuntu server is active, a SSH connection can be established.
-* Open a local terminal and get to the directory containing the .pem file.
+* Open a local terminal and move the downloaded .pem file to `~/.ssh/`.
 ``` console
-cd /path/to/file.pem
+mv path/to/ssh-efs.pem ~/.ssh/ 
 ```
 
 * Change permissions of the file.
 ``` console
-chmod 400 file.pem
+chmod 400 ~/.ssh/ssh-efs.pem
 ```
 
-* Connect to the EC2 instance using the pem file and the public IP address.
+* Open the `config` file in `.ssh` folder. If it doesn't exist, create one with a text editor. Append the following lines inside. Don't forget to replace the IP address of the EC2 instance and the .pem file name.
 ``` console
-ssh -i file.pem ubuntu@<EC2-public-IPv4-address>
+Host ec2efs
+  Hostname <EC2 public IPv4>
+  user ubuntu
+  IdentityFile ~/.ssh/ssh-efs.pem
+  Port 22
 ```
 
-* _nfs-common_ is a package which allows the configuration of systems using the NFS protocol. Install _nfs-common_ with the following commands.
+* You can now easily connect to the instance and check for the `efs` folder presence.
 ``` console
-sudo apt install nfs-common
-nfsstat --version
+ssh ec2efs
+ls
 ```
 
-* Create a directory to mount the EFS on. Mount the file system to the newly created folder. The file system IP address can be found in the _Network_ tab of your EFS in the AWS console. There is no difference between the three addresses displayed.
-``` console
-mkdir efs
-sudo mount -t nfs4 <fs_IPaddress>:/ efs
-```
-
-![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/efs_network_tab.png)
-
-* Update permisssion for the efs folder.
+* Update permissions for the `efs` folder.
 ```console
 sudo chown ubuntu efs
 ```
 
-* You can now copy simulation files from your local machine to the EFS. Note that here the IP address is the one of the EC2 and not the one of the EFS directly.
+* You can now copy simulation files from your local machine to the EFS.
 ``` console
-scp -i file.pem -r ./path/to/aws_demo ubuntu@<EC2-public-IPv4-address>:~/efs/demo
+scp -r local_folder ec2efs:~/efs
 ```
 
-Note that **the controllers cannot be compiled on the EC2 instance** (unless you install Webots on it, which is not necessarily the easiest option). Therefore, the best way to proceed is to modify and compile the controllers locally. Once the controller is built, the entire folder can be transferred to the EC2 instance via SSH using the corresponding command above.
+Note that **the Webots controllers cannot be compiled on the EC2 instance** (unless you install Webots on it, which is not necessarily the easiest option). Therefore, the best way to proceed is to modify and compile the controllers locally. Once the controller is built, the entire folder can be transferred to the EC2 instance via SSH using the corresponding command above.
 
 ### 6.6 Important information about EC2 instances
-The only purpose of the EC2 instance here is to create a link to the EFS service and access the file system. The EC2 instance only needs to be started when the files need to be modified. It is not needed to run containers in parallel. Keeping even a small EC2 instance running costs money. Therefore, it is best to stop it when it is not needed. To do this, go to your [EC2 console](https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#Instances:), select your running instance and stop it using the _Instance state_ drop-down menu and _Stop instance_ button.<br>
+The only purpose of the EC2 instance here is to create a link to the EFS service and access the file system. The EC2 instance only needs to be started when the files need to be modified. It is not needed for running containers in parallel. Keeping even a small EC2 instance running costs money. Therefore, it is best to stop it when it is not needed. To do this, go to your [EC2 console](https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#Instances:), select your running instance and stop it using the _Instance state_ drop-down menu and _Stop instance_ button.<br>
 
-![](https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/ec2_instance_state.png)<br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_instance_state.png)<br>
 
 The instance can be started again from this page when needed.
 
+Once implemented, steps of sections 6.1 to 6.5 must not be executed anymore. The only important commands are the ones to access the file system and transfer local files.
+
+``` console
+ssh ec2efs
+scp -r local_folder ec2efs:~/efs
+```
+
+## 7 AWS Batch Service
+### 7.1 Description
+All elements are now configured to run our Docker containers in the cloud. 
+
+Amazon provides an interface called AWS Batch. This service allows to schedule and automatically run a defined number of parallel container jobs. AWS Batch schedules are called jobs, are organized in job queues and run in computation environments. The complete configuration described in the next sections takes exclusively place on AWS Batch.
+
+As mentioned earlier in the instuctions, for this project we use the _multi-node parallel jobs_ feature. This feature has some restrictions in the configuration that will be highlighted further.
+
+### 7.2 Configuration
+#### 7.2.1 Compute environment
+* The first step consists in creating a compute environment in the [AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#compute-environments) by clicking on the _Create_ button. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
+
+* Choose an arbitrary name for your environment. Choose _Managed_ as environment type to let Amazon organize the jobs automatically. Choose the default _Batch service-linked role_ to give all the permissions to access other AWS services like ECS. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_compute_env_config.png)
+    
+* Choose _On demand_ as instance type. Fargate is not compatible with multi-node execution. Choose the maximal number of vCPUs (CPU cores) that can be allocated for your jobs. As a reference, one instance of Webots uses 2 vCPUS. So for 16 parallel nodes, 32 vCPUS should be allocated. Note that if resources are missing for some jobs, AWS Batch will simply queue them until a vCPU is free again. Also, unused resources are not charged at all. This field is only an indicative limit for the compute environment.<br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_instance_config.png)
+    
+* In the _Networking_ part, choose the correct VPC. Again, if you went for the internet option, you should choose _internet-vpc_ VPC. If not, you can keep the default VPC. IMPORTANT: with the _internet-vpc_, remove all public subnets. Only private subnets are allowed for internet containers. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_vpc_internet.png) <br> 
+    or default <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_vpc_no_internet.png)
+
+* Create the environment with the confirmation button. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_comp_env.png)
+    
+#### 7.2.2 Job queue
+A job queue allows to define a space where our jobs are organized before being run in the compute environment. They are defined by priorities and can be affiliated to multiple compute environment.
+
+* Open the [job queues in the AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#queues) and click on the _Create_ button. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
+
+* Choose an arbitrary name and a priority >0. It doesn't really matter here, as we only define one job queue. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_queue_config.png)
+
+* Add the previously created environment to your job queue. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_queue_env.png)
+    
+* You can confirm the job queue creation by clicking on the _Create_ buttons. All unmentioned parameters can be left at their default values.<br>
+   ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
+
+#### 7.2.3 Job definition
+A job definition allows to define a set of parameters for future job executions. It allows to define the container(s), the resources, mounted file systems and other features. The following explains the parameters to run the official Webots Docker image.
+
+* Open the [job definitions in the AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#job-definition) and click on the _Create_ button. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
+
+* Choose _multi-node parallel_ as job type. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_type.png)
+    
+* Choose and arbitrary name for the job definition, such as _multi-pso-job_. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_name.png)
+
+* In the _Multi-node configuration_ panel, choose the default number of nodes to be started. This number can be overriden later when starting the job. Also choose 0 as main node index.<br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_nodes.png)
+
+*  Add a new node range. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_add_group.png)
+    
+* In the new group panel, select all nodes as target nodes (0:). Write the url of the latest official Webots Docker image. Also write the command to execute in each started container. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config1.png)
+    
+* Select the compute resources to allocate for each container. Some tests have shown that 2 vCPUs and 4GiB of memory is sufficient to run the containers. No GPU is needed. The optimal instances will be launched according to these parameters. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config2.png)
+    
+* The next step consists in mounting the EFS file system to the container. First add the mount point to the container. Then, choose the EFS file system as volume. Names defined in both sections must be the same. The file system ID can be found in the [EFS console](https://us-east-2.console.aws.amazon.com/efs/home?region=us-east-2#/file-systems) (see second illustration below). <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config3.png)
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_filesystem_id.png)
+    
+* Choose _awslog_ as Log driver in the log configuration part. This will allow you to access the console logs of the simulation jobs. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config4.png)
+
+* In the _Retry strategies_ section, it is important to define what to do when an AGENT error comes up. _Multi-node parallel jobs_ is a very recent feature and everything is not perfect yet. Sometimes, when starting the containers, an AGENT error occurs, causing the job to crash and fail. With the retry strategy, we are sure the job is correctly launched. First click on _Add evaluate on exit_.<br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_retry_button.png)
+    
+* Add the following strategy. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_retry.png)
+    
+* You can confirm the job definition by clicking on the _Create_ buttons. All unmentioned parameters can be left at their default values.
+   <img src="https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/create_environment.png"/>
 
 
 
