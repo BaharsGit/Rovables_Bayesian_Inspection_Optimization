@@ -137,7 +137,7 @@ Since the communication is based solely on the file system, the different runs o
 ## 5 Textures downloading
 Webots downloads textures from Github when starting a world for the first time to save some space locally. This feature is problematic with the _multi-node parallel jobs_ feature of AWS Batch, as there is no internet access in the containers natively. In the Lily simulation, the Floor object is the only one requiring textures. The whole instructions explain the steps to follow for the two following possible implementations:
 1. **No internet connection required**: the Floor object is deleted, as it is not needed at all in the simulation. Therefore, no texture and no internet connection is required in the nodes.
-2. **Internet connection required**: the world is kept intact without any deletion. This option requires to configure internet access for the containers which costs 0.05$ per hour of usage. This option requires some additional implementation effort.
+2. **Internet connection required**: the world is kept intact without any deletion. This option requires to configure internet access for the containers which costs 0.045$ per hour of usage. This option requires some additional implementation effort. Additional pricing and implementation information can be found in the last section [9 Additional information](9-additional-information).
 
 ### 5.1 Without internet access
 Deleting the floor object is very easy. It can be done by simply removing the few lines concerning the Floor object in `24Lilies_LaLn.wbt`. If this is the chosen option, you can go directly to section 6. If not, apply the instructions of section 5.2.
@@ -415,6 +415,22 @@ Everything is now setup to run the parallel containers.
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_terminate_button.png)
 
 ## 9 Additional information
+* Only EC2 is compatible with multi-node jobs. Fargate is not yet supported.
 
+* In general, to access the internet, public subnets use public IPv4 addresses and an elastic network interface. This is the case for classic single-node jobs or arrays of jobs in AWS Batch. When running the jobs in Fargate, a public IP can be assigned. But in the case of multi-node jobs, AWS is restricting the internet access to multiple conditions:
+  * Using public subnets is possible. The started instances have a public IP address or an elastic IP. But they don't allow to access the internet from inside the container.
+  * Internet access is therefore limited to private subnets. But private subnets cannot natively access internet. To create a bridge to internet, the private subnets need a NAT gateway deployed on a public subnet of the same VPC. This is why a new custom VPC needs to be created to access internet in the scope of this project. 
+
+* The NAT Gateway deployed in the VPC costs money. It costs 0.045$ per hour once the NAT Gateway is available. Also, it costs 0.045$ per GB of data that is transmitted between the nodes and internet. The Docker image pull also goes through NAT, which results in at least 2.5 GB of data being transferred per node started via NAT.
+
+* There is no real way to disable the NAT gateway. The only way to completely eliminate costs is to remove NAT when it is not needed and recreate it when it is needed.
+  * To delete the NAT, go to the [NAT Gateway console](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#NatGateways:) , select the NAT Gateway in the list and in the _Actions_ drop-down menu, choose _Delete NAT gateway_.
+  * To recreate it, go to the [NAT Gateway console](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#NatGateways:) , click on the _Create NAT gateway_ button. Don't give any name, choose the Public subnet of your _internet-VPC_. Choose the Elastic IP in the corresponding field. Click on _Create NAT gateway_.
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/nat_gateway_creation.png)
+  * The private subnets need to know the existence of the new NAT. To perform the update, open the [subnets console](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#subnets:) and select one of the _Private subnets_. In the _Route table_ column, click on the route table ID. This will redirect you to the Route table console.
+  * Click on _Edit routes_ in the _Routes_ tab.
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/nat_gateway_edit_routes.png)
+  * Replace the deleted NAT by the newly created one.
+  * You can now run the containers again with Internet access.
 
       
