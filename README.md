@@ -29,6 +29,7 @@ This repository describes the steps to deploy multiple distributed Webots simula
         * 7.2.2 [Job queue](#722-job-queue)<br>
         * 7.2.3 [Job definition](#723-job-definition)<br>
 * 8 [Run simulations](#8-run-simulations)<br>
+* 9 [Additional information](#9-additional-information)<br>
       
 ## 1 Goal
 The goal of this implementation is to parallelize multiple Webots simulations in a distributed way on a cloud service. The involved simulation, described in the next section, is provided by Harvard University and was originally created on Webots 8.5.4. The first part of this work consists in converting the simulation to Webots R2022b. 
@@ -232,10 +233,9 @@ For this work, only a simple Ubuntu server is needed to mount a file system. Kee
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_new_key_pair.png)
 * In the _Network settings_, click on _Edit_.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_edit_network_button.png)
-* If you use the _internet-vpc_ VPC, apply the following configuration. Be sure to choose a public subnet and enable the public IP address.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_vpc_internet.png)
-* If you use the default VPC, apply the following configuration. Choose one of the subnets and enable the public IP address.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_vpc_no_internet.png)
+* | Internet VPC  | Default VPC |
+  | ------------- | ------------- |
+  | If you use the _internet-vpc_ VPC, apply the following configuration. Be sure to choose a public subnet and enable the public IP address. <br> ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_vpc_internet.png) | If you use the default VPC, apply the following configuration. Choose  any subnet and enable the public IP address. <br> ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_vpc_no_internet.png) |
 * Create a new security group, to allow SSH connections and the NFS protocol. The security group should look as follows.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_security_groups.png)
 * In _Configure storage_, click on _Edit_ next to _0x File system_ to add a file system.<br>
@@ -414,7 +414,7 @@ Everything is now setup to run the parallel containers.
 * Once the PSO job is finished, the main node will successfully exit and automatically terminate all other secondary nodes. The job can also be terminated manually using the button at the top. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_terminate_button.png)
 
-## 9 Additional informations
+## 9 Additional information
 
 
       
