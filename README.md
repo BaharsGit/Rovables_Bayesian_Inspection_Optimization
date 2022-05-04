@@ -161,14 +161,7 @@ The following steps taken from the [AWS documentation](https://docs.aws.amazon.c
   * For **Elastic IP Allocation ID**, choose the ID of the Elastic IP address that you created earlier.
   * Leave everything else unchange and choose **Create VPC**.
 
-* **Step 3**: The new subnets don't have a public IP address which is mandatory for AWS Batch.
-  * Open the Amazon VPC console at https://console.aws.amazon.com/vpc/.
-  * In the left navigation pane, choose Subnets.
-  * Select the public subnet for your VPC By default, the name created by the VPC wizard is Public subnet.
-  * Choose Actions, Modify auto-assign IP settings.
-  * Select the Enable auto-assign public IPv4 address check box, and then choose Save.
-
-* **Step 4**: To improve availability of instances, add a new private subnet to your network.
+* **Step 3**: To improve availability of instances, add a new private subnet to your network.
   * Open the Amazon VPC console at https://console.aws.amazon.com/vpc/.
   * In the left navigation pane, choose **Subnets**.
   * Choose **Create Subnet**.
