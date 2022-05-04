@@ -364,7 +364,7 @@ A job definition allows to define a set of parameters for future job executions.
 *  Add a new node range. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_add_group.png)
     
-* In the new group panel, select all nodes as target nodes (0:). Write the URL of the latest official Webots Docker image. Also write the command to execute in each started container. This will start the `run_experiment.sh` script in each container. <br>
+* In the new group panel, select all nodes as target nodes (0:). Write the URL of the latest official Webots Docker image. Also write the command to execute in each started container (`bash /usr/local/efs/pso_self-assembly_aws/run_experiment.sh`). This will start the `run_experiment.sh` script in each container. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config1.png)
     
 * Select the compute resources to allocate for each container. Some tests have shown that 2 vCPUs and 4GiB of memory is sufficient to run the containers. No GPU is needed. The optimal instances will be automatically launched according to these parameters. <br>
