@@ -198,14 +198,13 @@ If you want to use internet in your containers, choose the newly created _intern
 
 Now, to access our file system from a local machine, the following workflow must be applied:
 1. Enable NFS to the file system.
-2. Create an Ubuntu EC2 instance.
+2. Create an Ubuntu EC2 instance with the mounted file system.
 3. Connect to the instance using SSH.
-4. Mount the EFS on the instance.
 
 ### 6.3 Enable NFS in your security group
 A created file system is automatically assigned to a default security group. Security groups act as firewalls to define authorized in and out connections and protocols. In our case, we need the NFS protocol to be activated to access the EFS via NFS from SSH or from the Docker container.
 
-* Get to your [Security Groups](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#securityGroups:) and click on your default security group. If you have multiple ones, choose the one associated with the VPC you have selected in the last step, when creating the file system.
+* Get to your [Security Groups](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#securityGroups:) and click on the ID of your default security group. If you have multiple ones, choose the one associated with the VPC you have selected in the last step, when creating the file system.
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_default_list.png)
  
 * Click on _Edit inbound rules_. <br>
@@ -253,39 +252,39 @@ For this work, only a simple Ubuntu server is needed to mount a file system. Kee
 ### 6.5 Transfer files to EFS
 Now that the Ubuntu server is active, a SSH connection can be established.
 * Open a local terminal and move the downloaded .pem file to `~/.ssh/`.
-``` console
-mv path/to/ssh-efs.pem ~/.ssh/ 
-```
+  ``` console
+  mv path/to/ssh-efs.pem ~/.ssh/ 
+  ```
 
 * Change permissions of the file.
-``` console
-chmod 400 ~/.ssh/ssh-efs.pem
-```
+  ``` console
+  chmod 400 ~/.ssh/ssh-efs.pem
+  ```
 
 * Open the `config` file in `.ssh` folder. If it doesn't exist, create one with a text editor. Append the following lines inside. Don't forget to replace the IP address of the EC2 instance and the .pem file name.
-``` console
-Host ec2efs
-  Hostname <EC2 public IPv4>
-  user ubuntu
-  IdentityFile ~/.ssh/ssh-efs.pem
-  Port 22
-```
+  ``` console
+  Host ec2efs
+    Hostname <EC2 public IPv4>
+    user ubuntu
+    IdentityFile ~/.ssh/ssh-efs.pem
+    Port 22
+  ```
 
 * You can now easily connect to the instance and check for the `efs` folder presence.
-``` console
-ssh ec2efs
-ls
-```
+  ``` console
+  ssh ec2efs
+  ls
+  ```
 
 * Update permissions for the `efs` folder.
-```console
-sudo chown ubuntu efs
-```
+  ```console
+  sudo chown ubuntu efs
+  ```
 
-* You can now copy simulation files from your local machine to the EFS.
-``` console
-scp -r pso_self_assembly_aws ec2efs:~/efs
-```
+* You can now copy simulation files (given in this repository) from your local machine to the EFS.
+  ``` console
+  scp -r pso_self_assembly_aws ec2efs:~/efs
+  ```
 
 Note that **the Webots controllers cannot be compiled on the EC2 instance** (unless you install Webots on it, which is not necessarily the easiest option). Therefore, the best way to proceed is to modify and compile the controllers locally. Once the controller is built, the entire folder can be transferred to the EC2 instance via SSH using the corresponding command above.
 
@@ -300,7 +299,7 @@ Once implemented, steps of sections 6.1 to 6.5 must not be executed anymore. The
 
 ``` console
 ssh ec2efs
-scp -r file/folder ec2efs:~/efs
+scp -r file|folder ec2efs:~/efs
 ```
 
 ## 7 AWS Batch Service
