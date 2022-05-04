@@ -322,9 +322,11 @@ As mentioned earlier in the instuctions, for this project we use the _multi-node
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_instance_config.png)
     
 * In the _Networking_ part, choose the correct VPC. Again, if you went for the internet option, you should choose _internet-vpc_ VPC. If not, you can keep the default VPC. IMPORTANT: with the _internet-vpc_, remove all public subnets. Only private subnets are allowed for internet containers. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_vpc_internet.png) <br> 
-    or default <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_vpc_no_internet.png)
+
+  | Internet VPC  | Default VPC |
+  | ------------- | ------------- |
+  | ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_vpc_internet.png) | ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_vpc_no_internet.png) |
+   
 
 * Create the environment with the confirmation button. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_comp_env.png)
