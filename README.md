@@ -5,31 +5,31 @@ This repository describes the steps to deploy multiple distributed Webots simula
 
 * 1 [Goal](#1-goal)
 * 2 [Provided simulation](#2-provided-simulation)
-    * 2.1 [Simulation description](#21-simulation-description)<br>
-    * 2.2 [File structure](#22-file-structure)<br>
-    * 2.3 [Conversion to Webots R2022a](#23-conversion-to-webots-r2022a)<br>
-* 3 [Amazon account](#3-amazon-account)<br>
-* 4 [Global cloud solution](#4-global-cloud-solution)<br>
-    * 4.1 [Diagram](#41-diagram)<br> 
-    * 4.2 [New file structure for AWS](#42-new-file-structure-for-aws)<br>
-* 5 [Textures downloading](#5-textures-downloading)<br>
-    * 5.1 [Without internet access](#51-without-internet-access)<br> 
-    * 5.2 [With internet access](#52-with-internet-access)<br>
-* 6 [Elastic File System (EFS)](#6-elastic-file-system-efs)<br>
-    * 6.1. [Description](#61-description)<br>
-    * 6.2. [Create a file system](#62-create-a-file-system)<br>
-    * 6.3. [Enable NFS in your security group](#63-enable-nfs-in-your-security-group)<br>
-    * 6.4. [EC2 Instance](#64-ec2-instance)<br>
-    * 6.5. [Transfer files to EFS](#65-transfer-files-to-efs)<br>
-    * 6.6. [Important information about EC2 instances](#66-important-information-about-ec2-instances)<br>
-* 7 [AWS Batch Service](#7-aws-batch-service)<br>
-    * 7.1 [Description](#71-description)<br>
-    * 7.2 [Configuration](#72-configuration)<br>
-        * 7.2.1 [Compute environment](#721-compute-environment)<br>
-        * 7.2.2 [Job queue](#722-job-queue)<br>
-        * 7.2.3 [Job definition](#723-job-definition)<br>
-* 8 [Run simulations](#8-run-simulations)<br>
-* 9 [Additional information](#9-additional-information)<br>
+    * 2.1 [Simulation description](#21-simulation-description)
+    * 2.2 [File structure](#22-file-structure)
+    * 2.3 [Conversion to Webots R2022a](#23-conversion-to-webots-r2022a)
+* 3 [Amazon account](#3-amazon-account)
+* 4 [Global cloud solution](#4-global-cloud-solution)
+    * 4.1 [Diagram](#41-diagram) 
+    * 4.2 [New file structure for AWS](#42-new-file-structure-for-aws)
+* 5 [Textures downloading](#5-textures-downloading)
+    * 5.1 [Without internet access](#51-without-internet-access) 
+    * 5.2 [With internet access](#52-with-internet-access)
+* 6 [Elastic File System (EFS)](#6-elastic-file-system-efs)
+    * 6.1. [Description](#61-description)
+    * 6.2. [Create a file system](#62-create-a-file-system)
+    * 6.3. [Enable NFS in your security group](#63-enable-nfs-in-your-security-group)
+    * 6.4. [EC2 Instance](#64-ec2-instance)
+    * 6.5. [Transfer files to EFS](#65-transfer-files-to-efs)
+    * 6.6. [Important information about EC2 instances](#66-important-information-about-ec2-instances)
+* 7 [AWS Batch Service](#7-aws-batch-service)
+    * 7.1 [Description](#71-description)
+    * 7.2 [Configuration](#72-configuration)
+        * 7.2.1 [Compute environment](#721-compute-environment)
+        * 7.2.2 [Job queue](#722-job-queue)
+        * 7.2.3 [Job definition](#723-job-definition)
+* 8 [Run simulations](#8-run-simulations)
+* 9 [Additional information](#9-additional-information)
       
 ## 1 Goal
 The goal of this implementation is to parallelize multiple Webots simulations in a distributed way on a cloud service. The involved simulation, described in the next section, is provided by Harvard University and was originally created on Webots 8.5.4. The first part of this work consists in converting the simulation to Webots R2022b. 
