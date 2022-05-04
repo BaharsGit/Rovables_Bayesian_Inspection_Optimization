@@ -28,8 +28,7 @@ This repository describes the steps to deploy multiple distributed Webots simula
         * 7.2.1 [Compute environment](#721-compute-environment)<br>
         * 7.2.2 [Job queue](#722-job-queue)<br>
         * 7.2.3 [Job definition](#723-job-definition)<br>
-* 9 [Run simulations](#9-run-simulations)<br>
-* 10 [Results](#10-results)<br>
+* 8 [Run simulations](#8-run-simulations)<br>
       
 ## 1 Goal
 The goal of this implementation is to parallelize multiple Webots simulations in a distributed way on a cloud service. The involved simulation, described in the next section, is provided by Harvard University and was originally created on Webots 8.5.4. The first part of this work consists in converting the simulation to Webots R2022b. 
@@ -384,9 +383,38 @@ A job definition allows to define a set of parameters for future job executions.
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_retry.png)
     
 * You can confirm the job definition by clicking on the _Create_ buttons. All unmentioned parameters can be left at their default values.
-   <img src="https://github.com/cyberbotics/inspection_sim_aws/blob/main/images/create_environment.png"/>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
 
+## 8 Run simulations
+Everything is now setup to run the parallel containers. 
 
+* To launch AWS Batch jobs, open the [AWS Batch Console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#jobs) and click the _Submit new job_ button.<br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_submit_new_job.png)
+
+* A configuration page opens. First, choose an arbitrary name for your job. The multiple nodes will be referenced under this name. Select the Job definition peviously created and select the Job queue previously created. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_config.png)
+    
+* You can overwrite the number of nodes (particles + 1) you need. By default, it is set to the number you defined in the job definition. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_nb_nodes.png)
+    
+* Other parameters can be left as default.
+    
+* Run your jobs by clicking the _Submit_ button. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_submit_button.png)
+
+* The new multi-node job should now appear in the jobs list in the RUNNABLE status. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_list.png)
+    
+* By clicking on the job, you can access the nodes list. In general, the job is stuck in RUNNABLE status for 1 minute but it can take even longer sometimes. Containers are deployed on EC2 and not Fargate, so it can take some time to start the instances. Once the instances are ready, the job switches to the STARTING state, during which the Docker image is downloaded and run. At this point, only the main node will start first. Once started, it has the RUNNING status and the other nodes are started too. Finally, they all become RUNNING, as shown in the illustration below. The STARTING status can take up to three minutes.<br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_running_nodes.png)
+    
+* To display the console logs of the different nodes, you can select a node and open the logs stream in the right panel. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_node_logs.png)
+
+* Once the PSO job is finished, the main node will successfully exit and automatically terminate all other secondary nodes. The job can also be terminated manually using the button at the top. <br>
+    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_terminate_button.png)
+
+## 9 Additional informations
 
 
       
