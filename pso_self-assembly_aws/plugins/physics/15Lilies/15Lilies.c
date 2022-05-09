@@ -309,7 +309,7 @@ static void computeDrag(const dReal *position_vect, const dReal *lin_velocity,
   for (side = 0; side < 4; side++) {
     for (i = 0; i < DRAG_POINTS; i++) {
       switch (side) {
-      case 0:
+      case 0: // front face
         p[X] = LILY_SIZE_X / 2.0;
         p[Y] = LILY_SIZE_Y / 2.0 - LILY_SIZE_Y / 2.0 / (double)DRAG_POINTS -
                (double)i * LILY_SIZE_Y / (double)DRAG_POINTS;
@@ -319,7 +319,7 @@ static void computeDrag(const dReal *position_vect, const dReal *lin_velocity,
         surf_normal[Z] = 0.0;
         face_area = LILY_SIZE_X * LILY_SIZE_Z / DRAG_POINTS;
         break;
-      case 1:
+      case 1: // left face
         p[X] = LILY_SIZE_X / 2.0 - LILY_SIZE_X / 2.0 / (double)DRAG_POINTS -
                (double)i * LILY_SIZE_X / (double)DRAG_POINTS;
         p[Y] = LILY_SIZE_Y / 2.0;
@@ -329,7 +329,7 @@ static void computeDrag(const dReal *position_vect, const dReal *lin_velocity,
         surf_normal[Z] = 0.0;
         face_area = LILY_SIZE_Y * LILY_SIZE_Z / DRAG_POINTS;
         break;
-      case 2:
+      case 2: // back face
         p[X] = -LILY_SIZE_X / 2.0;
         p[Y] = LILY_SIZE_Y / 2.0 - LILY_SIZE_Y / 2.0 / (double)DRAG_POINTS -
                (double)i * LILY_SIZE_Y / (double)DRAG_POINTS;
@@ -339,7 +339,7 @@ static void computeDrag(const dReal *position_vect, const dReal *lin_velocity,
         surf_normal[Z] = 0.0;
         face_area = LILY_SIZE_X * LILY_SIZE_Z / DRAG_POINTS;
         break;
-      case 3:
+      case 3: // right face
         p[X] = LILY_SIZE_X / 2.0 - LILY_SIZE_X / 2.0 / (double)DRAG_POINTS -
                (double)i * LILY_SIZE_X / (double)DRAG_POINTS;
         p[Y] = -LILY_SIZE_Y / 2.0;
@@ -419,7 +419,7 @@ static void computeDrag_randn(const dReal *position_vect,
   for (side = 0; side < 4; side++) {
     for (i = 0; i < DRAG_POINTS; i++) {
       switch (side) {
-      case 0:
+      case 0: // front face
         p[X] = LILY_SIZE_X / 2.0;
         p[Y] = LILY_SIZE_Y / 2.0 - LILY_SIZE_Y / 2.0 / (double)DRAG_POINTS -
                (double)i * LILY_SIZE_Y / (double)DRAG_POINTS;
@@ -429,7 +429,7 @@ static void computeDrag_randn(const dReal *position_vect,
         surf_normal[Z] = 0.0;
         face_area = LILY_SIZE_X * LILY_SIZE_Z / DRAG_POINTS;
         break;
-      case 1:
+      case 1: // left face
         p[X] = LILY_SIZE_X / 2.0 - LILY_SIZE_X / 2.0 / (double)DRAG_POINTS -
                (double)i * LILY_SIZE_X / (double)DRAG_POINTS;
         p[Y] = LILY_SIZE_Y / 2.0;
@@ -439,7 +439,7 @@ static void computeDrag_randn(const dReal *position_vect,
         surf_normal[Z] = 0.0;
         face_area = LILY_SIZE_Y * LILY_SIZE_Z / DRAG_POINTS;
         break;
-      case 2:
+      case 2: // back face
         p[X] = -LILY_SIZE_X / 2.0;
         p[Y] = LILY_SIZE_Y / 2.0 - LILY_SIZE_Y / 2.0 / (double)DRAG_POINTS -
                (double)i * LILY_SIZE_Y / (double)DRAG_POINTS;
@@ -449,7 +449,7 @@ static void computeDrag_randn(const dReal *position_vect,
         surf_normal[Z] = 0.0;
         face_area = LILY_SIZE_X * LILY_SIZE_Z / DRAG_POINTS;
         break;
-      case 3:
+      case 3: // right face
         p[X] = LILY_SIZE_X / 2.0 - LILY_SIZE_X / 2.0 / (double)DRAG_POINTS -
                (double)i * LILY_SIZE_X / (double)DRAG_POINTS;
         p[Y] = -LILY_SIZE_Y / 2.0;
