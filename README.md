@@ -13,8 +13,9 @@ This repository describes the steps to deploy multiple distributed Webots simula
     * 4.1 [Diagram](#41-diagram) 
     * 4.2 [New file structure for AWS](#42-new-file-structure-for-aws)
 * 5 [Textures downloading](#5-textures-downloading)
-    * 5.1 [Without internet access](#51-without-internet-access) 
-    * 5.2 [With internet access](#52-with-internet-access)
+    * 5.1 [Delete objects with textures](#51-delete-objects-with-textures) 
+    * 5.2 [Local textures](#52-local-textures)
+    * 5.3 [Configure internet access](#53-configure-internet-access)
 * 6 [Elastic File System (EFS)](#6-elastic-file-system-efs)
     * 6.1. [Description](#61-description)
     * 6.2. [Create a file system](#62-create-a-file-system)
@@ -135,14 +136,18 @@ The communication between nodes is provided by the file system. When the `prob_#
 Since the communication is based solely on the file system, the different runs of the PSO must be distinguished using different folders. The Python script is therefore responsible for creating a `Run_#` folder to store all `Generation_#` directories and the resulting files ([comment1](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72407963)). The paths of other scripts are also updated to remain consistent ([comment2](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72408012), [comment3](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72408041) and [comment4](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72408076)).
 
 ## 5 Textures downloading
-Webots downloads textures from Github when starting a world for the first time to save some space locally. This feature is problematic with the _multi-node parallel jobs_ feature of AWS Batch, as there is no internet access in the containers natively. In the Lily simulation, the Floor object is the only one requiring textures. The whole instructions explain the steps to follow for the two following possible implementations:
-1. **No internet connection required**: the Floor object is deleted, as it is not needed at all in the simulation. Therefore, no texture and no internet connection is required in the nodes.
-2. **Internet connection required**: the world is kept intact without any deletion. This option requires to configure internet access for the containers which costs 0.045$ per hour of usage. This option requires some additional implementation effort. Additional pricing and implementation information can be found in the last section [9 Additional information](9-additional-information).
+Webots downloads textures from Github when starting a world for the first time to save some space locally. This feature is problematic with the _multi-node parallel jobs_ feature of AWS Batch, as there is no internet access in the containers natively. In the Lily simulation, the Floor object is the only one requiring textures. The whole instructions explain the steps to follow for the following possible implementations:
+1. **Delete objects with textures**: the Floor object is deleted, as it is not needed at all in the simulation. Therefore, no texture and no internet connection is required in the nodes. To apply this solution, head to [section 5.1](#51-delete-objects-with-textures).
+2. **Add the textures locally**: the Floor PROTO and the corresponding textures are added to the local simulation files so that Webots doesn't have to download them from Github. To apply this solution, head to [section 5.2](#52-local-textures).
+3. **Configure internet connection**: the world is kept intact without any deletion or any new local files. This option requires to configure internet access for the containers which costs 0.045$ per hour of usage. This option requires some additional implementation effort. Additional pricing and implementation information can be found in the last section [9 Additional information](9-additional-information). To apply this solution, head to [section 5.3](#53-configure-internet-access).
 
-### 5.1 Without internet access
-Deleting the floor object is very easy. It can be done by simply removing the few lines concerning the Floor object in `24Lilies_LaLn.wbt`. If this is the chosen option, you can go directly to section 6. If not, apply the instructions of section 5.2.
+### 5.1 Delete objects with textures 
+Deleting the Floor object is very easy. It can be done by simply removing the few lines concerning the Floor object in `24Lilies_LaLn.wbt`. If this is the chosen option, you can continue directly with [section 6](#6-elastic-file-system-efs).
 
-### 5.2 With internet access
+### 5.2 Local textures
+A solution to avoid requests to Github to download the textures at runtime is to add them directly in the simulation file so that they are directly accessible. In the example of this project, the Floor object is declared from the Floor PROTO, itself dependent on the Parquetry PROTO. The Parquetry PROTO requests four different textures using URLs to the location in the Webots resources. In this case, the Floor and Parquetry PROTOs are added to the `protos` folder and a new `textures` folder contains the four .png files. The URLs in the Parquetry PROTO are also updated with the relative path (see [this commit](https://github.com/cyberbotics/pso_self-assembly_aws/commit/32d4490724335d1b2d1215b0022602d5a91d36f5)). If this is the chosen option, you can continue directly with [section 6](#6-elastic-file-system-efs).
+
+### 5.3 Configure internet access
 The following steps taken from the [AWS documentation](https://docs.aws.amazon.com/batch/latest/userguide/create-public-private-vpc.html) must be applied. The goal is to create a Virtual Private Cloud (VPC) with one public and two private subnets. The public subnet gets a NAT gateway which allows internet access. Configuring AWS Batch later with this VPC will allow Webots to access the online textures.
 * **Step 1**: Create an Elastic IP Address for your NAT Gateway. A NAT gateway requires an Elastic IP address in your public subnet, but the VPC wizard does not create one for you.
   * Open the Amazon VPC console at https://console.aws.amazon.com/vpc/.
@@ -289,7 +294,11 @@ Now that the Ubuntu server is active, a SSH connection can be established.
   scp -r pso_self_assembly_aws ec2efs:~/efs
   ```
 
-Note that **the Webots controllers cannot be compiled on the EC2 instance** (unless you install Webots on it, which is not necessarily the easiest option). Therefore, the best way to proceed is to modify and compile the controllers locally. Once the controller is built, the entire folder can be transferred to the EC2 instance via SSH using the corresponding command above.
+Note that **the Webots controllers can only be compiled with `make` on the EC2 instance if Webots is installed**. To do that, install the Debian package using the following instructions: [Installation Procedure](https://cyberbotics.com/doc/guide/installation-procedure#installing-the-debian-package-with-the-advanced-packaging-tool-apt) and install the build-essential package with 
+```
+sudo apt install build-essential
+```
+Another way to proceed is to modify and compile the controllers locally. Once the controller is built, the entire folder can be transferred to the EC2 instance via SSH using the corresponding command above.
 
 ### 6.6 Important information about EC2 instances
 The only purpose of the EC2 instance here is to create a link to the EFS service and access the file system. The EC2 instance only needs to be started when the files need to be modified. It is not needed for running containers in parallel. Keeping even a small EC2 instance running costs money. Therefore, it is best to stop it when it is not needed. To do this, go to your [EC2 console](https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#Instances:), select your running instance and stop it using the _Instance state_ drop-down menu and _Stop instance_ button.<br>
