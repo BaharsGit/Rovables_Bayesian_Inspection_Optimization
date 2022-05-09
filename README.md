@@ -321,7 +321,7 @@ As mentioned earlier in the instuctions, for this project we use the _multi-node
 * Choose an arbitrary name for your environment. Choose _Managed_ as environment type to let Amazon organize the jobs automatically. Choose the default _Batch service-linked role_ to give all the permissions to access other AWS services like ECS. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_compute_env_config.png)
     
-* Choose _On demand_ as instance type. Fargate is not compatible with multi-node execution. Choose the maximal number of vCPUs (CPU cores) that can be allocated for your jobs. As a reference, the selected instance (_m5.large_) type uses 2 vCPUS. Each node will run on 1 instance, meaning the number of required vCPUs is equal to `2 × (P+1)`, with P the number of particles. So for 15 particles, 16 parallel nodes are needed (including the PSO one), 32 vCPUS should be allocated. Note that if more resources are requested for started jobs than this limit, AWS Batch will simply queue them until a vCPU is free again. Also, unused resources are not charged at all. This field is only an indicative limit for the compute environment. As mentioned, _m5.large_ instances should be chosen as instance type, as they are cheaper and more powerful than the instances chosen if the field is kept to _optimal_.<br>
+* Choose _On demand_ as instance type. Fargate is not compatible with multi-node execution. Choose the maximal number of vCPUs (CPU cores) that can be allocated for your jobs. As a reference, the selected instance (_m5.large_) type uses 2 vCPUS. Each node will run on 1 instance, meaning the number of required vCPUs is equal to `2 × (P+1)`, with P the number of particles. So for 15 particles, 16 parallel nodes are needed (including the PSO one), 32 vCPUS should be allocated. Note that if more resources are requested for started jobs than this limit, AWS Batch will simply queue them until a vCPU is free again. Also, unused resources are not charged at all. This field is only an indicative limit for the compute environment. As mentioned, _m5.large_ instances should be chosen as instance type, as they are cheaper and more powerful than the instances chosen if the field is kept to _optimal_. The default quota on the maximal number of vCPUs that can be allocated at the same time in your account can be found [here](https://us-east-2.console.aws.amazon.com/servicequotas/home/services/ec2/quotas), under the _Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances_ field.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_instance_config.png)
     
 * In the _Networking_ part, choose the correct VPC. Again, if you went for the internet option, you should choose _internet-vpc_ VPC. If not, you can keep the default VPC. IMPORTANT: with the _internet-vpc_, remove all public subnets. Only private subnets are allowed for internet containers. <br>
@@ -361,16 +361,16 @@ A job definition allows to define a set of parameters for future job executions.
 * Choose and arbitrary name for the job definition, such as _multi-pso-job_. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_name.png)
 
-* In the _Multi-node configuration_ panel, choose the default number of nodes to be started. This number can be overriden later when starting the job. Also choose 0 as main node index. This parameter corresponds to the number of particles in the PSO algorithm (+ the main node). <br>
+* In the _Multi-node configuration_ panel, choose the default number of nodes to be started. This parameter corresponds to the number of particles in the PSO algorithm + the main node. This number can be overriden later when starting the job. Also choose 0 as main node index.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_nodes.png)
 
-*  Add a new node range. <br>
+* Add a new node range. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_add_group.png)
     
 * In the new group panel, select all nodes as target nodes (0:). Write the URL of the latest official Webots Docker image. Also write the command to execute in each started container (`bash /usr/local/efs/pso_self-assembly_aws/run_experiment.sh`). This will start the `run_experiment.sh` script in each container. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config1.png)
     
-* Select the compute resources to allocate for each container. Some tests have shown that 2 vCPUs and 4GiB of memory is sufficient to run the containers. No GPU is needed. The optimal instances will be automatically launched according to these parameters. <br>
+* Select the compute resources to allocate for each container. Choose 2vCPUs and 4096 MiB of memory. No GPU is needed. _m5.large_ instances will be automatically launched with these parameters. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config2.png)
     
 * The next step consists in mounting the EFS file system to the container. First add the mount point to the container. Then, choose the EFS file system as volume. Names defined in both sections must be the same. The file system ID can be found in the [EFS console](https://us-east-2.console.aws.amazon.com/efs/home?region=us-east-2#/file-systems) (see second illustration below). <br>
@@ -398,7 +398,7 @@ Everything is now setup to run the parallel containers.
 * A configuration page opens. First, choose an arbitrary name for your job. The multiple nodes will be referenced under this name. Select the Job definition peviously created and select the Job queue previously created. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_config.png)
     
-* You can overwrite the number of nodes (nb particles + 1) you need. By default, it is set to the number you defined in the job definition. <br>
+* You can overwrite the number of nodes (nb particles + 1) you need or simply keep it at the default number you defined in the job definition. Remember to still be in the limit of the vCPUs resources you allocated in the compute environment.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_nb_nodes.png)
     
 * Other parameters can be left as default.
@@ -409,7 +409,7 @@ Everything is now setup to run the parallel containers.
 * The new multi-node job should now appear in the jobs list in the RUNNABLE status. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_list.png)
     
-* By clicking on the job, you can access the nodes list. In general, the job is stuck in RUNNABLE status for 1 minute but it can take even longer sometimes. Containers are deployed on EC2 and not Fargate, so it can take some time to start the instances. Once the instances are ready, the job switches to the STARTING state, during which the Docker image is downloaded and run. It takes approximatively 90 seconds to download the image. At this point, only the main node will start first. Once started, it has the RUNNING status and the other nodes are started too. Finally, they all become RUNNING, as shown in the illustration below. The STARTING status can take up to three minutes.<br>
+* By clicking on the job, you can access the nodes list. In general, the job is stuck in RUNNABLE status for 1 minute but it can take even longer sometimes. Containers are deployed on EC2 and not Fargate, so it can take some time to start the instances. Once the instances are ready, the job switches to the STARTING state, during which the Docker image is downloaded and run. It takes approximatively 90 seconds to download the image. At this point, only the main node will start first. Once started, it has the RUNNING status and the other nodes are started too. Finally, they all become RUNNING, as shown in the illustration below.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_running_nodes.png)
     
 * To display the console logs of the different nodes, you can select a node and open the logs stream in the right panel. <br>
