@@ -80,7 +80,7 @@ do
 
    
    # launch webots
-   timeout $WB_TIMEOUT  xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt
+   timeout $WB_TIMEOUT  xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt # logs are redirected to a txt file
  
 
    # waiting just a while before copying the output
