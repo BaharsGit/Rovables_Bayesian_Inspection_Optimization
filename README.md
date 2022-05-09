@@ -321,7 +321,7 @@ As mentioned earlier in the instuctions, for this project we use the _multi-node
 * Choose an arbitrary name for your environment. Choose _Managed_ as environment type to let Amazon organize the jobs automatically. Choose the default _Batch service-linked role_ to give all the permissions to access other AWS services like ECS. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_compute_env_config.png)
     
-* Choose _On demand_ as instance type. Fargate is not compatible with multi-node execution. Choose the maximal number of vCPUs (CPU cores) that can be allocated for your jobs. As a reference, one instance of Webots uses 2 vCPUS. So for 16 parallel nodes, 32 vCPUS should be allocated. Note that if resources are missing for some jobs, AWS Batch will simply queue them until a vCPU is free again. Also, unused resources are not charged at all. This field is only an indicative limit for the compute environment. Remove _optimal_ instance types and choose _m5.large_ instead for a cheaper but faster execution of the simulations.<br>
+* Choose _On demand_ as instance type. Fargate is not compatible with multi-node execution. Choose the maximal number of vCPUs (CPU cores) that can be allocated for your jobs. As a reference, the selected instance (_m5.large_) type uses 2 vCPUS. Each node will run on 1 instance, meaning the number of required vCPUs is equal to `2 × (P+1)`, with P the number of particles. So for 15 particles, 16 parallel nodes are needed (including the PSO one), 32 vCPUS should be allocated. Note that if more resources are requested for started jobs than this limit, AWS Batch will simply queue them until a vCPU is free again. Also, unused resources are not charged at all. This field is only an indicative limit for the compute environment. As mentioned, _m5.large_ instances should be chosen as instance type, as they are cheaper and more powerful than the instances chosen if the field is kept to _optimal_.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_instance_config.png)
     
 * In the _Networking_ part, choose the correct VPC. Again, if you went for the internet option, you should choose _internet-vpc_ VPC. If not, you can keep the default VPC. IMPORTANT: with the _internet-vpc_, remove all public subnets. Only private subnets are allowed for internet containers. <br>
@@ -398,7 +398,7 @@ Everything is now setup to run the parallel containers.
 * A configuration page opens. First, choose an arbitrary name for your job. The multiple nodes will be referenced under this name. Select the Job definition peviously created and select the Job queue previously created. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_config.png)
     
-* You can overwrite the number of nodes (particles + 1) you need. By default, it is set to the number you defined in the job definition. <br>
+* You can overwrite the number of nodes (nb particles + 1) you need. By default, it is set to the number you defined in the job definition. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_nb_nodes.png)
     
 * Other parameters can be left as default.
