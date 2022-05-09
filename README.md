@@ -412,7 +412,7 @@ Everything is now setup to run the parallel containers.
 * By clicking on the job, you can access the nodes list. In general, the job is stuck in RUNNABLE status for 1 minute but it can take even longer sometimes. Containers are deployed on EC2 and not Fargate, so it can take some time to start the instances. Once the instances are ready, the job switches to the STARTING state, during which the Docker image is downloaded and run. It takes approximatively 90 seconds to download the image. At this point, only the main node will start first. Once started, it has the RUNNING status and the other nodes are started too. Finally, they all become RUNNING, as shown in the illustration below.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_running_nodes.png)
     
-* To display the console logs of the different nodes, you can select a node and open the logs stream in the right panel. <br>
+* To display the console logs of the different nodes, you can select a node and open the logs stream in the right panel. By default, Webots logs won't be displayed in AWS, as they are redirected to a txt file. To change this behavior, comment the stdout and stderr redirection in `job_lily_parallel.sh` (see [this commit](https://github.com/cyberbotics/pso_self-assembly_aws/commit/d359c62a89066d2a70033848d23c7895c75f962b?diff=unified) for the precise line). <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_node_logs.png)
 
 * Once the PSO job is finished, the main node will successfully exit and automatically terminate all other secondary nodes. The job can also be terminated manually using the button at the top. <br>
