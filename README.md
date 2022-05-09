@@ -294,7 +294,11 @@ Now that the Ubuntu server is active, a SSH connection can be established.
   scp -r pso_self_assembly_aws ec2efs:~/efs
   ```
 
-Note that **the Webots controllers cannot be compiled on the EC2 instance** (unless you install Webots on it, which is not necessarily the easiest option). Therefore, the best way to proceed is to modify and compile the controllers locally. Once the controller is built, the entire folder can be transferred to the EC2 instance via SSH using the corresponding command above.
+Note that **the Webots controllers can only be compiled with `make` on the EC2 instance if Webots is installed**. To do that, install the Debian package using the following instructions: [Installation Procedure](https://cyberbotics.com/doc/guide/installation-procedure#installing-the-debian-package-with-the-advanced-packaging-tool-apt) and install the build-essential package with 
+```
+sudo apt install build-essential
+```
+Another way to proceed is to modify and compile the controllers locally. Once the controller is built, the entire folder can be transferred to the EC2 instance via SSH using the corresponding command above.
 
 ### 6.6 Important information about EC2 instances
 The only purpose of the EC2 instance here is to create a link to the EFS service and access the file system. The EC2 instance only needs to be started when the files need to be modified. It is not needed for running containers in parallel. Keeping even a small EC2 instance running costs money. Therefore, it is best to stop it when it is not needed. To do this, go to your [EC2 console](https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#Instances:), select your running instance and stop it using the _Instance state_ drop-down menu and _Stop instance_ button.<br>
