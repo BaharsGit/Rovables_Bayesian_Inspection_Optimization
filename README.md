@@ -310,9 +310,9 @@ You can verify that the upload went well by clicking on your repository in the A
 ### 7.1 Description
 The next step consists in using the Elastic File System (EFS) provided by Amazon to store the simulation files so that the container can access them at runtime.
 
-EFS is a secure and fully managed file system. You can create multiple separate storages and scale as much as you want, without lowering the performances. Each file system can be accessed from many instances through the Network File System (NFS) protocol, which allows a computer to access external files over a network. EFS can be mounted on EC2 instances (see [6.4 EC2 Instances](#64-ec2-instance)) and Docker containers.
+EFS is a secure and fully managed file system. You can create multiple separate storages and scale as much as you want, without lowering the performances. Each file system can be accessed from many instances through the Network File System (NFS) protocol, which allows a computer to access external files over a network. EFS can be mounted on EC2 instances (see [7.4 EC2 Instances](#74-ec2-instance)) and Docker containers.
 
-EFS are created in specific regions and must be assigned to a Virtual Private Cloud (VPC). VPCs can be defined in different regions and allow to create an isolated cloud environment for a user. To get access to a file system, a container or a EC2 instance must be configured in the same VPC. By default, a VPC is already created on a fresh AWS account. If you followed instructions of [5.2 With internet access](#52-with-internet-access), you have created a custom one for this project.
+EFS are created in specific regions and must be assigned to a Virtual Private Cloud (VPC). VPCs can be defined in different regions and allow to create an isolated cloud environment for a user. To get access to a file system, a container or a EC2 instance must be configured in the same VPC. By default, a VPC is already created on a fresh AWS account. If you followed instructions of [5.2 Configure internet access](#52-configure-internet-access), you have created a custom one for this project.
 
 <div align = center>
 
@@ -437,7 +437,7 @@ The only purpose of the EC2 instance here is to create a link to the EFS service
 
 The instance can be started again from this page when needed.
 
-Once implemented, steps of sections 6.1 to 6.5 must not be executed anymore. The only important commands are the ones to access the file system and transfer local files.
+Once implemented, steps of sections 7.1 to 7.5 must not be executed anymore. The only important commands are the ones to access the file system and transfer local files.
 
 ``` console
 ssh ec2efs
