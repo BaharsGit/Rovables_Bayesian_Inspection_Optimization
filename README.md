@@ -16,21 +16,30 @@ This repository describes the steps to deploy multiple distributed Webots simula
     * 5.1 [Delete objects with textures](#51-delete-objects-with-textures) 
     * 5.2 [Local textures](#52-local-textures)
     * 5.3 [Configure internet access](#53-configure-internet-access)
-* 6 [Elastic File System (EFS)](#6-elastic-file-system-efs)
-    * 6.1. [Description](#61-description)
-    * 6.2. [Create a file system](#62-create-a-file-system)
-    * 6.3. [Enable NFS in your security group](#63-enable-nfs-in-your-security-group)
-    * 6.4. [EC2 Instance](#64-ec2-instance)
-    * 6.5. [Transfer files to EFS](#65-transfer-files-to-efs)
-    * 6.6. [Important information about EC2 instances](#66-important-information-about-ec2-instances)
-* 7 [AWS Batch Service](#7-aws-batch-service)
-    * 7.1 [Description](#71-description)
-    * 7.2 [Configuration](#72-configuration)
-        * 7.2.1 [Compute environment](#721-compute-environment)
-        * 7.2.2 [Job queue](#722-job-queue)
-        * 7.2.3 [Job definition](#723-job-definition)
-* 8 [Run simulations](#8-run-simulations)
-* 9 [Additional information](#9-additional-information)
+* 6 [Elastic Container Registry (ECR)](#6-elastic-container-registry-ecr)<br>
+    * 6.1 [Description](#61-description)<br>
+    * 6.2 [Create a Dockerfile](#61-create-a-dockerfile)<br>
+    * 6.3 [Create repository](#63-create-repository)<br>
+        * 6.3.1 [Private repository](#631-private-repository)<br>
+        * 6.3.2 [Public repository](#632-public-repository)<br>
+    * 6.4 [IAM authorization](#64-iam-authorization)<br>
+    * 6.5 [Configure AWS CLI](#65-configure-aws-cli)<br>
+    * 6.6 [Upload Docker image](#66-upload-docker-image)<br>
+* 7 [Elastic File System (EFS)](#7-elastic-file-system-efs)
+    * 7.1. [Description](#71-description)
+    * 7.2. [Create a file system](#72-create-a-file-system)
+    * 7.3. [Enable NFS in your security group](#73-enable-nfs-in-your-security-group)
+    * 7.4. [EC2 Instance](#74-ec2-instance)
+    * 7.5. [Transfer files to EFS](#75-transfer-files-to-efs)
+    * 7.6. [Important information about EC2 instances](#76-important-information-about-ec2-instances)
+* 8 [AWS Batch Service](#8-aws-batch-service)
+    * 8.1 [Description](#81-description)
+    * 8.2 [Configuration](#82-configuration)
+        * 8.2.1 [Compute environment](#821-compute-environment)
+        * 8.2.2 [Job queue](#822-job-queue)
+        * 8.2.3 [Job definition](#823-job-definition)
+* 9 [Run simulations](#9-run-simulations)
+* 10 [Additional information](#10-additional-information)
       
 ## 1 Goal
 The goal of this implementation is to parallelize multiple Webots simulations in a distributed way on a cloud service. The involved simulation, described in the next section, is provided by Harvard University and was originally created on Webots 8.5.4. The first part of this work consists in converting the simulation to Webots R2022b. 
@@ -142,10 +151,10 @@ Webots downloads textures from Github when starting a world for the first time t
 3. **Configure internet connection**: the world is kept intact without any deletion or any new local files. This option requires to configure internet access for the containers which costs 0.045$ per hour of usage. This option requires some additional implementation effort. Additional pricing and implementation information can be found in the last section [9 Additional information](9-additional-information). To apply this solution, head to [section 5.3](#53-configure-internet-access).
 
 ### 5.1 Delete objects with textures 
-Deleting the Floor object is very easy. It can be done by simply removing the few lines concerning the Floor object in `24Lilies_LaLn.wbt`. If this is the chosen option, you can continue directly with [section 6](#6-elastic-file-system-efs).
+Deleting the Floor object is very easy. It can be done by simply removing the few lines concerning the Floor object in `24Lilies_LaLn.wbt`. If this is the chosen option, you can continue directly with [section 6](#6-elastic-container-registry-ecr).
 
 ### 5.2 Local textures
-A solution to avoid requests to Github to download the textures at runtime is to add them directly in the simulation file so that they are directly accessible. In the example of this project, the Floor object is declared from the Floor PROTO, itself dependent on the Parquetry PROTO. The Parquetry PROTO requests four different textures using URLs to the location in the Webots resources. In this case, the Floor and Parquetry PROTOs are added to the `protos` folder and a new `textures` folder contains the four .png files. The URLs in the Parquetry PROTO are also updated with the relative path (see [this commit](https://github.com/cyberbotics/pso_self-assembly_aws/commit/32d4490724335d1b2d1215b0022602d5a91d36f5)). If this is the chosen option, you can continue directly with [section 6](#6-elastic-file-system-efs).
+A solution to avoid requests to Github to download the textures at runtime is to add them directly in the simulation file so that they are directly accessible. In the example of this project, the Floor object is declared from the Floor PROTO, itself dependent on the Parquetry PROTO. The Parquetry PROTO requests four different textures using URLs to the location in the Webots resources. In this case, the Floor and Parquetry PROTOs are added to the `protos` folder and a new `textures` folder contains the four .png files. The URLs in the Parquetry PROTO are also updated with the relative path (see [this commit](https://github.com/cyberbotics/pso_self-assembly_aws/commit/32d4490724335d1b2d1215b0022602d5a91d36f5)). If this is the chosen option, you can continue directly with [section 6](#6-elastic-container-registry-ecr).
 
 ### 5.3 Configure internet access
 The following steps taken from the [AWS documentation](https://docs.aws.amazon.com/batch/latest/userguide/create-public-private-vpc.html) must be applied. The goal is to create a Virtual Private Cloud (VPC) with one public and two private subnets. The public subnet gets a NAT gateway which allows internet access. Configuring AWS Batch later with this VPC will allow Webots to access the online textures.
@@ -176,8 +185,134 @@ The following steps taken from the [AWS documentation](https://docs.aws.amazon.c
   * For **IPv4 CIDR block**, enter a valid CIDR block. For example, the wizard creates CIDR blocks in 10.0.0.0/24 and 10.0.1.0/24 by default. You could use 10.0.2.0/24 for your second private subnet.
   * Choose **Create Subnet**.
 
-## 6 Elastic File System (EFS)
+## 6 Elastic Container Registry (ECR)
 ### 6.1 Description
+This step is **optional**. It is only required if you need a custom Docker image. You can directly continue with [section 7](#7-elastic-file-system-efs) if no additional libraries are required in addition to the official Docker image. This project doesn't require a custom Docker image.
+
+Amazon provides a service called Elastic Container Registry (ECR) which is an equivalent to DockerHub. It allows to store Docker images on the cloud using private or public repositories. These images can then be pulled by other Amazon services to be run as containers.
+
+### 6.2 Create a Dockerfile
+This section describes how to create a custom Dockerfile. Webots is already released as a Docker image and can be found on [Dockerhub](https://hub.docker.com/r/cyberbotics/webots), library of Docker image repositories. Docker files allow to pull existing images from the public DockerHub repositories to re-use them and add new functionalities to them. To pull the Webots image, the following commands must be set at the top of the file:
+
+``` go
+ARG BASE_IMAGE=cyberbotics/webots:R2021b-ubuntu20.04
+FROM ${BASE_IMAGE}
+```
+
+You can choose the version of Ubuntu (Webots Docker supports Ubuntu 18 and 20) as well as the version of Webots by changing the _latest_ tag to the desired configuration. Available versions are listed on [Dockerhub](https://hub.docker.com/r/cyberbotics/webots/tags). For Webots R2020b revision 1 on Ubuntu 18.04:
+
+``` go
+ARG BASE_IMAGE=cyberbotics/webots:R2020b-rev1-ubuntu18.04
+FROM ${BASE_IMAGE}
+```
+
+For a more custom choice of Webots versions (Cyberbotics only provides Docker images since 2020), you can create your own Webots Docker images by checking this Github repository: [webots-docker](https://github.com/cyberbotics/webots-docker).
+
+Sometimes additional Python libraries are needed. These libraries must be installed in the Docker image so that the scripts can be properly executed in the container. The _RUN_ instructions executes desired installation commands. In this case, pip is used to install Python modules:
+
+``` go
+RUN apt update && apt install --yes python3-pip && rm -rf /var/lib/apt/lists/
+RUN pip3 install matplotlib
+...
+```
+
+To further custom your Docker image, please refer to the offical Docker documentation.
+
+These pieces of code should be put in a text file and named _Dockerfile_ for later build (see [Upload Docker image](#66-upload-docker-image) section for details on building Docker images).
+
+### 6.3 Create repository
+The first step consists in creating a repository on ECR. To do this head to the [ECR tool web page](https://console.aws.amazon.com/ecr/). 
+
+* You can choose either a public or private repository.
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ecr_public_private.png)
+
+#### 6.3.1 Private repository
+* Click on the Create repository button. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/create_repo_ecr.png)
+
+* Enter the repository name. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ecr_private_infos.png)
+
+* Click on the Create repository button on the bottom of the page. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/create_repo_ecr.png)
+
+#### 6.3.2 Public repository
+* Click on the Create repository button. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/create_repo_ecr.png)
+* Enter the repository name. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ecr_public_infos.png)
+
+    
+* Click on the Create repository button on the bottom of the page. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/create_repo_ecr.png)
+
+### 6.4 IAM authorization
+To access to the repository from the local machine to upload the Docker image, a few authorizations must be enabled. To perform these operations, open the Identity and Access Management in the [AWS console](https://console.aws.amazon.com/iamv2/home?#/users). This manager allows you to create different users with different permissions on the account, allowing multiple persons to use the account across different computers for example.
+
+* Click on _Users_ in the left panel. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/iam_left_panel.png)
+
+* Click on _Add users_. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/iam_add_user.png)
+
+* Enter an arbitrary name for the user which will get the permissions and tick the first box for the credentials. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/iam_name_credential.png)
+
+* Add the permissions shown in the image below. One of the rule is for accessing public repositories, the other to access private ones. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/iam_add_permissions.png)
+
+* Skip the Tag and Review pages.
+
+* The user is now created. Download the credentials using the _Download .csv_ button. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/iam_download_credentials.png)
+
+### 6.5 Configure AWS CLI
+AWS Command Line Interface (CLI) allows you to control your AWS account and services directly from the command line. The interface allows you to upload Docker image for example.
+
+To install AWS CLI, read the following easy tutorial on this page: [AWS CLI - Install/Upgrade](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+
+Type `aws --version` in a local terminal to verify correct installation. If the command is not found, add this to your ~/bashrc file: `export PATH=/usr/local/bin:$PATH`
+
+In a local terminal run the following command to configure the CLI: `aws configure`. AWS will ask you for 4 informations. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/aws_cli_credentials.png)
+
+The first two correspond to the credentials contained in the CSV file you downloaded in the last section. The third one must contain your geographic region you set at the beginning of this tutorial in the AWS console. The fourth one can be ignored.
+
+### 6.6 Upload Docker image
+The next steps are presented for a private repository, but the exact same workflow applies for public ones.
+
+You can install Docker on your local machine using the following commands.
+
+``` console
+sudo apt-get update
+sudo apt-get install ca-certificates curl gnupg lsb-release
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+```
+
+You can verify the installation by running a basic hello-world image.
+``` console
+sudo docker run hello-world
+```
+
+To upload your Docker image to ECR, AWS provides a set of commands directly in the console. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ecr_push_commands.png)
+
+The following pop-up window opens. Note that you should use the commands given in your console and not the ones displayed on the following example figure. <br>
+![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ecr_push_popup.png)
+
+
+* The first command allows you to log Docker into ECR. You may have to call the docker command as super user (sudo docker [...]).
+* The second command must be run in the folder containing your previously defined Dockerfile. Docker commands may need super user rights (sudo).
+* The third one allows to tag your built image to upload it to ECR. Docker commands may need super user rights (sudo).
+* The last command allows to push the image to the repository. Docker commands may need super user rights (sudo).
+
+You can verify that the upload went well by clicking on your repository in the AWS ECR console.
+
+## 7 Elastic File System (EFS)
+### 7.1 Description
 The next step consists in using the Elastic File System (EFS) provided by Amazon to store the simulation files so that the container can access them at runtime.
 
 EFS is a secure and fully managed file system. You can create multiple separate storages and scale as much as you want, without lowering the performances. Each file system can be accessed from many instances through the Network File System (NFS) protocol, which allows a computer to access external files over a network. EFS can be mounted on EC2 instances (see [6.4 EC2 Instances](#64-ec2-instance)) and Docker containers.
@@ -191,7 +326,7 @@ EFS are created in specific regions and must be assigned to a Virtual Private Cl
   source: [EFS - How it works ?](https://docs.aws.amazon.com/efs/latest/ug/how-it-works.html)
 </div>
 
-### 6.2 Create a file system
+### 7.2 Create a file system
 To create a file system head to [Elastic File System](https://us-east-2.console.aws.amazon.com/efs/get-started?region=us-east-2#/get-started) and click on _Create file system_.<br>
 ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_create.png)
 
@@ -206,7 +341,7 @@ Now, to access our file system from a local machine, the following workflow must
 2. Create an Ubuntu EC2 instance with the mounted file system.
 3. Connect to the instance using SSH.
 
-### 6.3 Enable NFS in your security group
+### 7.3 Enable NFS in your security group
 A created file system is automatically assigned to a default security group. Security groups act as firewalls to define authorized in and out connections and protocols. In our case, we need the NFS protocol to be activated to access the EFS via NFS from SSH or from the Docker container.
 
 * Get to your [Security Groups](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#securityGroups:) and click on the ID of your default security group. If you have multiple ones, choose the one associated with the VPC you have selected in the last step, when creating the file system.
@@ -220,7 +355,7 @@ A created file system is automatically assigned to a default security group. Sec
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_nfs_rule.png)
 * Click on _Save rules_.
     
-### 6.4 EC2 Instance
+### 7.4 EC2 Instance
 Elastic Compute Cloud (EC2) is one of the main services provided by AWS. It allows to create a virtual server which is hosted on EC2 to launch applications. Amazon offers all types of servers, with different operating systems, storage sizes, machine power and network infrastructure. Instances are created from Amazon Machine Images (AMI) which are provided by Amazon or can be found on the Marketplace. Example AMIs are different releases of Ubuntu or Windows or specific environments made available by other companies.
 
 For this work, only a simple Ubuntu server is needed to mount a file system. Keep in mind that this part is only about accessing the file system from a local machine and not running containers on these instances. Running the simulations is discussed in a further section.
@@ -257,7 +392,7 @@ For this work, only a simple Ubuntu server is needed to mount a file system. Kee
 * Your EC2 console should now contain a launched instance. Note the public IPv4 address needed for SSH connection. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_launched_instance.png)
 
-### 6.5 Transfer files to EFS
+### 7.5 Transfer files to EFS
 Now that the Ubuntu server is active, a SSH connection can be established.
 * Open a local terminal and move the downloaded .pem file to `~/.ssh/`.
   ``` console
@@ -300,7 +435,7 @@ sudo apt install build-essential
 ```
 Another way to proceed is to modify and compile the controllers locally. Once the controller is built, the entire folder can be transferred to the EC2 instance via SSH using the corresponding command above.
 
-### 6.6 Important information about EC2 instances
+### 7.6 Important information about EC2 instances
 The only purpose of the EC2 instance here is to create a link to the EFS service and access the file system. The EC2 instance only needs to be started when the files need to be modified. It is not needed for running containers in parallel. Keeping even a small EC2 instance running costs money. Therefore, it is best to stop it when it is not needed. To do this, go to your [EC2 console](https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#Instances:), select your running instance and stop it using the _Instance state_ drop-down menu and _Stop instance_ button.<br>
 
 ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_instance_state.png)<br>
@@ -314,16 +449,16 @@ ssh ec2efs
 scp -r file|folder ec2efs:~/efs
 ```
 
-## 7 AWS Batch Service
-### 7.1 Description
+## 8 AWS Batch Service
+### 8.1 Description
 All elements are now configured to run our Docker containers in the cloud. 
 
 Amazon provides an interface called AWS Batch. This service allows to schedule and automatically run a defined number of parallel container jobs. AWS Batch schedules are called jobs, are organized in job queues and run in computation environments. The complete configuration described in the next sections takes exclusively place on AWS Batch.
 
 As mentioned earlier in the instuctions, for this project we use the _multi-node parallel jobs_ feature. This feature has some restrictions in the configuration that will be highlighted further.
 
-### 7.2 Configuration
-#### 7.2.1 Compute environment
+### 8.2 Configuration
+#### 8.2.1 Compute environment
 * The first step consists in creating a compute environment in the [AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#compute-environments) by clicking on the _Create_ button. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
 
@@ -343,7 +478,7 @@ As mentioned earlier in the instuctions, for this project we use the _multi-node
 * Create the environment with the confirmation button. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_comp_env.png)
     
-#### 7.2.2 Job queue
+#### 8.2.2 Job queue
 A job queue allows to define a space where our jobs are organized before being run in the compute environment. They are defined by priorities and can be affiliated to multiple compute environment.
 
 * Open the [job queues in the AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#queues) and click on the _Create_ button. <br>
@@ -358,7 +493,7 @@ A job queue allows to define a space where our jobs are organized before being r
 * You can confirm the job queue creation by clicking on the _Create_ buttons. All unmentioned parameters can be left at their default values.<br>
    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
 
-#### 7.2.3 Job definition
+#### 8.2.3 Job definition
 A job definition allows to define a set of parameters for future job executions. It allows to define the container(s), the resources, mounted file systems and other features. The following explains the parameters to run the official Webots Docker image.
 
 * Open the [job definitions in the AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#job-definition) and click on the _Create_ button. <br>
@@ -376,7 +511,7 @@ A job definition allows to define a set of parameters for future job executions.
 * Add a new node range. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_add_group.png)
     
-* In the new group panel, select all nodes as target nodes (0:). Write the URL of the latest official Webots Docker image. Also write the command to execute in each started container (`bash /usr/local/efs/pso_self-assembly_aws/run_experiment.sh`). This will start the `run_experiment.sh` script in each container. <br>
+* In the new group panel, select all nodes as target nodes (0:). Write the URL of the latest official Webots Docker image. If a custom Docker image is needed, write the Image URI of your image in [ECR](https://us-east-2.console.aws.amazon.com/ecr/repositories?region=us-east-2). Also write the command to execute in each started container (`bash /usr/local/efs/pso_self-assembly_aws/run_experiment.sh`). This will start the `run_experiment.sh` script in each container. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config1.png)
     
 * Select the compute resources to allocate for each container. Choose 2vCPUs and 4096 MiB of memory. No GPU is needed. _m5.large_ instances will be automatically launched with these parameters. <br>
@@ -398,7 +533,7 @@ A job definition allows to define a set of parameters for future job executions.
 * You can confirm the job definition by clicking on the _Create_ buttons. All unmentioned parameters can be left at their default values.
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
 
-## 8 Run simulations
+## 9 Run simulations
 Everything is now setup to run the parallel containers. 
 
 * To launch AWS Batch jobs, open the [AWS Batch Console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#jobs) and click the _Submit new job_ button.<br>
@@ -427,7 +562,7 @@ Everything is now setup to run the parallel containers.
 * Once the PSO job is finished, the main node will successfully exit and automatically terminate all other secondary nodes. The job can also be terminated manually using the button at the top. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_terminate_button.png)
 
-## 9 Additional information
+## 10 Additional information
 * Only EC2 is compatible with multi-node jobs. Fargate is not yet supported.
 
 * In general, to access the internet, public subnets use public IPv4 addresses and an elastic network interface. This is the case for classic single-node jobs or arrays of jobs in AWS Batch. When running the jobs in Fargate, a public IP can be assigned. But in the case of multi-node jobs, AWS is restricting the internet access to multiple conditions:
