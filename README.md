@@ -13,8 +13,9 @@ This repository describes the steps to deploy multiple distributed Webots simula
     * 4.1 [Diagram](#41-diagram) 
     * 4.2 [New file structure for AWS](#42-new-file-structure-for-aws)
 * 5 [Textures downloading](#5-textures-downloading)
-    * 5.1 [Without internet access](#51-without-internet-access) 
-    * 5.2 [With internet access](#52-with-internet-access)
+    * 5.1 [Delete objects with textures](#51-delete-objects-with-textures) 
+    * 5.2 [Local textures](#52-local-textures)
+    * 5.3 [Configure internet access](#53-configure-internet-access)
 * 6 [Elastic File System (EFS)](#6-elastic-file-system-efs)
     * 6.1. [Description](#61-description)
     * 6.2. [Create a file system](#62-create-a-file-system)
@@ -141,10 +142,10 @@ Webots downloads textures from Github when starting a world for the first time t
 3. **Configure internet connection**: the world is kept intact without any deletion or any new local files. This option requires to configure internet access for the containers which costs 0.045$ per hour of usage. This option requires some additional implementation effort. Additional pricing and implementation information can be found in the last section [9 Additional information](9-additional-information). To apply this solution, head to [section 5.3](#53-configure-internet-access).
 
 ### 5.1 Delete objects with textures 
-Deleting the Floor object is very easy. It can be done by simply removing the few lines concerning the Floor object in `24Lilies_LaLn.wbt`. If this is the chosen option, you can go directly to [section 6](6-elastic-file-system-efs).
+Deleting the Floor object is very easy. It can be done by simply removing the few lines concerning the Floor object in `24Lilies_LaLn.wbt`. If this is the chosen option, you can continue directly with [section 6](#6-elastic-file-system-efs).
 
 ### 5.2 Local textures
-A solution to avoid requests to Github to download the textures at runtime is to add them directly in the simulation file so that they are directly accessible. In the example of this project, the Floor object is declared from the Floor PROTO, itself dependent on the Parquetry PROTO. The Parquetry PROTO requests four different textures using URLs to the location in the Webots resources. In this case, the Floor and Parquetry PROTOs are added to the `protos` folder and a new `textures` folder contains the four .png files. The URLs in the Parquetry PROTO are also updated with the relative path (see [this commit](https://github.com/cyberbotics/pso_self-assembly_aws/commit/32d4490724335d1b2d1215b0022602d5a91d36f5)).
+A solution to avoid requests to Github to download the textures at runtime is to add them directly in the simulation file so that they are directly accessible. In the example of this project, the Floor object is declared from the Floor PROTO, itself dependent on the Parquetry PROTO. The Parquetry PROTO requests four different textures using URLs to the location in the Webots resources. In this case, the Floor and Parquetry PROTOs are added to the `protos` folder and a new `textures` folder contains the four .png files. The URLs in the Parquetry PROTO are also updated with the relative path (see [this commit](https://github.com/cyberbotics/pso_self-assembly_aws/commit/32d4490724335d1b2d1215b0022602d5a91d36f5)). If this is the chosen option, you can continue directly with [section 6](#6-elastic-file-system-efs).
 
 ### 5.3 Configure internet access
 The following steps taken from the [AWS documentation](https://docs.aws.amazon.com/batch/latest/userguide/create-public-private-vpc.html) must be applied. The goal is to create a Virtual Private Cloud (VPC) with one public and two private subnets. The public subnet gets a NAT gateway which allows internet access. Configuring AWS Batch later with this VPC will allow Webots to access the online textures.
