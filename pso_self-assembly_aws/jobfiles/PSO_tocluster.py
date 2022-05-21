@@ -36,9 +36,6 @@ def launch_webots(i, j):
     except TimeoutExpired
         proc.kill()
         outss,errss=proc.communicate()
-def evalCoverage():
-
-def evalAccuracy():
 
 # ---- Read fitness files-------------------------------------------------------+
 def fitness_evaluation(i, j):
@@ -56,6 +53,7 @@ def fitness_evaluation(i, j):
     else:
         fitness = float(fitness) 
     return fitness
+    # Create function per fitness dimension 
 
 
 # --- MAIN ---------------------------------------------------------------------+

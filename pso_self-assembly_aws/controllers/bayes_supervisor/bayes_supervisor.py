@@ -144,7 +144,7 @@ def reset():
     print("Running Iteration Number: ")
     print(run)
     randomizePosition()
-    boxData, grid = genArena()
+    #boxData, grid = genArena()
     supervisor.simulationSetMode(supervisor.SIMULATION_MODE_FAST)
 
 def randomizePosition():
@@ -189,7 +189,7 @@ supervisor = Supervisor()
 # get the time step of the current world.
 timestep = int(supervisor.getBasicTimeStep())
 
-boxData, grid = genArena()
+#boxData, grid = genArena()
 defArray = ["rov_0", "rov_1", "rov_2", "rov_3"]
 
 rov_node_array = np.empty(nRobot, dtype=object)
