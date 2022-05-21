@@ -33,13 +33,17 @@ def launch_webots(i, j):
     
     try:
         outss, errss=proc.communicate(timeout=7200)
-    except TimeoutExpired:
+    except TimeoutExpired
         proc.kill()
         outss,errss=proc.communicate()
+def evalCoverage():
 
+def evalAccuracy():
 
 # ---- Read fitness files-------------------------------------------------------+
 def fitness_evaluation(i, j):
+    # | | |
+
     filename = run_dir + "Generation_%d/local_fitness_%d.txt" % (i, j)
     # os.makedirs(os.path.dirname(filename), exist_ok=True)
     # with open( filename, mode='w') as filemy:
@@ -50,7 +54,7 @@ def fitness_evaluation(i, j):
         fitness = -1
         print('File is empty \n')
     else:
-        fitness = float(fitness)
+        fitness = float(fitness) 
     return fitness
 
 
@@ -88,6 +92,7 @@ class Particle:
 
     # update new particle velocity
     def update_velocity(self, pos_best_g):
+        # LUT for PSO Parameters depending on search space. 
         PSO_W = -0.1832 # PSO Parameters
         PSO_PW = 0.5287
         PSO_NW = 3.1913
@@ -101,6 +106,7 @@ class Particle:
             self.velocity_i[i] = PSO_W * self.velocity_i[i] + vp + vn
 
     # update the particle position based off new velocity updates
+    # EDIT WHEN ADDIN PARAM
     def update_position(self, bounds):
         for i in range(0, num_dimensions):
             self.position_i[i] = self.position_i[i] + self.velocity_i[i]
@@ -131,12 +137,15 @@ class PSO():
 
         # establish the swarm
         swarm = []
+        rand_init_count = 0
         swarm.append(Particle(x0,bounds))
 
         for i in range(1, num_particles):
             x=[]
             for j in range(0,num_dimensions):
                 x.append(random.uniform(bounds[0],bounds[1]))
+                #x.append(random.uniform(bounds[rand_init_count],bounds[rand_init_count + 1])) #includes low excludes high
+                rand_init_count = rand_init_count + 1
             
             swarm.append(Particle(x,bounds))
         print("This is the number of particles in swarm: \n")
@@ -244,10 +253,13 @@ os.mkdir(run_dir)
 # --- RUN ----------------------------------------------------------------------+
 
 # initial=[5,5]               # initial starting location [x1,x2...]
-bounds = [0,0.5]  # input bounds [(x1_min,x1_max)]
-num_dimensions = 3
-x0=[0.01,0.005,0.000025]
-startTime=datetime.now()
+# --- PSO PARAMETERS -----------------------------------------------------------+
+# | Observation Interval | Positive Feedback (Binary) | Credibility Thresdhold | Random Walk Type (Binary) |
+bounds = [0,0.5]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+num_dimensions = 3 # Dimensxion of particle
+x0=[0.01,0.005,0.000025] # Initial particle position
+# ------------------------------------------------------------------------------+
+startTime=datetime.now() 
 PSO(x0, fitness_evaluation, bounds, num_particles=args.nb_particles, maxiter=30)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"

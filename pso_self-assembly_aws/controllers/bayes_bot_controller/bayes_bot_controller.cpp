@@ -37,7 +37,7 @@ static PositionSensor* encoders[2];
 static double alpha = 0;
 static double beta = 0;
 static int d_f = -1; 
-static int tao = 10;
+static int tao = 5;
 static double p_c = 0.5; //Credibility Threshold 
 static bool u_plus = false; //Positive feedback 
 static double comDist = 0.3;
@@ -370,7 +370,7 @@ int main(int argc, char *argv[]) {
           beta = beta + (1 - C);
         }
         // RECEIVE MESSAGE
-        getMessage(); 
+        //getMessage(); 
         p = incbeta(alpha, beta, 0.5);
         std::cout << name << " Current CDF: " << p << " with ALPHA: " << alpha << " and BETA: "<< beta <<std::endl;
         std::string currentData = myDataField->getSFString();
@@ -382,7 +382,7 @@ int main(int argc, char *argv[]) {
             d_f = 1;
           } 
         }
-        putMessage();
+        //putMessage();
         r_walk = true;
         control_count = control_count + 1; //NOTE: This means that the control_count is updated every "TIME_STEP" ticks in the world. 
     }

@@ -1,0 +1,101 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  CFM 0.1
+  ERP 0.1
+  basicTimeStep 8
+  coordinateSystem "NUE"
+  contactProperties [
+    ContactProperties {
+      material2 "WheelMat"
+    }
+  ]
+}
+Viewpoint {
+  orientation -0.37410009861715926 -0.8017314106520007 -0.4661285888985836 2.0110979679680656
+  position -0.6445857263848079 1.670951048271989 0.41047833261588046
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+DEF surface Solid {
+  translation 0.5 0 0.5
+  rotation 0 -0.9999999999999999 0 1.5707953071795862
+  children [
+    Shape {
+      appearance Appearance {
+      }
+      geometry Plane {
+      }
+    }
+  ]
+  contactMaterial "Metal"
+  boundingObject Plane {
+  }
+}
+Wall {
+  translation 0.5 0 -0.015
+  size 1 0.05 0.025
+}
+Wall {
+  translation 0.5 0 1.015
+  name "wall(1)"
+  size 1 0.05 0.025
+}
+Wall {
+  translation 1.015 0 0.5
+  rotation 0 1 0 1.5708
+  name "wall(2)"
+  size 1 0.05 0.025
+}
+Wall {
+  translation -0.015 0 0.5
+  rotation 0 1 0 1.5708
+  name "wall(3)"
+  size 1 0.05 0.025
+}
+Robot {
+  name "Bayes Bot Supervisor"
+  controller "bayes_supervisor"
+  supervisor TRUE
+}
+DEF rov_0 Rovable {
+  translation 0.42 0.023 0.32
+  rotation 1 0 0 -1.5707953071795862
+  name "r0"
+  controller "bayes_bot_controller"
+  controllerArgs [
+    "5"
+  ]
+  customData "1000.500000"
+}
+DEF rov_1 Rovable {
+  translation 0.07 0.023 0.21
+  rotation 1 0 0 -1.5707953071795862
+  name "r1"
+  controller "bayes_bot_controller"
+  controllerArgs [
+    "13"
+  ]
+  customData "1110.250000"
+}
+DEF rov_2 Rovable {
+  translation 0.19 0.023 0.07
+  rotation 1 0 0 -1.5707953071795862
+  name "r2"
+  controller "bayes_bot_controller"
+  controllerArgs [
+    "74"
+  ]
+  customData "1110.000000"
+}
+DEF rov_3 Rovable {
+  translation 0.16 0.023 0.45
+  rotation 1 0 0 -1.5707953071795862
+  name "r3"
+  controller "bayes_bot_controller"
+  controllerArgs [
+    "2281"
+  ]
+  customData "1110.000000"
+}
