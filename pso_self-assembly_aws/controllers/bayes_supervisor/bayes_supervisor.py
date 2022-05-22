@@ -20,13 +20,9 @@ MAX_TIME = 120
 run = 0
 n_run = 2
 nRobot = 4
-boxSize = 5
+boxSize = 4
 imageDim = 128
 fillRatio = 1.0
-if (fillRatio >= 0.50):
-    mw = 1
-else:
-    mw = 0
 p_high = 0.9
 p_low = 0.1
 minD = 0.15
@@ -45,6 +41,17 @@ coverage_arr = []
 fitnessData = np.zeros(3) # Decision Time | Coverage | Accuracy
 start_time = time.time()
 sim_time = 0
+
+fitnessFile = "local_fitness.txt"
+inputFile = "prob.txt"
+
+defArray = ["rov_0", "rov_1", "rov_2", "rov_3"]
+
+rov_node_array = np.empty(nRobot, dtype=object)
+trans_field_array = np.empty(nRobot, dtype=object)
+data_array = np.empty(nRobot, dtype=object)
+trans_value_array = np.empty(nRobot, dtype=object)
+color_array = np.empty(nRobot, dtype=object)
 
 # --------------------------------------------------------------
 def checkDecision(data):
@@ -73,26 +80,18 @@ def genArena():
     possibleY = list(range(0, imageDim, boxSize))
     
     i = 0
-    j = 0
-    while i < fillCount:
+    print("Generating Arena with Fill Ratio: ", fillRatio)
+    while i < fillCount-1:
         rX = random.randint(0, len(possibleX)-1)
         rY = random.randint(0, len(possibleY)-1)
+        
         if (checkCoord(possibleX[rX], possibleY[rY], startArray)):
             startArray[i][0] = possibleX[rX]
             startArray[i][1] = possibleY[rY]
             i = i + 1
-        j = j + 1
-
-    #draw = ImageDraw.Draw(img)
-
-    # for coord in startArray:
-        # draw.rectangle((coord[0], coord[1] + (sqSize - 1), coord[0] + (sqSize - 1), coord[1]), fill=1, outline=1)
-
-    #img = img.transpose(method=Image.FLIP_TOP_BOTTOM) #Flip to account for axis change in Webots
-    #img.save("worlds/textures/" + "boxrect_" + str(robot_seed) + ".png", quality=100)
     return startArray, np.zeros((len(possibleY), len(possibleX)))
 
-
+# Writes to the fitness file for the current iteration of particle
 def cleanup():
     supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
     supervisor.simulationReset()
@@ -120,7 +119,7 @@ def reset():
     global boxData
     global grid
 
-    if mw:
+    if (fillRatio > 0.50):
         run_dec = int(all(i < 0.5 for i in rowProbData))
     else:
         run_dec = int(all(i >= 0.5 for i in rowProbData))
@@ -168,14 +167,20 @@ def randomizePosition():
 def get_color(xPos, yPos):
     for coord in boxData:
         # Data is stored in (x, y)
-        if ((xPos >= int(coord[0])/imageDim) and (xPos <= (((int(coord[0]) + boxSize)/imageDim))) and (yPos >= int(coord[1])/imageDim) and (yPos <= (((int(coord[1]) + boxSize)/imageDim)))):
+        if ((xPos >= int(coord[0])/imageDim) and (xPos <= ((int(coord[0]) + boxSize)/imageDim)) and (yPos >= int(coord[1])/imageDim) and (yPos <= ((int(coord[1]) + boxSize)/imageDim))):
             ix = int(int(coord[0])/boxSize)
             iy = int(int(coord[1])/boxSize)
             grid[ix][iy] = 1
-            return 1
-    
+            return 1 #Returns 1 if the current robot is on a white square
+    print(xPos, yPos)
     return 0
 
+def setParam():
+    #Read in parameters used for algorithm
+    with open(inputFile) as f:
+        parameters = f.readlines()
+
+    print(parameters)
 # --------------------------------------------------------------------
 
 # file = open("boundary/boxrect_" + seedIn + ".csv")
@@ -188,30 +193,8 @@ supervisor = Supervisor()
 
 # get the time step of the current world.
 timestep = int(supervisor.getBasicTimeStep())
+boxData, grid = genArena()
 
-#boxData, grid = genArena()
-defArray = ["rov_0", "rov_1", "rov_2", "rov_3"]
-
-rov_node_array = np.empty(nRobot, dtype=object)
-trans_field_array = np.empty(nRobot, dtype=object)
-data_array = np.empty(nRobot, dtype=object)
-trans_value_array = np.empty(nRobot, dtype=object)
-color_array = np.empty(nRobot, dtype=object)
-
-fitnessFile = "local_fitness.txt"
-inputFile = "prob.txt"
-noiseFile = "fitness_repeat.txt"
-
-#Read in parameters used for algorithm
-# with open(inputFile) as f:
-#     parameters = f.readlines()
-
-#randomizePosition()
-
-# MODIFIED FOR AWS LAUNCH
-# Get the current time
-start_time = time.time()
-sim_time = supervisor.getTime()
 
 for i in range(nRobot):
     rov_node_array[i] = supervisor.getFromDef(defArray[i])
@@ -219,8 +202,16 @@ for i in range(nRobot):
     trans_value_array[i] = trans_field_array[i].getSFVec3f()
     data_array[i] = rov_node_array[i].getField("customData")
     init_c = str(get_color(trans_value_array[i][2], trans_value_array[i][0]))
-    print(init_c)
-    data_array[i].setSFString(init_c + '000.000000') #Init custom data to required format
+    init_data = init_c + '000.000000'
+    print(init_data)
+    data_array[i].setSFString(init_data) #Init custom data to required format
+
+randomizePosition()
+
+# MODIFIED FOR AWS LAUNCH
+# Get the current time
+start_time = time.time()
+sim_time = supervisor.getTime()
 
 while supervisor.step(timestep) != -1:
     rowProbData = []
@@ -231,12 +222,15 @@ while supervisor.step(timestep) != -1:
         rowPosData.append(trans_value_array[i][2])
         rowPosData.append(trans_value_array[i][0])
         color_array[i] = str(get_color(trans_value_array[i][2], trans_value_array[i][0]))
-        #print(data_array[i].getSFString())
-        remaining = (data_array[i].getSFString())[1:]
-        probability = remaining[2:8]
-        #if probability: #Checks if the string is blank.
+        currentData = data_array[i].getSFString()
+        remaining = currentData[1:]
+        probability = currentData[3:11]
         rowProbData.append(float(probability))
         newString = color_array[i] + remaining
+        # print("Current Data: ", currentData)
+        # print("Removed Color: ", remaining)
+        # print("Probability: ", probability)
+        # print("New String: ", newString)
         data_array[i].setSFString(newString)
 
     csvProbData.append(rowProbData)
@@ -244,27 +238,27 @@ while supervisor.step(timestep) != -1:
 
     #print(rowProbData)
 
-    if(supervisor.getTime() - sim_time > 30):
-        if (checkDecision(rowProbData)) and settlingTime <= endTic:
-            settlingTime = settlingTime + 1
-        elif (checkDecision(rowProbData)) and settlingTime > endTic:
-            if run < n_run-1:
-                reset()
-            else:
-                cleanup()
-        else:
-            settlingTime = 0
+    # if(supervisor.getTime() - sim_time > 30):
+    #     if (checkDecision(rowProbData)) and settlingTime <= endTic:
+    #         settlingTime = settlingTime + 1
+    #     elif (checkDecision(rowProbData)) and settlingTime > endTic:
+    #         if run < n_run-1:
+    #             reset()
+    #         else:
+    #             cleanup()
+    #     else:
+    #         settlingTime = 0
 
 
-    # MODIFIED FOR AWS LAUNCH
-    # if (supervisor.getTime() > endTime):
-    #   cleanup()
-    if (time.time()-start_time > MAX_TIME):
-       #supervisor.simulationQuit(0)
-        if run < n_run-1:
-           reset()
-        else:
-           cleanup()
+    # # MODIFIED FOR AWS LAUNCH
+    # # if (supervisor.getTime() > endTime):
+    # #   cleanup()
+    # if (time.time()-start_time > MAX_TIME):
+    #    #supervisor.simulationQuit(0)
+    #     if run < n_run-1:
+    #        reset()
+    #     else:
+    #        cleanup()
 
 # MODIFIED FOR AWS LAUNCH
 # Enter here exit cleanup code.

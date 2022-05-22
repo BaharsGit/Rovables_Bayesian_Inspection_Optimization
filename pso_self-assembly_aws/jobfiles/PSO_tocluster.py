@@ -33,7 +33,7 @@ def launch_webots(i, j):
     
     try:
         outss, errss=proc.communicate(timeout=7200)
-    except TimeoutExpired
+    except TimeoutExpired:
         proc.kill()
         outss,errss=proc.communicate()
 
@@ -161,7 +161,7 @@ class PSO():
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, mode='w') as myfile:
                     myfile.write('\n'.join(str(p_w) for p_w in swarm[j].position_i))
-                #launch_webots(i, j)
+                launch_webots(i, j)
 
             #debug
             #outs = ''

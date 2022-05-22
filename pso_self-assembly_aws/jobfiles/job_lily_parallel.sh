@@ -16,7 +16,7 @@ WB_TIMEOUT=7200           # Kill webots after WB_TIMEOUT seconds
  
 N_RUNS=1 #number of runs to be done
 
-WEBWORLD="../../worlds/24Lilies_LaLn.wbt"
+WEBWORLD="../../worlds/bayes_pso.wbt"
 
 # set the input directory (relative to the working directory)
 INPUT_DIR=Generation_${GEN_ID}

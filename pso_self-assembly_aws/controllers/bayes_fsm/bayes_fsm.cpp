@@ -1,4 +1,4 @@
-// File:          bayes_bot_controller.cpp
+// File:          bayes_fsm.cpp
 // Date:
 // Description:
 // Author:
@@ -8,7 +8,6 @@
 #include <fstream>
 #include <string>
 #include <time.h>
-#include <BetaCDF.hpp>
 #include <webots/Robot.hpp>
 #include <webots/Motor.hpp>
 #include <webots/Gyro.hpp>
@@ -25,6 +24,8 @@ using namespace webots;
 
 //Initialize the parameters
 #define TIME_STEP 8
+#define FSM_RW
+
 
 enum Side { LEFT, RIGHT };
 
@@ -44,6 +45,7 @@ static double comDist = 1;
 static double qSize = 2;
 static double close_distance = 50.0;
 
+static int FSM_STATE = 0;
 static int C = 0; //Observed Color
 static int nRobot = 4;
 static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"};
@@ -298,8 +300,7 @@ static void do_random_walk() {
 }
 
 
-// P > 0.5 ==> MOSTLY BLACK
-int main(int argc, char *argv[]) {
+int main(int argc, char **argv) {
   // create the Robot instance.
   robot = new Supervisor();
   
@@ -361,36 +362,15 @@ int main(int argc, char *argv[]) {
 
 
   //Main while loop
-  while (robot->step(timeStep) != -1) {
-    if (r_walk) {
-      do_random_walk();
-    } else {
-      if ((control_count % tao) == 0) {
-          C = getColor();
-          alpha = alpha + C;
-          beta = beta + (1 - C);
-        }
-        // RECEIVE MESSAGE
-        getMessage(); 
-        p = incbeta(alpha, beta, 0.5);
-        std::cout << name << " Current CDF: " << p << " with ALPHA: " << alpha << " and BETA: "<< beta <<std::endl;
-        std::string currentData = myDataField->getSFString();
-        myDataField->setSFString(currentData.substr(0,3) + std::to_string(p));
-        if ((d_f == -1) & u_plus) {
-          if (p > p_c) {
-            d_f = 0;
-          } else if ((1 - p) > p_c) {
-            d_f = 1;
-          } 
-        }
-        putMessage();
-        r_walk = true;
-        control_count = control_count + 1; //NOTE: This means that the control_count is updated every "TIME_STEP" ticks in the world. 
-    }
-    //std::cout << name << " " << robot->getTime() << std::endl;
-  }
+  do {
+  switch(FSM_STATE) {
   
+  }
+   
+  } while (robot->step(timeStep) != -1) ;
+
+  // Enter here exit cleanup code.
+
   delete robot;
-  //probData.close();
   return 0;
 }
