@@ -22,7 +22,7 @@ n_run = 2
 nRobot = 4
 boxSize = 4
 imageDim = 128
-fillRatio = 1.0
+fillRatio = 0.35
 p_high = 0.9
 p_low = 0.1
 minD = 0.15
@@ -33,7 +33,7 @@ initialPos = []
 csvProbData = []
 csvPosData = []
 parameters = []
-seedIn = 0
+seedIn = 1
 boxData = []
 accuracy = []
 dec_time = []
@@ -172,7 +172,7 @@ def get_color(xPos, yPos):
             iy = int(int(coord[1])/boxSize)
             grid[ix][iy] = 1
             return 1 #Returns 1 if the current robot is on a white square
-    print(xPos, yPos)
+    #print(xPos, yPos)
     return 0
 
 def setParam():
@@ -203,10 +203,10 @@ for i in range(nRobot):
     data_array[i] = rov_node_array[i].getField("customData")
     init_c = str(get_color(trans_value_array[i][2], trans_value_array[i][0]))
     init_data = init_c + '000.000000'
-    print(init_data)
+    #print(init_data)
     data_array[i].setSFString(init_data) #Init custom data to required format
 
-#randomizePosition()
+randomizePosition()
 
 # MODIFIED FOR AWS LAUNCH
 # Get the current time
@@ -230,8 +230,8 @@ while supervisor.step(timestep) != -1:
         # print("Current Data: ", currentData)
         # print("Removed Color: ", remaining)
         # print("Probability: ", probability)
-        # print("New String: ", newString)
-        data_array[i].setSFString(newString)
+        print("New String: ", newString)
+        #data_array[i].setSFString(newString)
 
     csvProbData.append(rowProbData)
     csvPosData.append(rowPosData)

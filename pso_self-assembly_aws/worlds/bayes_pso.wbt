@@ -72,7 +72,7 @@ DEF rov_0 Rovable {
   controllerArgs [
     "5"
   ]
-  customData "1110.000000"
+  customData "1000.000000"
 }
 DEF rov_1 Rovable {
   translation 0.07 0.023 0.21
@@ -85,9 +85,7 @@ DEF rov_1 Rovable {
   customData "1000.000000"
 }
 DEF rov_2 Rovable {
-  hidden rotation_11 -0.9999999999999999 1.4991312723562737e-10 1.4991297438212862e-10 1.5707953071795802
-  hidden rotation_14 0.9999999999999999 -1.314226620595928e-10 1.314225280574661e-10 1.570795307179579
-  translation 0.19 0.023 0.07
+  translation 0.632734 0.023 0.814372
   rotation 1 0 0 -1.5707953071795862
   name "r2"
   controller "bayes_fsm"
