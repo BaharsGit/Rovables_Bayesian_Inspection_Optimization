@@ -24,7 +24,12 @@ using namespace webots;
 
 //Initialize the parameters
 #define TIME_STEP 8
-#define FSM_RW
+
+//Finite State Machine Parameters
+#define FSM_RW 0
+#define FSM_CA 1
+#define FSM_PAUSE 2
+#define FSM_OBS 3
 
 
 enum Side { LEFT, RIGHT };
@@ -38,12 +43,12 @@ static PositionSensor* encoders[2];
 static double alpha = 0;
 static double beta = 0;
 static int d_f = -1; 
-static int tao = 1;
+static int tao = 200;
 static double p_c = 0.5; //Credibility Threshold 
 static bool u_plus = false; //Positive feedback 
 static double comDist = 1;
 static double qSize = 2;
-static double close_distance = 50.0;
+static double close_distance = 30.0;
 
 static int FSM_STATE = 0;
 static int C = 0; //Observed Color
@@ -59,12 +64,13 @@ static std::string name;
 static double speed = 5.0;
 static int rand_const_forward = 250; 
 static int rand_const_turn = 100;
+static int pause_time = 25;
 static double p;
 static int direction = LEFT;
 static bool r_walk = true;
 static int forward_count;
+static int pause_count;
 static int turn_count;
-static int collision_count;
 static int control_count = 0;
 static std::queue<int> commHistory;
 /*
@@ -226,79 +232,6 @@ static void putMessage() { // color, id, df/C'
   }
 }
 
-static void do_random_walk() {
-  //std::cout << collision_count << " " << forward_count << " " << turn_count << std::endl;
-  double distance_sensors_values[4];
-  for (int i = 0; i < 4; i++){
-    distance_sensors_values[i] = distance_sensors[i]->getValue();
-  }
-  
-  // INCLUDE CODE FOR MORE DSENSORS
-  if (distance_sensors_values[LEFT] < close_distance || distance_sensors_values[RIGHT] < close_distance || 
-  distance_sensors_values[2] < close_distance || distance_sensors_values[3] < close_distance) {
-    //std::cout << name << " Collision Avoidance" << std::endl;
-    direction = distance_sensors_values[LEFT] < distance_sensors_values[RIGHT] ? RIGHT : LEFT;
-    if ((std::abs(distance_sensors_values[LEFT] - distance_sensors_values[RIGHT]) < 0.35) || 
-    (std::abs(distance_sensors_values[2] - distance_sensors_values[3]) < 0.35)) {
-      direction = -1;
-    } else if (distance_sensors_values[2] < distance_sensors_values[3]) {
-      direction = RIGHT;
-    } else if (distance_sensors_values[3] < distance_sensors_values[2]) {
-      direction = LEFT;
-    }
-    if (collision_count == 0) {
-      collision_count = 200;
-    }
-    if (direction == LEFT) {
-      // set the speed to turn to the left
-      motors[LEFT]->setVelocity(-speed);
-      motors[RIGHT]->setVelocity(speed);
-    } else if (direction == RIGHT ){
-      // set the speed to turn to the right
-      motors[LEFT]->setVelocity(speed);
-      motors[RIGHT]->setVelocity(-speed);
-    } else if (direction == -1){
-      // set the speed to go backwards
-      motors[LEFT]->setVelocity(-speed);
-      motors[RIGHT]->setVelocity(-speed);
-    } 
-  }
-  if (collision_count > 0) {
-    collision_count = collision_count - 1;
-    return;
-  } else {
-    if (forward_count > 0) {
-      motors[LEFT]->setVelocity(speed);
-      motors[RIGHT]->setVelocity(speed);
-      forward_count = forward_count - 1;
-    } else if ((forward_count == 0) && (turn_count > 0)) {
-      turn_count = turn_count - 1;
-      if (direction == LEFT) {
-        // set the speed to turn to the left
-        motors[LEFT]->setVelocity(-speed);
-        motors[RIGHT]->setVelocity(speed);
-      } else {
-        // set the speed to turn to the right
-        motors[LEFT]->setVelocity(speed);
-        motors[RIGHT]->setVelocity(-speed);
-      }
-    } else if((forward_count == 0) & (turn_count == 0)) {
-        //Once done turning check distance sensors to pick turn direction.
-        forward_count = rand() % rand_const_forward;
-        turn_count = rand() % rand_const_turn;
-        r_walk = false;
-        double dir = rand() / (float) RAND_MAX;
-        if (dir > 0.5) {
-          //std::cout << "RIGHT" << std::endl;
-          direction = RIGHT;
-        } else {
-          //std::cout << "LEFT" << std::endl;
-          direction = LEFT;
-        } 
-    }
-  }
-}
-
 
 int main(int argc, char **argv) {
   // create the Robot instance.
@@ -357,16 +290,134 @@ int main(int argc, char **argv) {
   
   forward_count = rand() % rand_const_forward;
   turn_count = rand() % rand_const_turn;
-  
-  //Set up algorithm parameters from commmand line args
-
 
   //Main while loop
   do {
-  switch(FSM_STATE) {
-  
-  }
-   
+    //getMessage();
+    double distance_sensors_values[4];
+    for (int i = 0; i < 4; i++){
+      distance_sensors_values[i] = distance_sensors[i]->getValue();
+    }
+    //std::cout << "Robot: " << name << " in state: " << FSM_STATE << std::endl;
+
+    //FSM 
+    switch(FSM_STATE) {
+
+      //RANDOM WALK STATE
+      case FSM_RW:
+      {
+        if (control_count % tao == 0) {
+          pause_count = pause_time;
+          FSM_STATE = FSM_PAUSE;
+        } else if (distance_sensors_values[LEFT] < close_distance || distance_sensors_values[RIGHT] < close_distance || distance_sensors_values[2] < close_distance || distance_sensors_values[3] < close_distance) { 
+          FSM_STATE = FSM_CA;
+          break;
+        }
+        if (forward_count > 0) {
+          motors[LEFT]->setVelocity(speed);
+          motors[RIGHT]->setVelocity(speed);
+          forward_count = forward_count - 1;
+        } else if ((forward_count == 0) && (turn_count > 0)) {
+          turn_count = turn_count - 1;
+          if (direction == LEFT) {
+            // set the speed to turn to the left
+            motors[LEFT]->setVelocity(-speed);
+            motors[RIGHT]->setVelocity(speed);
+          } else {
+            // set the speed to turn to the right
+            motors[LEFT]->setVelocity(speed);
+            motors[RIGHT]->setVelocity(-speed);
+          }
+        } else if((forward_count == 0) & (turn_count == 0)) {
+            //Once done turning check distance sensors to pick turn direction.
+            forward_count = rand() % rand_const_forward;
+            turn_count = rand() % rand_const_turn;
+            r_walk = false;
+            double dir = rand() / (float) RAND_MAX;
+            if (dir > 0.5) {
+              //std::cout << "RIGHT" << std::endl;
+              direction = RIGHT;
+            } else {
+              //std::cout << "LEFT" << std::endl;
+              direction = LEFT;
+            } 
+          }
+        break;
+      }
+
+      //COLLISION AVOIDANCE STATE
+      case FSM_CA:
+      {
+        if (control_count % tao == 0) {
+          pause_count = pause_time;
+          FSM_STATE = FSM_PAUSE;
+        } else if (distance_sensors_values[LEFT] > 130 && distance_sensors_values[RIGHT] > 130 && distance_sensors_values[2] > 130 && distance_sensors_values[3] > 130) { 
+          FSM_STATE = FSM_RW;
+          break;
+        }
+        direction = distance_sensors_values[LEFT] < distance_sensors_values[RIGHT] ? RIGHT : LEFT;
+        
+        if ((distance_sensors_values[LEFT] < 150) && (distance_sensors_values[RIGHT] < 150) && (distance_sensors_values[2] < 150) && (distance_sensors_values[3] < 150)) {
+          direction = -1;
+        } else if (distance_sensors_values[2] < distance_sensors_values[3]) {   
+          direction = RIGHT;
+        } else if (distance_sensors_values[3] < distance_sensors_values[2]) {
+          direction = LEFT;
+        } 
+        
+        std::cout << direction << std::endl;
+        if (direction == LEFT) {
+          // set the speed to turn to the left
+          motors[LEFT]->setVelocity(-speed);
+          motors[RIGHT]->setVelocity(speed);
+        } else if (direction == RIGHT ){
+          // set the speed to turn to the right
+          motors[LEFT]->setVelocity(speed);
+          motors[RIGHT]->setVelocity(-speed);
+        } else if (direction == -1){
+          // set the speed to go backwards
+          motors[LEFT]->setVelocity(-speed);
+          motors[RIGHT]->setVelocity(-speed);
+        }
+        break;
+      }
+
+      //PAUSE STATE
+      case FSM_PAUSE:
+      {
+        //Stop to observe
+        motors[LEFT]->setVelocity(0);
+        motors[RIGHT]->setVelocity(0);
+        if (pause_count == 0) {
+          FSM_STATE = FSM_OBS;
+        } else {
+          pause_count = pause_count - 1;
+        }
+        break;
+      }
+      
+      case FSM_OBS:
+      {
+        C = getColor();
+        alpha = alpha + C;
+        beta = beta + (1 - C);
+        FSM_STATE = FSM_RW;
+        break;
+      }
+    }
+    p = incbeta(alpha, beta, 0.5);
+    //std::cout << name << " Current CDF: " << p << " with ALPHA: " << alpha << " and BETA: "<< beta <<std::endl;
+    std::string currentData = myDataField->getSFString();
+    myDataField->setSFString(currentData.substr(0,3) + std::to_string(p));
+    if ((d_f == -1) & u_plus) {
+      if (p > p_c) {
+        d_f = 0;
+      } else if ((1 - p) > p_c) {
+        d_f = 1;
+      } 
+    }
+    //putMessage();
+    control_count = control_count + 1;
   } while (robot->step(timeStep) != -1) ;
 
   // Enter here exit cleanup code.

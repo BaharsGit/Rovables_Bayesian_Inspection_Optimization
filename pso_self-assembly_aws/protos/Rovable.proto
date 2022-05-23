@@ -40,7 +40,7 @@ PROTO Rovable [
           children IS extensionSlot
         }
       DEF DS_LEFT DistanceSensor {
-        translation 0.008 0.0075 0.0075
+        translation 0.008 0.0075 -0.003
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
           DEF DS_SHAPE Shape {
@@ -57,7 +57,7 @@ PROTO Rovable [
         name "left distance sensor"
       }
       DEF DS_RIGHT DistanceSensor {
-        translation 0.008 -0.0075 0.0075
+        translation 0.008 -0.0075 0.0030
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
           USE DS_SHAPE
@@ -65,7 +65,7 @@ PROTO Rovable [
         name "right distance sensor"
       }
       DEF DS_ANGLE_RIGHT DistanceSensor {
-        translation 0.008 -0.009 0.0075
+        translation 0.008 -0.009 0.0030
         rotation -0.935 0.251 -0.251 1.64
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
@@ -74,7 +74,7 @@ PROTO Rovable [
         name "angle right distance sensor"
       }
       DEF DS_SIDE_RIGHT DistanceSensor {
-        translation 0.008 -0.009 0.0075
+        translation 0.008 -0.009 0.0030
         rotation -0.577 0.577 -0.577 2.09
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
@@ -83,7 +83,7 @@ PROTO Rovable [
         name "side right distance sensor"
       }
       DEF DS_SIDE_LEFT DistanceSensor {
-        translation 0.008 0.009 0.0075
+        translation 0.008 0.009 0.0030
         rotation 0.935 0.251 -0.251 -1.64
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
@@ -92,7 +92,7 @@ PROTO Rovable [
         name "angle left distance sensor"
       }
       DEF DS_SIDE_LEFT DistanceSensor {
-        translation 0.008 0.009 0.0075
+        translation 0.008 0.009 0.0030
         rotation 0.577 0.577 -0.577 -2.09
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
@@ -101,7 +101,7 @@ PROTO Rovable [
         name "side left distance sensor"
       }
       DEF DS_SIDE_LEFT_2 DistanceSensor {
-        translation -0.005 0.009 0.0075
+        translation -0.005 0.009 0.0030
         rotation 0.577 0.577 -0.577 -2.09
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
@@ -110,7 +110,7 @@ PROTO Rovable [
         name "side left two distance sensor"
       }
       DEF DS_SIDE_RIGHT_2 DistanceSensor {
-        translation -0.005 -0.009 0.0075
+        translation -0.005 -0.009 0.0030
         rotation -0.577 0.577 -0.577 2.09
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
@@ -119,7 +119,7 @@ PROTO Rovable [
         name "side right two distance sensor"
       }
       DEF DS_BACK DistanceSensor {
-        translation -0.005 -0.0075 0.0075
+        translation -0.005 -0.0075 0.0030
         rotation 0.00 0.707 -0.707 3.14159
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
@@ -128,7 +128,7 @@ PROTO Rovable [
         name "back right distance sensor"
       }
       DEF DS_BACK DistanceSensor {
-        translation -0.005 0.0075 0.0075
+        translation -0.005 0.0075 0.0030
         rotation 0.00 0.707 -0.707 3.14159
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [

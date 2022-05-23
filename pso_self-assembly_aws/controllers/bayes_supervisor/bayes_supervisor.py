@@ -206,7 +206,7 @@ for i in range(nRobot):
     print(init_data)
     data_array[i].setSFString(init_data) #Init custom data to required format
 
-randomizePosition()
+#randomizePosition()
 
 # MODIFIED FOR AWS LAUNCH
 # Get the current time
