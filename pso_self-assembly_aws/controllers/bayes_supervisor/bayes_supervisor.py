@@ -60,37 +60,6 @@ def checkDecision(data):
             continue
     return 1
 
-def checkCoord(x, y, array):
-    #Iterates through 
-    for coord in array:
-        if ((coord[0] == x) and (coord[1] == y)):
-            return 0
-    return 1
-
-def genArena():
-    random.seed(seedIn) 
-    # random.seed(16)
-
-    #img = Image.new('1', (imageDim, imageDim))
-    picArea = imageDim * imageDim
-    sqArea = boxSize * boxSize
-    fillCount = math.ceil((fillRatio * picArea) / sqArea)
-    startArray = np.zeros((fillCount,2)) #Defines bottom left of white square
-    possibleX = list(range(0, imageDim, boxSize))
-    possibleY = list(range(0, imageDim, boxSize))
-    
-    i = 0
-    print("Generating Arena with Fill Ratio: ", fillRatio)
-    while i < fillCount-1:
-        rX = random.randint(0, len(possibleX)-1)
-        rY = random.randint(0, len(possibleY)-1)
-        
-        if (checkCoord(possibleX[rX], possibleY[rY], startArray)):
-            startArray[i][0] = possibleX[rX]
-            startArray[i][1] = possibleY[rY]
-            i = i + 1
-    return startArray, np.zeros((len(possibleY), len(possibleX)))
-
 # Writes to the fitness file for the current iteration of particle
 def cleanup():
     supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
@@ -183,18 +152,11 @@ def setParam():
     print(parameters)
 # --------------------------------------------------------------------
 
-# file = open("boundary/boxrect_" + seedIn + ".csv")
-# csvreader = csv.reader(file)
-# for row in csvreader:
-#     boxData.append(row)
-
 # create the Robot instance.
 supervisor = Supervisor()
 
 # get the time step of the current world.
 timestep = int(supervisor.getBasicTimeStep())
-boxData, grid = genArena()
-
 
 for i in range(nRobot):
     rov_node_array[i] = supervisor.getFromDef(defArray[i])
@@ -202,7 +164,7 @@ for i in range(nRobot):
     trans_value_array[i] = trans_field_array[i].getSFVec3f()
     data_array[i] = rov_node_array[i].getField("customData")
     init_c = str(get_color(trans_value_array[i][2], trans_value_array[i][0]))
-    init_data = init_c + '000.000000'
+    init_data = '00000.000000'
     #print(init_data)
     data_array[i].setSFString(init_data) #Init custom data to required format
 
@@ -214,6 +176,7 @@ start_time = time.time()
 sim_time = supervisor.getTime()
 
 while supervisor.step(timestep) != -1:
+    #print("----------------------------------------------------------")
     rowProbData = []
     rowPosData = []
 
@@ -224,13 +187,13 @@ while supervisor.step(timestep) != -1:
         color_array[i] = str(get_color(trans_value_array[i][2], trans_value_array[i][0]))
         currentData = data_array[i].getSFString()
         remaining = currentData[1:]
-        probability = currentData[3:11]
+        probability = currentData[4:11]
         rowProbData.append(float(probability))
         newString = color_array[i] + remaining
         # print("Current Data: ", currentData)
         # print("Removed Color: ", remaining)
         # print("Probability: ", probability)
-        print("New String: ", newString)
+        #print("New String: ", newString)
         #data_array[i].setSFString(newString)
 
     csvProbData.append(rowProbData)
@@ -251,14 +214,15 @@ while supervisor.step(timestep) != -1:
 
 
     # # MODIFIED FOR AWS LAUNCH
-    # # if (supervisor.getTime() > endTime):
-    # #   cleanup()
-    # if (time.time()-start_time > MAX_TIME):
-    #    #supervisor.simulationQuit(0)
-    #     if run < n_run-1:
-    #        reset()
-    #     else:
-    #        cleanup()
+    # if (supervisor.getTime() > endTime):
+    #   cleanup()
+      
+    if (time.time()-start_time > MAX_TIME):
+       #supervisor.simulationQuit(0)
+        if run < n_run-1:
+           reset()
+        else:
+           cleanup()
 
 # MODIFIED FOR AWS LAUNCH
 # Enter here exit cleanup code.

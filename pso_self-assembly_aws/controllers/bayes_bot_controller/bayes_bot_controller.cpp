@@ -6,6 +6,7 @@
 #include <math.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <time.h>
 #include <BetaCDF.hpp>
