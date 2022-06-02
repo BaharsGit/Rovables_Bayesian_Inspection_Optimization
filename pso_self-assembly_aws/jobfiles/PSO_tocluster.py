@@ -53,7 +53,6 @@ def fitness_evaluation(i, j):
     else:
         fitness = float(fitness) 
     return sum(fitness)
-    # Create function per fitness dimension 
 
 
 # --- MAIN ---------------------------------------------------------------------+

@@ -526,18 +526,19 @@ static void readArena() {
 //Read in the parameters from prob.txt
 static void readParameters() {
   char *pPath = getenv("WB_WORKING_DIR");
-  //printf("The current path is: %s\n", pPath);
+  printf("The current path is: %s\n", pPath);
   char prob_name[256];
   sprintf(prob_name, "%s/prob.txt", pPath);
-  std::ifstream file(prob_name);
+  std::ifstream file("prob.txt");
+  
   double z;
-  std::cout << "Reading in Parameters" << std::endl;
+  std::cout << "Reading in Parameters: " << std::endl;
   for (int i = 0; i < nParam; i++) {
     std::string line;
     std::getline(file, line);
     const char *cstr = line.c_str();
     z = std::atof(cstr);
-    
+    std::cout << z << std::endl;
     if (i == 0) {
       if (z > 0.5) u_plus = true;
       else u_plus = false;
@@ -548,6 +549,12 @@ static void readParameters() {
     if (i == 3) rand_const_forward = z;
     if (i == 4) rand_const_turn = z;
   }
+  
+  std::cout << "Positive Feedback: " << u_plus << std::endl;
+  std::cout << "Credibility Thresdhold: " << p_c << std::endl;
+  std::cout << "Close Distance: " << close_distance <<std::endl;
+  std::cout << "Random forward: " << rand_const_forward << std::endl;
+  std::cout << "Random Turn: " << rand_const_turn << std::endl;
   
   file.close();
 }
