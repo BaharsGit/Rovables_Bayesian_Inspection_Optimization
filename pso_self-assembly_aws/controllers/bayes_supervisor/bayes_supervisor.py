@@ -18,11 +18,11 @@ import sys
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
 MAX_TIME = 120
 run = 0
-n_run = 2
+n_run = 10
 nRobot = 4
 boxSize = 4
 imageDim = 128
-fillRatio = 0.35
+fillRatio = 0.55
 p_high = 0.9
 p_low = 0.1
 minD = 0.15
@@ -41,6 +41,24 @@ coverage_arr = []
 fitnessData = np.zeros(3) # Decision Time | Coverage | Accuracy
 start_time = time.time()
 sim_time = 0
+control_count = 0
+
+value = os.getenv("WB_WORKING_DIR")
+if (value is not None):
+    os.chdir(value)
+    with open(value + "prob.txt") as f:
+        parameters = f.read().splitlines()
+else:
+    with open("prob.txt") as f:
+        parameters = f.read().splitlines()
+
+#print(parameters)
+tao = float(parameters[2])
+
+sqArea = boxSize * boxSize
+possibleX = list(range(0, imageDim, boxSize))
+possibleY = list(range(0, imageDim, boxSize))
+grid = np.zeros((len(possibleY), len(possibleX)))
 
 fitnessFile = "local_fitness.txt"
 inputFile = "prob.txt"
@@ -87,11 +105,13 @@ def reset():
     global sim_time
     global boxData
     global grid
+    global control_count
 
     if (fillRatio > 0.50):
         run_dec = int(all(i < 0.5 for i in rowProbData))
     else:
-        run_dec = int(all(i >= 0.5 for i in rowProbData))
+        run_dec = int(all(i > 0.5 for i in rowProbData))
+    #print("Run Correct: ", run_dec)
     _, counts = np.unique(grid, return_counts=True)
     coverage_arr.append(counts[1] / (imageDim * imageDim))
     dec_time.append(supervisor.getTime())
@@ -105,15 +125,23 @@ def reset():
     csvProbData = []
     csvPosData = []
     boxData = []
+    control_count = 0
+    grid = np.zeros((len(possibleY), len(possibleX)))
 
     start_time = time.time()
     sim_time = supervisor.getTime()
     run = run + 1
-    print("Running Iteration Number: ")
+    print("Running Noise Resistance Iteration Number: ")
     print(run)
     randomizePosition()
     #boxData, grid = genArena()
     supervisor.simulationSetMode(supervisor.SIMULATION_MODE_FAST)
+
+def get_pos(xPos, yPos):
+    ix = int(int(xPos*imageDim)/boxSize)
+    iy = int(int(yPos*imageDim)/boxSize)
+    #print(ix, iy)
+    grid[ix][iy] = 1
 
 def randomizePosition():
     posX = []
@@ -128,28 +156,10 @@ def randomizePosition():
                 break
         initialPos.append([posX[i], 0.023, posY[i]])
     for i in range(nRobot):
-        INITIAL = [random.uniform(0.05,0.95), 0.023, random.uniform(0.05,0.95)]
+        INITIAL = [random.uniform(0.05,0.95), 0.32, random.uniform(0.05,0.95)]
         trans_field_array[i].setSFVec3f(INITIAL)
         trans_field_array[i].setSFVec3f(initialPos[i])
 
-
-def get_color(xPos, yPos):
-    for coord in boxData:
-        # Data is stored in (x, y)
-        if ((xPos >= int(coord[0])/imageDim) and (xPos <= ((int(coord[0]) + boxSize)/imageDim)) and (yPos >= int(coord[1])/imageDim) and (yPos <= ((int(coord[1]) + boxSize)/imageDim))):
-            ix = int(int(coord[0])/boxSize)
-            iy = int(int(coord[1])/boxSize)
-            grid[ix][iy] = 1
-            return 1 #Returns 1 if the current robot is on a white square
-    #print(xPos, yPos)
-    return 0
-
-def setParam():
-    #Read in parameters used for algorithm
-    with open(inputFile) as f:
-        parameters = f.readlines()
-
-    print(parameters)
 # --------------------------------------------------------------------
 
 # create the Robot instance.
@@ -163,7 +173,6 @@ for i in range(nRobot):
     trans_field_array[i] = rov_node_array[i].getField("translation")
     trans_value_array[i] = trans_field_array[i].getSFVec3f()
     data_array[i] = rov_node_array[i].getField("customData")
-    init_c = str(get_color(trans_value_array[i][2], trans_value_array[i][0]))
     init_data = '00000.000000'
     #print(init_data)
     data_array[i].setSFString(init_data) #Init custom data to required format
@@ -184,12 +193,13 @@ while supervisor.step(timestep) != -1:
         trans_value_array[i] = trans_field_array[i].getSFVec3f()
         rowPosData.append(trans_value_array[i][2])
         rowPosData.append(trans_value_array[i][0])
-        color_array[i] = str(get_color(trans_value_array[i][2], trans_value_array[i][0]))
+        if (control_count % tao == 0):
+            get_pos(trans_value_array[i][2], trans_value_array[i][0])
         currentData = data_array[i].getSFString()
         remaining = currentData[1:]
         probability = currentData[4:11]
         rowProbData.append(float(probability))
-        newString = color_array[i] + remaining
+        #newString = color_array[i] + remaining
         # print("Current Data: ", currentData)
         # print("Removed Color: ", remaining)
         # print("Probability: ", probability)
@@ -198,19 +208,20 @@ while supervisor.step(timestep) != -1:
 
     csvProbData.append(rowProbData)
     csvPosData.append(rowPosData)
+    control_count = control_count + 1
 
     #print(rowProbData)
 
-    # if(supervisor.getTime() - sim_time > 30):
-    #     if (checkDecision(rowProbData)) and settlingTime <= endTic:
-    #         settlingTime = settlingTime + 1
-    #     elif (checkDecision(rowProbData)) and settlingTime > endTic:
-    #         if run < n_run-1:
-    #             reset()
-    #         else:
-    #             cleanup()
-    #     else:
-    #         settlingTime = 0
+    if(supervisor.getTime() - sim_time > 100):
+        if (checkDecision(rowProbData)) and settlingTime <= endTic:
+            settlingTime = settlingTime + 1
+        elif (checkDecision(rowProbData)) and settlingTime > endTic:
+            if run < n_run-1:
+                reset()
+            else:
+                cleanup()
+        else:
+            settlingTime = 0
 
 
     # # MODIFIED FOR AWS LAUNCH

@@ -83,7 +83,6 @@ static int control_count = 0;
 //Arena Parameters
 int boxSize = 4;
 int imageDim = 128;
-double fillRatio = 0.55;
 int rowCount = 564; // THIS MUST BE CHANGED EVERYTIME A NEW ARENA IS CREATED
 int grid[564][2]; 
 
@@ -160,7 +159,7 @@ int main(int argc, char **argv) {
   C = getColor();
 
   //Main while loop
-  while (robot->step(timeStep) != -1) {
+  while (robot->step(timeStep) != -1) { 
   
     //std::cout << "--------------" << FSM_STATE <<" : " << control_count << "----------------" << std::endl;
     // Start robots one after the other
@@ -178,6 +177,7 @@ int main(int argc, char **argv) {
       //RANDOM WALK STATE
       case FSM_RW:
       { 
+        //std::cout << "RW" << std::endl;
         if (control_count % tao == 0) {
           pause_count = pause_time;
           FSM_STATE = FSM_PAUSE;
@@ -280,17 +280,24 @@ int main(int argc, char **argv) {
       case FSM_SEND:
       {
         // Update custom data one by one but wait until all robots finish to move to next state.
+        //std::cout << msg_count << std::endl;
         if (msg_count == robotNum) {
+          //std::cout << "FSM_SEND " << robotNum << std::endl;
           putMessage();
           FSM_STATE = FSM_SEND;
+          msg_count = msg_count + 1;
         } else {
           // Move on to next robot to push msg.
+          //std::cout << "FSM_SEND ELSE" << std::endl;
           msg_count = msg_count + 1;
           FSM_STATE = FSM_SEND;
         }
         
         //
-        if (msg_count > robotNum - 1) {
+        if (msg_count > (nRobot-1)) {
+          //std::cout << "FSM_PULL" << std::endl;
+          //std::cout << "TO PULL" << std::endl;
+          msg_count = 0;
           FSM_STATE = FSM_PULL;
         }
         break;
@@ -302,7 +309,7 @@ int main(int argc, char **argv) {
         FSM_STATE = FSM_RW;
         std::string currentData = myDataField->getSFString();
         myDataField->setSFString(currentData.substr(0,4) + std::to_string(p));
-        std::cout << "Controller Read: " << currentData << std::endl;
+        //std::cout << "Controller Read: " << currentData << std::endl;
         break;
       }
       
@@ -319,9 +326,10 @@ int main(int argc, char **argv) {
     }
     
     control_count = control_count + 1;
+    //std::cout << "Alpha: " << alpha << " Beta: " << beta << std::endl;
   }
   // Enter here exit cleanup code.
-
+  
   delete robot;
   return 0;
 }
@@ -456,9 +464,12 @@ static void getMessage() {
   Field *myDataField = me->getField("customData");
   std::string myData = myDataField->getSFString();
   for (int i = 0; i < nRobot; i++) {
-    cPrime = myData[i] - '0';
-    alpha = alpha + cPrime;
-    beta = beta + (1 - cPrime);
+    if (i != robotNum) {
+      cPrime = myData[i] - '0';
+      //std::cout << cPrime << std::endl;
+      alpha = alpha + cPrime;
+      beta = beta + (1 - cPrime);
+    }
   }
   //std::string newMessage = myData.substr(0,3);
   //std::cout << "Get Message: " << newMessage <<std::endl;
@@ -480,6 +491,7 @@ static void putMessage() { // color, id, df/C'
        //std::cout << "FOUND with distance: " << dist << std::endl;
        Field *otherDataField = rovNode[i]->getField("customData");
        std::string otherData = otherDataField->getSFString();
+       //std::cout << "Other Data: " << otherData << std::endl;
 
        std::string myData = myDataField->getSFString();
        
@@ -526,35 +538,39 @@ static void readArena() {
 //Read in the parameters from prob.txt
 static void readParameters() {
   char *pPath = getenv("WB_WORKING_DIR");
-  printf("The current path is: %s\n", pPath);
+  //printf("The current path is: %s\n", pPath);
   char prob_name[256];
   sprintf(prob_name, "%s/prob.txt", pPath);
-  std::ifstream file("prob.txt");
   
-  double z;
-  std::cout << "Reading in Parameters: " << std::endl;
-  for (int i = 0; i < nParam; i++) {
-    std::string line;
-    std::getline(file, line);
-    const char *cstr = line.c_str();
-    z = std::atof(cstr);
-    std::cout << z << std::endl;
-    if (i == 0) {
-      if (z > 0.5) u_plus = true;
-      else u_plus = false;
+  //Dont set the parameters if the pointer is NULL
+  if (pPath != NULL) {
+    std::ifstream file(prob_name);
+    
+    double z;
+    std::cout << "Reading in Parameters: " << std::endl;
+    for (int i = 0; i < nParam; i++) {
+      std::string line;
+      std::getline(file, line);
+      const char *cstr = line.c_str();
+      z = std::atof(cstr);
+      std::cout << z << std::endl;
+      if (i == 0) {
+        if (z > 0.5) u_plus = true;
+        else u_plus = false;
+      }
+      
+      if (i == 1) p_c = z;
+      if (i == 2) close_distance = z;
+      if (i == 3) rand_const_forward = z;
+      if (i == 4) rand_const_turn = z;
     }
     
-    if (i == 1) p_c = z;
-    if (i == 2) close_distance = z;
-    if (i == 3) rand_const_forward = z;
-    if (i == 4) rand_const_turn = z;
+    std::cout << "Positive Feedback: " << u_plus << std::endl;
+    std::cout << "Credibility Thresdhold: " << p_c << std::endl;
+    std::cout << "Close Distance: " << close_distance <<std::endl;
+    std::cout << "Random forward: " << rand_const_forward << std::endl;
+    std::cout << "Random Turn: " << rand_const_turn << std::endl;
+    
+    file.close();
   }
-  
-  std::cout << "Positive Feedback: " << u_plus << std::endl;
-  std::cout << "Credibility Thresdhold: " << p_c << std::endl;
-  std::cout << "Close Distance: " << close_distance <<std::endl;
-  std::cout << "Random forward: " << rand_const_forward << std::endl;
-  std::cout << "Random Turn: " << rand_const_turn << std::endl;
-  
-  file.close();
 }

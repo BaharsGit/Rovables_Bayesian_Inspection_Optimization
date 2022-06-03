@@ -6,9 +6,12 @@
 ##$ -m eas
 #$ -t 1-1
 ##$ -p -512
- 
-GEN_ID=$1 
-INDIVID_ID=$2
+
+echo $(pwd)
+# GEN_ID=$1 
+# INDIVID_ID=$2
+GEN_ID=0
+INDIVID_ID=1
 WORST_FITNESS=43200
 
 WB_TIMEOUT=7200           # Kill webots after WB_TIMEOUT seconds
@@ -29,7 +32,7 @@ echo ${OUTPUT_DIR}
 
 # set the job base directory 
 JOB_BASE_DIR=$(pwd)/tmp/job${GEN_ID}_${INDIVID_ID}
- 
+echo ${JOB_BASE_DIR}
 
 # create the working directory
 
@@ -73,6 +76,7 @@ do
    # copy the input parameters
 
    cp ${INPUT_DIR}/prob_${INDIVID_ID}.txt $WB_WORKING_DIR/prob.txt
+   #echo $WB_WORKING_DIR/prob.txt
    
    
 
