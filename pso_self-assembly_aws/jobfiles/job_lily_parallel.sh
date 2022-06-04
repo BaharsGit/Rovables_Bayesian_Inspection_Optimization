@@ -8,10 +8,10 @@
 ##$ -p -512
 
 echo $(pwd)
-# GEN_ID=$1 
-# INDIVID_ID=$2
-GEN_ID=0
-INDIVID_ID=1
+GEN_ID=$1 
+INDIVID_ID=$2
+# GEN_ID=0
+# INDIVID_ID=1
 WORST_FITNESS=43200
 
 WB_TIMEOUT=7200           # Kill webots after WB_TIMEOUT seconds
