@@ -1,6 +1,6 @@
 """vibration_controller controller."""
 
-from tracemalloc import start
+from tracemalloc import startF
 from controller import Supervisor
 import os
 import csv
@@ -91,11 +91,19 @@ def cleanup():
     fitnessData[1] = sum(coverage_arr) / n_run
     fitnessData[2] = sum(accuracy) / n_run
 
+    if (value is not None):
+        os.chdir(value)
+        with open(value + "local_fitness.txt", 'w') as f:
+            for line in fitnessData:
+                f.write(str(line))
+                f.write('\n')
+    else:
+        with open("local_fitness.txt", 'w') as f:
+            for line in fitnessData:
+                f.write(str(line))
+                f.write('\n')
+
     #Write the fitness file into the local dir only when number of runs are done
-    with open(fitnessFile, 'w') as f:
-        for line in fitnessData:
-            f.write(str(line))
-            f.write('\n')
     print("Cleaning up Simulation")
     supervisor.simulationQuit(0)
 
