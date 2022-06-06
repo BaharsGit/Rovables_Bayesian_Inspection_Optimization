@@ -1,6 +1,6 @@
 """vibration_controller controller."""
 
-from tracemalloc import startF
+#from tracemalloc import startF
 from controller import Supervisor
 import os
 import csv
@@ -16,9 +16,9 @@ import sys
 # ADD IN NOISE PER PARTICLE, FIND FUNCTION TO REVERT WORLD THROUGH SUPERVISOR
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 120
+MAX_TIME = 10
 run = 0
-n_run = 10
+n_run = 2
 nRobot = 4
 boxSize = 4
 imageDim = 128
@@ -54,7 +54,7 @@ else:
 
 #print(parameters)
 tao = float(parameters[2])
-
+random.seed(time.time())
 sqArea = boxSize * boxSize
 possibleX = list(range(0, imageDim, boxSize))
 possibleY = list(range(0, imageDim, boxSize))
@@ -105,6 +105,10 @@ def cleanup():
 
     #Write the fitness file into the local dir only when number of runs are done
     print("Cleaning up Simulation")
+    if (value is not None):
+        print("Wrote file: " +  value + "local_fitness")
+    else:
+        print("wrote file: local_fitness")
     supervisor.simulationQuit(0)
 
 def reset():
@@ -139,10 +143,9 @@ def reset():
     start_time = time.time()
     sim_time = supervisor.getTime()
     run = run + 1
-    print("Running Noise Resistance Iteration Number: ")
-    print(run)
+    print("Running Noise Resistance Iteration Number: ", run)
     randomizePosition()
-    #boxData, grid = genArena()
+    supervisor.simulationReset()
     supervisor.simulationSetMode(supervisor.SIMULATION_MODE_FAST)
 
 def get_pos(xPos, yPos):

@@ -160,11 +160,11 @@ int main(int argc, char **argv) {
 
   //Main while loop
   while (robot->step(timeStep) != -1) { 
-  
-    std::cout << "---- FSM: " << FSM_STATE <<"Belief: " << p << "----" << std::endl;
     // Start robots one after the other
       //std::cout << name << " start controller" << std::endl;
- 
+    std::cout << "--------------" << std::endl;
+    std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << std::endl;
+    //std::cout << alpha << " " << beta << std::endl;
     double distance_sensors_values[4];
     for (int i = 0; i < 4; i++){
       distance_sensors_values[i] = distance_sensors[i]->getValue();
@@ -316,7 +316,7 @@ int main(int argc, char **argv) {
     }
     p = incbeta(alpha, beta, 0.5);
     //std::cout << name << " Current CDF: " << p << " with ALPHA: " << alpha << " and BETA: "<< beta <<std::endl;
-
+    
     if ((d_f == -1) & u_plus) {
       if (p > p_c) {
         d_f = 0;
