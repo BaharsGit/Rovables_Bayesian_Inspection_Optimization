@@ -161,7 +161,7 @@ int main(int argc, char **argv) {
   //Main while loop
   while (robot->step(timeStep) != -1) { 
   
-    //std::cout << "--------------" << FSM_STATE <<" : " << control_count << "----------------" << std::endl;
+    std::cout << "---- FSM: " << FSM_STATE <<"Belief: " << p << "----" << std::endl;
     // Start robots one after the other
       //std::cout << name << " start controller" << std::endl;
  
