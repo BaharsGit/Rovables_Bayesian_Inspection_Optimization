@@ -12,11 +12,8 @@ from decimal import Decimal
 import time
 import sys
 
-#SUPERVISOR ARGUMENTS READ THROUGH TXT FILE
-# ADD IN NOISE PER PARTICLE, FIND FUNCTION TO REVERT WORLD THROUGH SUPERVISOR
-
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 10
+MAX_TIME = 140
 run = 0
 n_run = 2
 nRobot = 4
@@ -33,7 +30,7 @@ initialPos = []
 csvProbData = []
 csvPosData = []
 parameters = []
-seedIn = 1
+seedIn = str(sys.argv[1])
 boxData = []
 accuracy = []
 dec_time = []
@@ -83,8 +80,29 @@ def cleanup():
     supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
     supervisor.simulationReset()
 
-#     #filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
-#    # filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
+    filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
+    filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
+
+    # writing to csv file
+    with open(filenameProb, 'w') as csvfile:
+        # creating a csv writer object
+        csvwriter = csv.writer(csvfile)
+
+        #Write the header
+        #csvwriter.writerow(defArray)
+
+        # writing the data rows
+        csvwriter.writerows(csvProbData)
+
+    with open(filenamePos, 'w') as csvfile:
+        # creating a csv writer object
+        csvwriter = csv.writer(csvfile)
+
+        #Write the header
+        #csvwriter.writerow(defArray)
+
+        # writing the data rows
+        csvwriter.writerows(csvPosData)
 
     _, counts = np.unique(grid, return_counts=True)
     fitnessData[0] = sum(dec_time) / n_run
@@ -102,6 +120,7 @@ def cleanup():
             for line in fitnessData:
                 f.write(str(line))
                 f.write('\n')
+    
 
     #Write the fitness file into the local dir only when number of runs are done
     print("Cleaning up Simulation")
@@ -227,10 +246,10 @@ while supervisor.step(timestep) != -1:
         if (checkDecision(rowProbData)) and settlingTime <= endTic:
             settlingTime = settlingTime + 1
         elif (checkDecision(rowProbData)) and settlingTime > endTic:
-            if run < n_run-1:
-                reset()
-            else:
-                cleanup()
+            # if run < n_run-1:
+            #     reset()
+            # else:
+            cleanup()
         else:
             settlingTime = 0
 
@@ -241,10 +260,10 @@ while supervisor.step(timestep) != -1:
       
     if (time.time()-start_time > MAX_TIME):
        #supervisor.simulationQuit(0)
-        if run < n_run-1:
-           reset()
-        else:
-           cleanup()
+        # if run < n_run-1:
+        #    reset()
+        # else:
+        cleanup()
 
 # MODIFIED FOR AWS LAUNCH
 # Enter here exit cleanup code.
