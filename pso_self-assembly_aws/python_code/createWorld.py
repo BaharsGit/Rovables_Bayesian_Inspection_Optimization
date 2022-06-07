@@ -77,7 +77,7 @@ class WorldGenerator():
 
       #img.show()
       img.save('../worlds/textures/textrect.png', quality=100)
-      np.savetxt('../controllers/bayes_supervisor/boxrect.csv', startArray.astype(int), delimiter=',', fmt='%d')
+      np.savetxt('../controllers/bayes_fsm/boxrect.csv', startArray.astype(int), delimiter=',', fmt='%d')
 
 
     def createPos(self):
