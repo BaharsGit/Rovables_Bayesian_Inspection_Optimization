@@ -76,7 +76,7 @@ class WorldGenerator():
       img = img.transpose(method=Image.FLIP_TOP_BOTTOM) #Flip to account for axis change in Webots
 
       #img.show()
-      img.save('../worlds/textures/textrect.png', quality=100)
+      #img.save('../worlds/textures/boxrect.png', quality=100)
       np.savetxt('../controllers/bayes_fsm/boxrect.csv', startArray.astype(int), delimiter=',', fmt='%d')
 
 

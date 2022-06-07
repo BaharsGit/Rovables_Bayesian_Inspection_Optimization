@@ -215,7 +215,7 @@ start_time = time.time()
 sim_time = supervisor.getTime()
 
 while supervisor.step(timestep) != -1:
-    #print("----------------------------------------------------------")
+    print("----------------------------------------------------------")
     rowProbData = []
     rowPosData = []
 

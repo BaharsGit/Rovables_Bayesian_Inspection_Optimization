@@ -38,7 +38,7 @@ echo Starting script. . . ${BASH_VERSION}
 line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
 seed=$(sed -n ${line}p /usr/local/efs/demo/seed_array.txt)
 
-python3 -u imCreateRect.py -fr $fill -ss $square_size  -sd $mapSeed -rs $seed 
+#python3 -u imCreateRect.py -fr $fill -ss $square_size  -sd $mapSeed -rs $seed 
 
 #No longer using as seed data is "pipelined" into map generation script
 #echo $seed > /usr/local/efs/demo/controllers/bayes_bot_controller/seed.txt
