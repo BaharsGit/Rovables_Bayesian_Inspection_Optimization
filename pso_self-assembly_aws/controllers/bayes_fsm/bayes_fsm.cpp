@@ -162,8 +162,8 @@ int main(int argc, char **argv) {
   while (robot->step(timeStep) != -1) { 
     // Start robots one after the other
       //std::cout << name << " start controller" << std::endl;
-    std::cout << "--------------" << std::endl;
-    std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << std::endl;
+    //std::cout << "--------------" << std::endl;
+    std::cout <<  "Robot " << robotNum << "-> FSM State: " << FSM_STATE << " Belief: " << p << " with Alpha: " << alpha << " Beta: " << beta <<std::endl;
     //std::cout << alpha << " " << beta << std::endl;
     double distance_sensors_values[4];
     for (int i = 0; i < 4; i++){
