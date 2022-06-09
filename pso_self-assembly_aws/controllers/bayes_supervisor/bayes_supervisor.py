@@ -30,7 +30,7 @@ initialPos = []
 csvProbData = []
 csvPosData = []
 parameters = []
-seedIn = str(sys.argv[1])
+#seedIn = str(sys.argv[1])
 boxData = []
 accuracy = []
 dec_time = []
@@ -215,7 +215,7 @@ start_time = time.time()
 sim_time = supervisor.getTime()
 
 while supervisor.step(timestep) != -1:
-    print("----------------------------------------------------------")
+    print("---------------------------------------------------------- ")
     rowProbData = []
     rowPosData = []
 
@@ -235,7 +235,8 @@ while supervisor.step(timestep) != -1:
         # print("Probability: ", probability)
         #print("New String: ", newString)
         #data_array[i].setSFString(newString)
-
+    print("Logged: ")
+    print(rowProbData)
     csvProbData.append(rowProbData)
     csvPosData.append(rowPosData)
     control_count = control_count + 1
