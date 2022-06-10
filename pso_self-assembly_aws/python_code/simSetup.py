@@ -32,6 +32,7 @@ WG.createWorld()
 
 # #Run the Webots simulation
 dir = "../worlds/bayesian_rovables_sim" + "_" + str(args.seed) + ".wbt"
+print("Running World: ", dir)
 subprocess.call(["webots --mode=fast --minimize --no-rendering --stdout --batch", dir], shell=True)
 # #time.sleep(30)
 

@@ -179,7 +179,7 @@ Wall {
   translation """ + str(self.initialX[i]) + """ 0.023 """ + str(self.initialY[i]) + """
   rotation 1 0 0 -1.5707953071795862
   name "r""" + rov_number + """"
-  controller "bayes_bot_controller"
+  controller "bayes_fsm"
   controllerArgs """ + arg + """
   supervisor TRUE
   customData "0001.000000"

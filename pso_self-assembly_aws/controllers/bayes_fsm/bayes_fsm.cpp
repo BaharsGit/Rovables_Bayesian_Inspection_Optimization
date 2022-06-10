@@ -571,5 +571,7 @@ static void readParameters() {
     std::cout << "Random Turn: " << rand_const_turn << std::endl;
     
     file.close();
+  } else {
+    std::cout << "Using Baseline parameters" << std::endl;
   }
 }
