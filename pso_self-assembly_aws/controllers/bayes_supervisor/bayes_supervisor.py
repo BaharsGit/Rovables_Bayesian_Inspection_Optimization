@@ -77,9 +77,9 @@ def checkDecision(data):
 
 # Writes to the fitness file for the current iteration of particle
 def cleanup():
-    supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
-    supervisor.simulationReset()
-
+    #supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
+    #supervisor.simulationReset()
+    print("Writing Data...")
     filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
     filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
 
@@ -104,30 +104,31 @@ def cleanup():
         # writing the data rows
         csvwriter.writerows(csvPosData)
 
-    _, counts = np.unique(grid, return_counts=True)
-    fitnessData[0] = sum(dec_time) / n_run
-    fitnessData[1] = sum(coverage_arr) / n_run
-    fitnessData[2] = sum(accuracy) / n_run
+    #FITNESS FILE NOT NEEDED FOR BASELINE
+    # _, counts = np.unique(grid, return_counts=True)
+    # fitnessData[0] = sum(dec_time) / n_run
+    # fitnessData[1] = sum(coverage_arr) / n_run
+    # fitnessData[2] = sum(accuracy) / n_run
 
-    if (value is not None):
-        os.chdir(value)
-        with open(value + "local_fitness.txt", 'w') as f:
-            for line in fitnessData:
-                f.write(str(line))
-                f.write('\n')
-    else:
-        with open("local_fitness.txt", 'w') as f:
-            for line in fitnessData:
-                f.write(str(line))
-                f.write('\n')
+    # if (value is not None):
+    #     os.chdir(value)
+    #     with open(value + "local_fitness.txt", 'w') as f:
+    #         for line in fitnessData:
+    #             f.write(str(line))
+    #             f.write('\n')
+    # else:
+    #     with open("local_fitness.txt", 'w') as f:
+    #         for line in fitnessData:
+    #             f.write(str(line))
+    #             f.write('\n')
     
 
     #Write the fitness file into the local dir only when number of runs are done
     print("Cleaning up Simulation")
-    if (value is not None):
-        print("Wrote file: " +  value + "local_fitness")
-    else:
-        print("wrote file: local_fitness")
+    # if (value is not None):
+    #     print("Wrote file: " +  value + "local_fitness")
+    # else:
+    #     print("wrote file: local_fitness")
     supervisor.simulationQuit(0)
 
 def reset():
@@ -213,7 +214,7 @@ for i in range(nRobot):
 # Get the current time
 start_time = time.time()
 sim_time = supervisor.getTime()
-
+print("Supervisor Seed: ", seedIn)
 while supervisor.step(timestep) != -1:
     print("---------------------------------------------------------- ")
     rowProbData = []

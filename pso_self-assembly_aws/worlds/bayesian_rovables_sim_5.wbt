@@ -62,42 +62,42 @@ Wall {
 Robot {
   name "Bayes Bot Supervisor"
   controller "bayes_supervisor"
-  controllerArgs "1"
+  controllerArgs "5"
   supervisor TRUE
 }
 DEF rov_0 Rovable {
-  translation 0.1709278197011611 0.023 0.8126903632435094
+  translation 0.6106115254007317 0.023 0.7176082903346565
   rotation 1 0 0 -1.5707953071795862
   name "r0"
   controller "bayes_fsm"
-  controllerArgs "1"
+  controllerArgs "5"
   supervisor TRUE
   customData "0001.000000"
 }
 DEF rov_1 Rovable {
-  translation 0.7373971570789526 0.023 0.2795621231654795
+  translation 0.765674209009127 0.023 0.8982052553993453
   rotation 1 0 0 -1.5707953071795862
   name "r1"
   controller "bayes_fsm"
-  controllerArgs "1"
+  controllerArgs "5"
   supervisor TRUE
   customData "0001.000000"
 }
 DEF rov_2 Rovable {
-  translation 0.4958915783827468 0.023 0.45454195830986427
+  translation 0.7159087172659376 0.023 0.8800924969988753
   rotation 1 0 0 -1.5707953071795862
   name "r2"
   controller "bayes_fsm"
-  controllerArgs "1"
+  controllerArgs "5"
   supervisor TRUE
   customData "0001.000000"
 }
 DEF rov_3 Rovable {
-  translation 0.6364336754504867 0.023 0.7598510160219618
+  translation 0.07610470545525326 0.023 0.4690603889402948
   rotation 1 0 0 -1.5707953071795862
   name "r3"
   controller "bayes_fsm"
-  controllerArgs "1"
+  controllerArgs "5"
   supervisor TRUE
   customData "0001.000000"
 }

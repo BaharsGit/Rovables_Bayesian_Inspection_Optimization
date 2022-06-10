@@ -56,7 +56,7 @@ static int nParam = 5;
 static double alpha = 0;
 static double beta = 0;
 static int d_f = -1; 
-static int tao = 200;
+static int tao = 70;
 static double p_c = 0.5; //Credibility Threshold 
 static bool u_plus = false; //Positive feedback 
 static double comDist = 1;
@@ -121,11 +121,6 @@ int main(int argc, char **argv) {
   electromagnet->setPosition(INFINITY);
   electromagnet->setVelocity(1);
   
-  //Output data file for analysis
-  std::ofstream probData;
-  std::string fileName = name + "_data.csv";
-  probData.open(fileName);
-  
   //Device Tags
   for (int i = 0; i < 2; i++) {
     
@@ -162,6 +157,7 @@ int main(int argc, char **argv) {
   while (robot->step(timeStep) != -1) { 
     // Start robots one after the other
       //std::cout << name << " start controller" << std::endl;
+    p = incbeta(alpha, beta, 0.5);
     std::cout <<  "Robot " << robotNum << "-> FSM State: " << FSM_STATE << " Belief: " << p << " with Alpha: " << alpha << " Beta: " << beta <<std::endl;
     //std::cout << alpha << " " << beta << std::endl;
     double distance_sensors_values[4];
@@ -212,6 +208,8 @@ int main(int argc, char **argv) {
               direction = LEFT;
             } 
           }
+        std::string currentData = myDataField->getSFString();
+        myDataField->setSFString(currentData.substr(0,4) + std::to_string(p));
         break;
       }
 
@@ -250,6 +248,8 @@ int main(int argc, char **argv) {
           motors[LEFT]->setVelocity(-speed);
           motors[RIGHT]->setVelocity(-speed);
         }
+        std::string currentData = myDataField->getSFString();
+        myDataField->setSFString(currentData.substr(0,4) + std::to_string(p));
         break;
       }
 
@@ -264,6 +264,8 @@ int main(int argc, char **argv) {
         } else {
           pause_count = pause_count - 1;
         }
+        std::string currentData = myDataField->getSFString();
+        myDataField->setSFString(currentData.substr(0,4) + std::to_string(p));
         break;
       }
       

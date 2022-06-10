@@ -14,5 +14,5 @@ from createWorld import WorldGenerator
 # os.rmdir(tempDir)
 
 
-WG = WorldGenerator(world_seed=16, robot_seed=1, robot_number=4)
+WG = WorldGenerator(world_seed=16, robot_seed=0, robot_number=4)
 WG.createWorld()

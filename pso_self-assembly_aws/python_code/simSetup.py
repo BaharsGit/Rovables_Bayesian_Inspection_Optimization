@@ -31,9 +31,10 @@ WG = WorldGenerator(world_seed=16, robot_seed=args.seed, robot_number=4)
 WG.createWorld()
 
 # #Run the Webots simulation
-dir = "../worlds/bayesian_rovables_sim" + "_" + str(args.seed) + ".wbt"
+dir =  "../worlds/bayesian_rovables_sim" + "_" + str(args.seed) + ".wbt"
+print(os.getcwd())
 print("Running World: ", dir)
-subprocess.call(["webots --mode=fast --minimize --no-rendering --stdout --batch", dir], shell=True)
+#subprocess.call(["webots --mode=fast --minimize --no-rendering --stdout --batch", dir], shell=True)
 # #time.sleep(30)
 
 # # MODIFIED FOR AWS LAUNCH, LINES 32-42

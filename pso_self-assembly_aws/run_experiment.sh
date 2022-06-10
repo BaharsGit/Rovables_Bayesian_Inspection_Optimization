@@ -18,7 +18,7 @@ mapSeed="16"
 py_path="/usr/local/efs/demo/python_code"
 
 # Move to path
-cd $py_path
+cd $py_path 
 
 # Fix Parameters and world -> variations in algorithm runs
 echo Starting script. . . ${BASH_VERSION}
