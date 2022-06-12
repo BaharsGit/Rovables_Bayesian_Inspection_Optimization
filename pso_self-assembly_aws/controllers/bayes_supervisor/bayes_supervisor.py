@@ -46,7 +46,7 @@ control_count = 0
 value = os.getenv("WB_WORKING_DIR")
 if (value is not None):
     os.chdir(value)
-    with open(value + "prob.txt") as f:
+    with open(value + "/prob.txt") as f:
         parameters = f.read().splitlines()
 else:
     with open("prob.txt") as f:

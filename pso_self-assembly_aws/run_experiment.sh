@@ -10,10 +10,13 @@ echo "Main node index =" $MAIN_ID
 # Get the number of nodes/particles from started AWS job
 NB_NODES=$((AWS_BATCH_JOB_NUM_NODES))
 NB_PARTICLES=$(($NB_NODES-1))
+#ADDED FOR TESTING
+NB_PARTICLES=2
 
 echo "Number of particles =" $NB_PARTICLES
 
-cd /usr/local/efs/pso_self-assembly_aws/jobfiles
+#cd /usr/local/efs/pso_self-assembly_aws/jobfiles
+cd /home/darren/Documents/DARS/Rovables_Bayesian_Inspection_Optimization/pso_self-assembly_aws/jobfiles
 
 if [ $MY_ID -eq $MAIN_ID ]; then
   # Run PSO Python script on main node

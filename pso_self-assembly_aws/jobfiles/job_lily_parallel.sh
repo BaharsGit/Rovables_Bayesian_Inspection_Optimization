@@ -14,12 +14,12 @@ INDIVID_ID=$2
 # INDIVID_ID=1
 WORST_FITNESS=43200
 
-WB_TIMEOUT=7200           # Kill webots after WB_TIMEOUT seconds
+WB_TIMEOUT=30           # Kill webots after WB_TIMEOUT seconds
 #WB_TIMEOUT=15           # Kill webots after WB_TIMEOUT seconds
  
 N_RUNS=1 #number of runs to be done
 
-WEBWORLD="../../worlds/bayes_pso.wbt"
+WEBWORLD="../worlds/bayes_pso.wbt"
 
 # set the input directory (relative to the working directory)
 INPUT_DIR=Generation_${GEN_ID}
@@ -137,7 +137,7 @@ done
 
  
 
- # create the output directory
+#  # create the output directory
 if [ ! -d $OUTPUT_DIR ]
 then
 	echo "(`date`) Create output directory $OUTPUT_DIR"
