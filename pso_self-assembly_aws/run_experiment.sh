@@ -15,8 +15,8 @@ NB_PARTICLES=2
 
 echo "Number of particles =" $NB_PARTICLES
 
-#cd /usr/local/efs/pso_self-assembly_aws/jobfiles
-cd /home/darren/Documents/DARS/Rovables_Bayesian_Inspection_Optimization/pso_self-assembly_aws/jobfiles
+cd /usr/local/efs/pso_self-assembly_aws/jobfiles
+#cd /home/darren/Documents/DARS/Rovables_Bayesian_Inspection_Optimization/pso_self-assembly_aws/jobfiles
 
 if [ $MY_ID -eq $MAIN_ID ]; then
   # Run PSO Python script on main node

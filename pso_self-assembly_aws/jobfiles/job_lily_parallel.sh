@@ -14,7 +14,7 @@ INDIVID_ID=$2
 # INDIVID_ID=1
 WORST_FITNESS=43200
 
-WB_TIMEOUT=30           # Kill webots after WB_TIMEOUT seconds
+WB_TIMEOUT=700           # Kill webots after WB_TIMEOUT seconds
 #WB_TIMEOUT=15           # Kill webots after WB_TIMEOUT seconds
  
 N_RUNS=1 #number of runs to be done
@@ -84,7 +84,8 @@ do
 
    
    # launch webots
-   timeout $WB_TIMEOUT  xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt # logs are redirected to a txt file
+   timeout $WB_TIMEOUT  xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD # logs are redirected to a txt file
+   #timeout $WB_TIMEOUT  xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt # logs are redirected to a txt file
  
 
    # waiting just a while before copying the output
@@ -101,7 +102,8 @@ do
 
       echo "(`date`) Run $RUN_ID successfully completed"
 
-      rm $WB_WORKING_DIR/ack.txt
+      #NOT USED IN ROVABLES BAYES
+      #rm $WB_WORKING_DIR/ack.txt
 
    else
 
@@ -123,7 +125,8 @@ do
 
 	echo ${WORST_FITNESS} >> $WB_WORKING_DIR/local_fitness.txt
 
-	rm $WB_WORKING_DIR$/ack.txt
+   #NOT USED IN ROVABLES BAYES
+	#rm $WB_WORKING_DIR$/ack.txt
 
       fi
 

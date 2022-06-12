@@ -93,7 +93,7 @@ def cleanup():
 
     if (value is not None):
         os.chdir(value)
-        with open(value + "local_fitness.txt", 'w') as f:
+        with open(value + "/local_fitness.txt", 'w') as f:
             for line in fitnessData:
                 f.write(str(line))
                 f.write('\n')
