@@ -1,14 +1,3 @@
-
-#
-# File: PSO_tocluster.py python script       
-# Date: 17 March 2017     
-# Description: This python script was written for cluster job file job_lily_parallel.sub, 
-#              it runs on AWS (particle) nodes, it launches Webots to evaluate the corresponding particle
-# Author: Bahar Haghighat 
-# Modifications: by Bahar Haghighat, 20 May 2022, cleaned up non-AWS stuff left from local cluster launch
-#
-
-
 # --- IMPORT DEPENDENCIES ------------------------------------------------------+
 
 from __future__ import division
@@ -23,7 +12,7 @@ import argparse
 #import sys
 #import fileinput
 
-# --- COST FUNCTION, OBSOLETE ------------------------------------------------------------+
+# --- COST FUNCTION ------------------------------------------------------------+
 
 # launch webots to evaluate the fitness to optimize
 def launch_webots(i, j):
@@ -48,9 +37,10 @@ def launch_webots(i, j):
         proc.kill()
         outss,errss=proc.communicate()
 
-
 # ---- Read fitness files-------------------------------------------------------+
 def fitness_evaluation(i, j):
+    # | | |
+
     filename = run_dir + "Generation_%d/local_fitness_%d.txt" % (i, j)
     # os.makedirs(os.path.dirname(filename), exist_ok=True)
     # with open( filename, mode='w') as filemy:
@@ -61,8 +51,8 @@ def fitness_evaluation(i, j):
         fitness = -1
         print('File is empty \n')
     else:
-        fitness = float(fitness)
-    return fitness
+        fitness = float(fitness) 
+    return sum(fitness)
 
 
 # --- MAIN ---------------------------------------------------------------------+
@@ -99,6 +89,7 @@ class Particle:
 
     # update new particle velocity
     def update_velocity(self, pos_best_g):
+        # LUT for PSO Parameters depending on search space. 
         PSO_W = -0.1832 # PSO Parameters
         PSO_PW = 0.5287
         PSO_NW = 3.1913
@@ -112,25 +103,29 @@ class Particle:
             self.velocity_i[i] = PSO_W * self.velocity_i[i] + vp + vn
 
     # update the particle position based off new velocity updates
+    # Adjusted to have unique bounds for each dimension
     def update_position(self, bounds):
+        dim_index = 0
         for i in range(0, num_dimensions):
             self.position_i[i] = self.position_i[i] + self.velocity_i[i]
 
             # adjust maximum position if necessary
-            if self.position_i[i] > bounds[1]:
-                self.position_i[i] = bounds[1]
+            if self.position_i[i] > bounds[dim_index + 1]:
+                self.position_i[i] = bounds[dim_index + 1]
 
             # adjust minimum position if neseccary
-            if self.position_i[i] < bounds[0]:
-                self.position_i[i] = bounds[0]
+            if self.position_i[i] < bounds[dim_index]:
+                self.position_i[i] = bounds[dim_index]
 
             # adjust maximum velocity if necessary
-            if self.velocity_i[i] > 0.15*(bounds[1]-bounds[0]):
-                self.velocity_i[i] = 0.15*(bounds[1]-bounds[0])
+            if self.velocity_i[i] > 0.15*(bounds[dim_index + 1]-bounds[dim_index]):
+                self.velocity_i[i] = 0.15*(bounds[dim_index + 1]-bounds[dim_index])
 
             # adjust minimum position if neseccary
-            if self.velocity_i[i] < -0.15*(bounds[1]-bounds[0]):
-                self.velocity_i[i] = -0.15*(bounds[1]-bounds[0])
+            if self.velocity_i[i] < -0.15*(bounds[dim_index + 1]-bounds[dim_index]):
+                self.velocity_i[i] = -0.15*(bounds[dim_index + 1]-bounds[dim_index])
+
+            dim_index = dim_index + 1
 
 
 class PSO():
@@ -145,9 +140,12 @@ class PSO():
         swarm.append(Particle(x0,bounds))
 
         for i in range(1, num_particles):
+            rand_init_count = 0
             x=[]
             for j in range(0,num_dimensions):
-                x.append(random.uniform(bounds[0],bounds[1]))
+                #x.append(random.uniform(bounds[0],bounds[1])) MODIFIED FOR BAYES BOT
+                x.append(random.uniform(bounds[rand_init_count],bounds[rand_init_count + 1])) #includes low excludes high
+                rand_init_count = rand_init_count + 1
             
             swarm.append(Particle(x,bounds))
         print("This is the number of particles in swarm: \n")
@@ -165,7 +163,7 @@ class PSO():
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, mode='w') as myfile:
                     myfile.write('\n'.join(str(p_w) for p_w in swarm[j].position_i))
-                #launch_webots(i, j)
+                launch_webots(i, j)
 
             #debug
             #outs = ''
@@ -252,15 +250,16 @@ else:
 run_dir = "Run_" + str(last_run_id+1) + "/"
 os.mkdir(run_dir)
 
-# --- RUN PSO SETUP ----------------------------------------------------------------------+
+# --- RUN ----------------------------------------------------------------------+
 
-# initial=[5,5]               
-# initial starting location [x1,x2...]
-# input bounds [(x1_min,x1_max)]
-bounds = [0,0.5]  
-num_dimensions = 3
-x0=[0.01,0.005,0.000025]
-startTime=datetime.now()
+# initial=[5,5]               # initial starting location [x1,x2...]
+# --- PSO PARAMETERS -----------------------------------------------------------+
+# | Observation Interval | Positive Feedback (Binary) | Credibility Thresdhold | Random Walk Type (Binary) |
+bounds = [0,1,0,1,10,90,10,250,10,100]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+num_dimensions = 5 # Dimensxion of particle
+x0=[0.4,0.5,30,150,150] # Initial particle position
+# ------------------------------------------------------------------------------+
+startTime=datetime.now() 
 PSO(x0, fitness_evaluation, bounds, num_particles=args.nb_particles, maxiter=30)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"
