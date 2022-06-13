@@ -10,8 +10,6 @@ echo "Main node index =" $MAIN_ID
 # Get the number of nodes/particles from started AWS job
 NB_NODES=$((AWS_BATCH_JOB_NUM_NODES))
 NB_PARTICLES=$(($NB_NODES-1))
-#ADDED FOR TESTING
-NB_PARTICLES=2
 
 echo "Number of particles =" $NB_PARTICLES
 
