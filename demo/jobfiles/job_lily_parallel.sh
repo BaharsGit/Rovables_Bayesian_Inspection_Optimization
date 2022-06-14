@@ -6,7 +6,7 @@
 # Description: This shell script was based on cluster job file job_lily_parallel.sub, 
 #              it runs on AWS (particle) nodes, it launches Webots to evaluate the corresponding particle
 # Author: Bahar Haghighat 
-# Modifications: by Bahar Haghighat, 20 May 2022, cleaned up non-AWS stuff left from local cluster launch
+# Modifications: by Bahar Haghighat, 13 June 2022, cleaned up non-AWS stuff left from local cluster launch
 #
  
 # The first input variable to the shell script is the GEN_ID, the second one is the PARTICLE_ID
@@ -91,7 +91,7 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
       then
 
          echo "(`date`) Run $RUN_ID successfully completed"
-         rm $WB_WORKING_DIR/ack.txt
+         #rm $WB_WORKING_DIR/ack.txt
 
       else
 
@@ -112,7 +112,7 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
 
            echo "(`date`) RUN got stuck, auxilary fitness file created"
    	     echo ${WORST_FITNESS} >> $WB_WORKING_DIR/local_fitness.txt
-   	     rm $WB_WORKING_DIR$/ack.txt
+   	     #rm $WB_WORKING_DIR$/ack.txt
 
          fi
 

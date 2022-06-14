@@ -5,7 +5,7 @@
 # Description: This python script was written for cluster job file job_lily_parallel.sub, 
 #              it runs on AWS (particle) nodes, it launches Webots to evaluate the corresponding particle
 # Author: Bahar Haghighat 
-# Modifications: by Bahar Haghighat, 20 May 2022, cleaned up non-AWS stuff left from local cluster launch
+# Modifications: by Bahar Haghighat, 13 June 2022, cleaned up non-AWS stuff left from local cluster launch
 #
 
 
