@@ -11,8 +11,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.37410009861715926 -0.8017314106520007 -0.4661285888985836 2.0110979679680656
-  position -0.6525788806030524 1.6172258114624256 0.040779063969903995
+  orientation -0.1850197199903361 -0.9223354080111774 -0.339212467848032 2.227253146879652
+  position -1.5470215940796068 2.1394689082551044 -1.084494322095622
 }
 TexturedBackground {
 }
@@ -62,6 +62,9 @@ Wall {
 Robot {
   name "Bayes Bot Supervisor"
   controller "bayes_supervisor"
+  controllerArgs [
+    "14"
+  ]
   supervisor TRUE
 }
 DEF rov_0 Rovable {
@@ -72,7 +75,7 @@ DEF rov_0 Rovable {
   controllerArgs [
     "5"
   ]
-  customData "00000.000000"
+  customData "01000.170429"
 }
 DEF rov_1 Rovable {
   translation 0.07 0.023 0.21
@@ -82,7 +85,7 @@ DEF rov_1 Rovable {
   controllerArgs [
     "13"
   ]
-  customData "00000.000000"
+  customData "10100.001383"
 }
 DEF rov_2 Rovable {
   translation 0.632734 0.023 0.814372
@@ -92,7 +95,7 @@ DEF rov_2 Rovable {
   controllerArgs [
     "74"
   ]
-  customData "00000.000000"
+  customData "11000.001383"
 }
 DEF rov_3 Rovable {
   translation 0.16 0.023 0.45
@@ -102,5 +105,5 @@ DEF rov_3 Rovable {
   controllerArgs [
     "2281"
   ]
-  customData "00000.000000"
+  customData "11100.002089"
 }

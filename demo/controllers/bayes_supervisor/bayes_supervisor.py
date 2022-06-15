@@ -43,10 +43,10 @@ control_count = 0
 value = os.getenv("WB_WORKING_DIR")
 if (value is not None):
     os.chdir(value)
-    with open(value + "prob.txt") as f:
+    with open(value + "/prob.txt") as f:
         parameters = f.read().splitlines()
 else:
-    with open("prob.txt") as f:
+    with open("/prob.txt") as f:
         parameters = f.read().splitlines()
 
 #print(parameters)
@@ -83,26 +83,26 @@ def cleanup():
     filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
     filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
 
-    # writing to csv file
-    with open(filenameProb, 'w') as csvfile:
-        # creating a csv writer object
-        csvwriter = csv.writer(csvfile)
+    # # writing to csv file
+    # with open(filenameProb, 'w') as csvfile:
+    #     # creating a csv writer object
+    #     csvwriter = csv.writer(csvfile)
 
-        #Write the header
-        #csvwriter.writerow(defArray)
+    #     #Write the header
+    #     #csvwriter.writerow(defArray)
 
-        # writing the data rows
-        csvwriter.writerows(csvProbData)
+    #     # writing the data rows
+    #     csvwriter.writerows(csvProbData)
 
-    with open(filenamePos, 'w') as csvfile:
-        # creating a csv writer object
-        csvwriter = csv.writer(csvfile)
+    # with open(filenamePos, 'w') as csvfile:
+    #     # creating a csv writer object
+    #     csvwriter = csv.writer(csvfile)
 
-        #Write the header
-        #csvwriter.writerow(defArray)
+    #     #Write the header
+    #     #csvwriter.writerow(defArray)
 
-        # writing the data rows
-        csvwriter.writerows(csvPosData)
+    #     # writing the data rows
+    #     csvwriter.writerows(csvPosData)
 
     _, counts = np.unique(grid, return_counts=True)
     fitnessData[0] = sum(dec_time) / n_run
@@ -111,21 +111,25 @@ def cleanup():
 
     if (value is not None):
         os.chdir(value)
-        with open(value + "local_fitness.txt", 'w') as f:
-            for line in fitnessData:
-                f.write(str(line))
-                f.write('\n')
+        with open(value + "/local_fitness.txt", 'w') as f:
+            f.write(str(supervisor.getTime()))
+            f.write('\n')
+            # for line in fitnessData:
+            #     f.write(str(line))
+            #     f.write('\n')
     else:
         with open("local_fitness.txt", 'w') as f:
-            for line in fitnessData:
-                f.write(str(line))
-                f.write('\n')
+            f.write(str(supervisor.getTime()))
+            f.write('\n')
+            # for line in fitnessData:
+            #     f.write(str(line))
+            #     f.write('\n')
     
 
     #Write the fitness file into the local dir only when number of runs are done
     print("Cleaning up Simulation")
     if (value is not None):
-        print("Wrote file: " +  value + "local_fitness")
+        print("Wrote file: " +  value + "/local_fitness")
     else:
         print("wrote file: local_fitness")
     supervisor.simulationQuit(0)
@@ -140,6 +144,7 @@ def reset():
 
     if (fillRatio > 0.50):
         run_dec = int(all(i < 0.5 for i in rowProbData))
+
     else:
         run_dec = int(all(i > 0.5 for i in rowProbData))
     #print("Run Correct: ", run_dec)

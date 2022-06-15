@@ -62,7 +62,7 @@ def fitness_evaluation(i, j):
         print("PSO_tocluster.py: Generation_" + str(i) + "/local_fitness_" +str(j) + ".txt file is empty \n")
     else:
         fitness = float(fitness)
-    return fitness
+    return (0-fitness)
 
 
 # --- MAIN ---------------------------------------------------------------------+
@@ -113,24 +113,27 @@ class Particle:
 
     # update the particle position based off new velocity updates
     def update_position(self, bounds):
+        dim_index = 0
         for i in range(0, num_dimensions):
             self.position_i[i] = self.position_i[i] + self.velocity_i[i]
 
             # adjust maximum position if necessary
-            if self.position_i[i] > bounds[1]:
-                self.position_i[i] = bounds[1]
+            if self.position_i[i] > bounds[dim_index + 1]:
+                self.position_i[i] = bounds[dim_index + 1]
 
             # adjust minimum position if neseccary
-            if self.position_i[i] < bounds[0]:
-                self.position_i[i] = bounds[0]
+            if self.position_i[i] < bounds[dim_index]:
+                self.position_i[i] = bounds[dim_index]
 
             # adjust maximum velocity if necessary
-            if self.velocity_i[i] > 0.15*(bounds[1]-bounds[0]):
-                self.velocity_i[i] = 0.15*(bounds[1]-bounds[0])
+            if self.velocity_i[i] > 0.15*(bounds[dim_index + 1]-bounds[dim_index]):
+                self.velocity_i[i] = 0.15*(bounds[dim_index + 1]-bounds[dim_index])
 
             # adjust minimum position if neseccary
-            if self.velocity_i[i] < -0.15*(bounds[1]-bounds[0]):
-                self.velocity_i[i] = -0.15*(bounds[1]-bounds[0])
+            if self.velocity_i[i] < -0.15*(bounds[dim_index + 1]-bounds[dim_index]):
+                self.velocity_i[i] = -0.15*(bounds[dim_index + 1]-bounds[dim_index])
+
+            dim_index = dim_index + 2
 
 
 class PSO():
@@ -145,9 +148,12 @@ class PSO():
         swarm.append(Particle(x0,bounds))
 
         for i in range(1, num_particles):
+            rand_init_count = 0
             x=[]
             for j in range(0,num_dimensions):
-                x.append(random.uniform(bounds[0],bounds[1]))
+                #x.append(random.uniform(bounds[0],bounds[1])) MODIFIED FOR BAYES BOT
+                x.append(random.uniform(bounds[rand_init_count],bounds[rand_init_count + 1])) #includes low excludes high
+                rand_init_count = rand_init_count + 2
             
             swarm.append(Particle(x,bounds))
         print("PSO_tocluster.py: This is the number of particles in swarm: " + str(len(swarm)) + "\n")
@@ -257,10 +263,12 @@ os.mkdir(run_dir)
 # initial=[5,5]               
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
-bounds = [0,0.5]  
-num_dimensions = 3
-x0=[0.01,0.005,0.000025]
-startTime=datetime.now()
+# | Observation Interval | Positive Feedback (Binary) | Credibility Thresdhold | Random Walk Type (Binary) |
+bounds = [0,1,0,1,10,90,10,250,10,100]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+num_dimensions = 5 # Dimension of particle
+x0=[0.4,0.5,30,150,150] # Initial particle position
+# ------------------------------------------------------------------------------+
+startTime=datetime.now() 
 PSO(x0, fitness_evaluation, bounds, num_particles=args.nb_particles, maxiter=30)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"

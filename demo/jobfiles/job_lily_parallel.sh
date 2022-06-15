@@ -19,7 +19,7 @@ WORST_FITNESS=43200
 
 
 # Kill webots after WB_TIMEOUT seconds
-WB_TIMEOUT=7200  
+WB_TIMEOUT=300
 
  
 # N_RUNS can be used for noise resistant evaluation of a particle
