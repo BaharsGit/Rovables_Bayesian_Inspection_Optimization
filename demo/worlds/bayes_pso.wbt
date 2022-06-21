@@ -11,8 +11,9 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.1850197199903361 -0.9223354080111774 -0.339212467848032 2.227253146879652
-  position -1.5470215940796068 2.1394689082551044 -1.084494322095622
+  orientation 0.1822751339125709 -0.8955969614517143 -0.40581012579235975 3.9215685839139867
+  position 2.159748369672502 2.6955232665216804 -1.2934365240631078
+  follow "r1"
 }
 TexturedBackground {
 }
@@ -75,7 +76,7 @@ DEF rov_0 Rovable {
   controllerArgs [
     "5"
   ]
-  customData "01000.170429"
+  customData "01100.000000"
 }
 DEF rov_1 Rovable {
   translation 0.07 0.023 0.21
@@ -85,7 +86,7 @@ DEF rov_1 Rovable {
   controllerArgs [
     "13"
   ]
-  customData "10100.001383"
+  customData "10110.000000"
 }
 DEF rov_2 Rovable {
   translation 0.632734 0.023 0.814372
@@ -95,7 +96,7 @@ DEF rov_2 Rovable {
   controllerArgs [
     "74"
   ]
-  customData "11000.001383"
+  customData "11011.000000"
 }
 DEF rov_3 Rovable {
   translation 0.16 0.023 0.45
@@ -105,5 +106,5 @@ DEF rov_3 Rovable {
   controllerArgs [
     "2281"
   ]
-  customData "11100.002089"
+  customData "01100.000859"
 }

@@ -13,9 +13,9 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 140
+MAX_TIME = 320
 run = 0
-n_run = 2
+n_run = 5
 nRobot = 4
 boxSize = 4
 imageDim = 128
@@ -23,14 +23,13 @@ fillRatio = 0.55
 p_high = 0.9
 p_low = 0.1
 minD = 0.15
-endTime = 180
 settlingTime = 0
-endTic = 100
+endTic = 30 #When to start checking decisions in terms of sim time.
 initialPos = []
 csvProbData = []
 csvPosData = []
 parameters = []
-seedIn = str(sys.argv[1])
+seedIn = str(time.time())
 boxData = []
 accuracy = []
 dec_time = []
@@ -39,6 +38,7 @@ fitnessData = np.zeros(3) # Decision Time | Coverage | Accuracy
 start_time = time.time()
 sim_time = 0
 control_count = 0
+newReset = 0
 
 value = os.getenv("WB_WORKING_DIR")
 if (value is not None):
@@ -46,7 +46,7 @@ if (value is not None):
     with open(value + "/prob.txt") as f:
         parameters = f.read().splitlines()
 else:
-    with open("/prob.txt") as f:
+    with open("prob.txt") as f:
         parameters = f.read().splitlines()
 
 #print(parameters)
@@ -70,15 +70,22 @@ color_array = np.empty(nRobot, dtype=object)
 
 # --------------------------------------------------------------
 def checkDecision(data):
+    pSum = 0
     for p in data:
         if (p > p_low and p < p_high):
-            continue
-    return 1
+            return 0
+        else:
+            pSum = pSum + p
+    
+    if (pSum <= 4*0.1 or pSum >= 4*0.9):
+        return 1
+    else:
+        return 0
 
 # Writes to the fitness file for the current iteration of particle
 def cleanup():
+    #print("Fitness: ", supervisor.getTime())
     supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
-    supervisor.simulationReset()
 
     filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
     filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
@@ -91,7 +98,7 @@ def cleanup():
     #     #Write the header
     #     #csvwriter.writerow(defArray)
 
-    #     # writing the data rows
+    #     # writing the data rows``
     #     csvwriter.writerows(csvProbData)
 
     # with open(filenamePos, 'w') as csvfile:
@@ -103,6 +110,17 @@ def cleanup():
 
     #     # writing the data rows
     #     csvwriter.writerows(csvPosData)
+
+    if (fillRatio > 0.50):
+        run_dec = int(all(i < 0.5 for i in rowProbData))
+
+    else:
+        run_dec = int(all(i > 0.5 for i in rowProbData))
+    #print("Run Correct: ", run_dec)
+    _, counts = np.unique(grid, return_counts=True)
+    coverage_arr.append(counts[1] / (imageDim * imageDim))
+    dec_time.append(supervisor.getTime())
+    accuracy.append(run_dec)
 
     _, counts = np.unique(grid, return_counts=True)
     fitnessData[0] = sum(dec_time) / n_run
@@ -141,6 +159,7 @@ def reset():
     global boxData
     global grid
     global control_count
+    global newReset
 
     if (fillRatio > 0.50):
         run_dec = int(all(i < 0.5 for i in rowProbData))
@@ -168,8 +187,8 @@ def reset():
     sim_time = supervisor.getTime()
     run = run + 1
     print("Running Noise Resistance Iteration Number: ", run)
-    randomizePosition()
     supervisor.simulationReset()
+    newReset = 1
     supervisor.simulationSetMode(supervisor.SIMULATION_MODE_FAST)
 
 def get_pos(xPos, yPos):
@@ -220,55 +239,59 @@ start_time = time.time()
 sim_time = supervisor.getTime()
 
 while supervisor.step(timestep) != -1:
-    #print("----------------------------------------------------------")
-    rowProbData = []
-    rowPosData = []
+    if (newReset):
+        randomizePosition()
+        newReset = 0
+    else:
+        #print("----------------------------------------------------------")
+        rowProbData = []
+        rowPosData = []
 
-    for i in range(nRobot):
-        trans_value_array[i] = trans_field_array[i].getSFVec3f()
-        rowPosData.append(trans_value_array[i][2])
-        rowPosData.append(trans_value_array[i][0])
-        if (control_count % tao == 0):
-            get_pos(trans_value_array[i][2], trans_value_array[i][0])
-        currentData = data_array[i].getSFString()
-        remaining = currentData[1:]
-        probability = currentData[4:11]
-        rowProbData.append(float(probability))
-        #newString = color_array[i] + remaining
-        # print("Current Data: ", currentData)
-        # print("Removed Color: ", remaining)
-        # print("Probability: ", probability)
-        #print("New String: ", newString)
-        #data_array[i].setSFString(newString)
+        for i in range(nRobot):
+            trans_value_array[i] = trans_field_array[i].getSFVec3f()
+            rowPosData.append(trans_value_array[i][2])
+            rowPosData.append(trans_value_array[i][0])
+            if (control_count % tao == 0):
+                get_pos(trans_value_array[i][2], trans_value_array[i][0])
+            currentData = data_array[i].getSFString()
+            remaining = currentData[1:]
+            probability = currentData[4:11]
+            rowProbData.append(float(probability))
+            #newString = color_array[i] + remaining
+            # print("Current Data: ", currentData)
+            # print("Removed Color: ", remaining)
+            # print("Probability: ", probability)
+            #print("New String: ", newString)
+            #data_array[i].setSFString(newString)
 
-    csvProbData.append(rowProbData)
-    csvPosData.append(rowPosData)
-    control_count = control_count + 1
+        csvProbData.append(rowProbData)
+        csvPosData.append(rowPosData)
+        control_count = control_count + 1
 
-    #print(rowProbData)
+        #print(rowProbData)
 
-    if(supervisor.getTime() - sim_time > 100):
-        if (checkDecision(rowProbData)) and settlingTime <= endTic:
-            settlingTime = settlingTime + 1
-        elif (checkDecision(rowProbData)) and settlingTime > endTic:
+        if(supervisor.getTime() - sim_time > 100):
+            if (checkDecision(rowProbData)) and settlingTime <= endTic:
+                settlingTime = settlingTime + 1
+            elif (checkDecision(rowProbData)) and settlingTime > endTic:
+                # if run < n_run-1:
+                #     reset()
+                # else:
+                cleanup()
+            # else:
+            #     settlingTime = 0
+
+
+        # # MODIFIED FOR AWS LAUNCH
+        # if (supervisor.getTime() > endTime):
+        #   cleanup()
+        
+        if (time.time()-start_time > MAX_TIME):
+        #supervisor.simulationQuit(0)
             # if run < n_run-1:
             #     reset()
             # else:
             cleanup()
-        else:
-            settlingTime = 0
-
-
-    # # MODIFIED FOR AWS LAUNCH
-    # if (supervisor.getTime() > endTime):
-    #   cleanup()
-      
-    if (time.time()-start_time > MAX_TIME):
-       #supervisor.simulationQuit(0)
-        # if run < n_run-1:
-        #    reset()
-        # else:
-        cleanup()
 
 # MODIFIED FOR AWS LAUNCH
 # Enter here exit cleanup code.

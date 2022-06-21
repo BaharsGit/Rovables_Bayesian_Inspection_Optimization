@@ -163,8 +163,10 @@ int main(int argc, char **argv) {
     // Start robots one after the other
       //std::cout << name << " start controller" << std::endl;
     //std::cout << "--------------" << std::endl;
-    //std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << std::endl;
-    //std::cout << alpha << " " << beta << std::endl;
+    if (control_count % 5000 == 0) {
+      std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << std::endl;
+    }
+    //std::cout << " Robot " << robotNum << " : " << alpha << " " << beta << std::endl;
     double distance_sensors_values[4];
     for (int i = 0; i < 4; i++){
       distance_sensors_values[i] = distance_sensors[i]->getValue();
@@ -178,12 +180,19 @@ int main(int argc, char **argv) {
       case FSM_RW:
       { 
         //std::cout << "RW" << std::endl;
-        if (control_count % tao == 0) {
-          pause_count = pause_time;
-          FSM_STATE = FSM_PAUSE;
-        } else if (distance_sensors_values[LEFT] < close_distance || distance_sensors_values[RIGHT] < close_distance || distance_sensors_values[2] < close_distance || distance_sensors_values[3] < close_distance) { 
+        //COLLISION AVOIDANCE
+        if (distance_sensors_values[LEFT] < close_distance || distance_sensors_values[RIGHT] < close_distance || distance_sensors_values[2] < close_distance || distance_sensors_values[3] < close_distance) { 
           FSM_STATE = FSM_CA;
           break;
+        }
+        //OBSERVE COLOR 
+        else if ((control_count - robotNum) % tao == 0) {
+          pause_count = pause_time;
+          FSM_STATE = FSM_PAUSE;
+        } 
+        //SEND COLOR
+        else {
+          FSM_STATE = FSM_SEND;
         }
         if (forward_count > 0) {
           motors[LEFT]->setVelocity(speed);
@@ -219,12 +228,8 @@ int main(int argc, char **argv) {
       //COLLISION AVOIDANCE STATE
       case FSM_CA:
       {
-        
-        if (control_count % tao == 0) {
-          pause_count = pause_time;
+        if (distance_sensors_values[LEFT] > 130 && distance_sensors_values[RIGHT] > 130 && distance_sensors_values[2] > 130 && distance_sensors_values[3] > 130) { 
           FSM_STATE = FSM_PAUSE;
-        } else if (distance_sensors_values[LEFT] > 130 && distance_sensors_values[RIGHT] > 130 && distance_sensors_values[2] > 130 && distance_sensors_values[3] > 130) { 
-          FSM_STATE = FSM_RW;
           break;
         }
         direction = distance_sensors_values[LEFT] < distance_sensors_values[RIGHT] ? RIGHT : LEFT;
@@ -469,6 +474,8 @@ static void getMessage() {
       //std::cout << cPrime << std::endl;
       alpha = alpha + cPrime;
       beta = beta + (1 - cPrime);
+      //std::cout << "Robot: " << robotNum << " Color: " << cPrime << std::endl;
+      //std::cout << "Robot: " << robotNum << " Alpha: " << alpha << "Beta: " << beta << std::endl;
     }
   }
   //std::string newMessage = myData.substr(0,3);

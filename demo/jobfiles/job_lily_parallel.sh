@@ -15,11 +15,11 @@ PARTICLE_ID=$2
 
 
 # Setting the worst case fitness value, in case the launch doesn't go well, the worst case fitness value is considered as default
-WORST_FITNESS=43200
-
+#WORST_FITNESS=[360, 0, 0]
+WORST_FITNESS=10000
 
 # Kill webots after WB_TIMEOUT seconds
-WB_TIMEOUT=300
+WB_TIMEOUT=2000
 
  
 # N_RUNS can be used for noise resistant evaluation of a particle

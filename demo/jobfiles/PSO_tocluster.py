@@ -62,7 +62,15 @@ def fitness_evaluation(i, j):
         print("PSO_tocluster.py: Generation_" + str(i) + "/local_fitness_" +str(j) + ".txt file is empty \n")
     else:
         fitness = float(fitness)
-    return (0-fitness)
+    # Simple Fitness Function
+    #return (0-fitness)
+    # Complex Fitness Function
+    # 150*(average accuracy) + 100*(average coverage) - (average decision time)
+    #fitness_res = (175*fitness[2] + 100*fitness[1] - fitness[0])
+    fitness_res = float(fitness)
+    print("Particle: ", i, j)
+    print("Fitness Result: ", fitness_res)
+    return fitness_res
 
 
 # --- MAIN ---------------------------------------------------------------------+
@@ -263,7 +271,7 @@ os.mkdir(run_dir)
 # initial=[5,5]               
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
-# | Observation Interval | Positive Feedback (Binary) | Credibility Thresdhold | Random Walk Type (Binary) |
+# Positive Feedback (Binary) | Credibility Thresdhold | Close Distance | Random Walk Forward | Random Walk Backward
 bounds = [0,1,0,1,10,90,10,250,10,100]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
 num_dimensions = 5 # Dimension of particle
 x0=[0.4,0.5,30,150,150] # Initial particle position
