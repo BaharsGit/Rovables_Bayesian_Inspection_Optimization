@@ -13,7 +13,7 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 320
+MAX_TIME = 360
 run = 0
 n_run = 5
 nRobot = 4
@@ -24,12 +24,15 @@ p_high = 0.9
 p_low = 0.1
 minD = 0.15
 settlingTime = 0
-endTic = 10 #How long robots hold the decision
+endTic = 30 #How long robots hold the decision
 initialPos = []
 csvProbData = []
 csvPosData = []
 parameters = []
-seedIn = str(time.time())
+#PSO
+#seedIn = str(time.time())
+#BASELINE
+seedIn = str(sys.argv[1])
 boxData = []
 accuracy = []
 dec_time = []
@@ -85,38 +88,36 @@ def checkDecision(data):
 # Writes to the fitness file for the current iteration of particle
 def cleanup():
     #print("Fitness: ", supervisor.getTime())
-    supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
 
     filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
     filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
 
-    # # writing to csv file
-    # with open(filenameProb, 'w') as csvfile:
-    #     # creating a csv writer object
-    #     csvwriter = csv.writer(csvfile)
+    # writing to csv file
+    with open(filenameProb, 'w') as csvfile:
+        # creating a csv writer object
+        csvwriter = csv.writer(csvfile)
 
-    #     #Write the header
-    #     #csvwriter.writerow(defArray)
+        #Write the header
+        #csvwriter.writerow(defArray)
 
-    #     # writing the data rows``
-    #     csvwriter.writerows(csvProbData)
+        # writing the data rows``
+        csvwriter.writerows(csvProbData)
 
-    # with open(filenamePos, 'w') as csvfile:
-    #     # creating a csv writer object
-    #     csvwriter = csv.writer(csvfile)
+    with open(filenamePos, 'w') as csvfile:
+        # creating a csv writer object
+        csvwriter = csv.writer(csvfile)
 
-    #     #Write the header
-    #     #csvwriter.writerow(defArray)
+        #Write the header
+        #csvwriter.writerow(defArray)
 
-    #     # writing the data rows
-    #     csvwriter.writerows(csvPosData)
+        # writing the data rows
+        csvwriter.writerows(csvPosData)
 
     if (fillRatio > 0.50):
         run_dec = int(all(i < 0.5 for i in rowProbData))
-
     else:
         run_dec = int(all(i > 0.5 for i in rowProbData))
-    #print("Run Correct: ", run_dec)
+    print("Run Correct: ", run_dec)
     _, counts = np.unique(grid, return_counts=True)
     coverage_arr.append(counts[1] / (imageDim * imageDim))
     dec_time.append(supervisor.getTime())
@@ -127,29 +128,34 @@ def cleanup():
     fitnessData[1] = sum(coverage_arr) / n_run
     fitnessData[2] = sum(accuracy) / n_run
 
-    if (value is not None):
-        os.chdir(value)
-        with open(value + "/local_fitness.txt", 'w') as f:
-            f.write(str(supervisor.getTime()))
-            f.write('\n')
-            # for line in fitnessData:
-            #     f.write(str(line))
-            #     f.write('\n')
-    else:
-        with open("local_fitness.txt", 'w') as f:
-            f.write(str(supervisor.getTime()))
-            f.write('\n')
-            # for line in fitnessData:
-            #     f.write(str(line))
-            #     f.write('\n')
+    # USED ONLY FOR PSO LAUNCH
+    # if (value is not None):
+    #     os.chdir(value)
+    #     with open(value + "/local_fitness.txt", 'w') as f:
+    #         fit = supervisor.getTime() - 50*run_dec
+    #         print(fit)
+    #         f.write(str(fit))
+    #         f.write('\n')
+    #         # for line in fitnessData:
+    #         #     f.write(str(line))
+    #         #     f.write('\n')
+    # else:
+    #     with open("local_fitness.txt", 'w') as f:
+    #         fit = supervisor.getTime() - 50*run_dec
+    #         print(fit)
+    #         f.write(str(fit))
+    #         f.write('\n')
+    #         # for line in fitnessData:
+    #         #     f.write(str(line))
+    #         #     f.write('\n')
     
 
     #Write the fitness file into the local dir only when number of runs are done
-    print("Cleaning up Simulation")
-    if (value is not None):
-        print("Wrote file: " +  value + "/local_fitness")
-    else:
-        print("wrote file: local_fitness")
+    # print("Cleaning up Simulation")
+    # if (value is not None):
+    #     print("Wrote file: " +  value + "/local_fitness")
+    # else:
+    #     print("wrote file: local_fitness")
     supervisor.simulationQuit(0)
 
 def reset():
@@ -270,16 +276,17 @@ while supervisor.step(timestep) != -1:
 
         #print(rowProbData)
 
-        if(supervisor.getTime() - sim_time > 30):
-            if (checkDecision(rowProbData)) and settlingTime <= endTic:
-                settlingTime = settlingTime + 1
-            elif (checkDecision(rowProbData)) and settlingTime > endTic:
-                # if run < n_run-1:
-                #     reset()
-                # else:
-                cleanup()
-            # else:
-            #     settlingTime = 0
+        # if(supervisor.getTime() - sim_time > 100):
+        #     if (checkDecision(rowProbData)) and settlingTime <= endTic:
+        #         settlingTime = settlingTime + 1
+        #         print("hold")
+        #     elif (checkDecision(rowProbData)) and settlingTime > endTic:
+        #         # if run < n_run-1:
+        #         #     reset()
+        #         # else:
+        #         cleanup()
+        #     else:
+        #         settlingTime = 0
 
 
         # # MODIFIED FOR AWS LAUNCH

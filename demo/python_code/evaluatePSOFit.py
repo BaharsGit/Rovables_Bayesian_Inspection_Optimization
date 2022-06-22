@@ -16,7 +16,7 @@ num_gen = 30
 
 fitness_df = pd.DataFrame()
 
-rootdir = '/home/darren/Documents/DARS/Run_2/'
+rootdir = '/home/darren/Documents/DARS/Rovables_Bayesian_Inspection_Optimization/Run_1/'
 
 for i in range(num_gen):
     particle_fit_temp = []

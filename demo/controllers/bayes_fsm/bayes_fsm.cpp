@@ -81,10 +81,10 @@ static int turn_count;
 static int control_count = 0;
 
 //Arena Parameters
-int boxSize = 4;
+int boxSize = 16;
 int imageDim = 128;
-int rowCount = 564; // THIS MUST BE CHANGED EVERYTIME A NEW ARENA IS CREATED
-int grid[564][2]; 
+int rowCount = 36; // THIS MUST BE CHANGED EVERYTIME A NEW ARENA IS CREATED
+int grid[36][2]; 
 
 //Function declarations
 double incbeta(double a, double b, double x);
@@ -434,6 +434,7 @@ static int getColor() {
           return 1; //Returns 1 if the current robot is on a white square
       }
   }
+  //std::cout << robotNum << " BLACK" << std::endl;
   //print(xPos, yPos)
   return 0;
 }
@@ -572,12 +573,12 @@ static void readParameters() {
       if (i == 4) rand_const_turn = z;
     }
     
-    std::cout << "Positive Feedback: " << u_plus << std::endl;
-    std::cout << "Credibility Thresdhold: " << p_c << std::endl;
-    std::cout << "Close Distance: " << close_distance <<std::endl;
-    std::cout << "Random forward: " << rand_const_forward << std::endl;
-    std::cout << "Random Turn: " << rand_const_turn << std::endl;
-    
     file.close();
   }
+  
+  std::cout << "Positive Feedback: " << u_plus << std::endl;
+  std::cout << "Credibility Thresdhold: " << p_c << std::endl;
+  std::cout << "Close Distance: " << close_distance <<std::endl;
+  std::cout << "Random forward: " << rand_const_forward << std::endl;
+  std::cout << "Random Turn: " << rand_const_turn << std::endl;
 }

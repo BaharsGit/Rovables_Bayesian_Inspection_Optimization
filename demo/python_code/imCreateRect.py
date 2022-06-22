@@ -13,10 +13,10 @@ import shutil
 parser = argparse.ArgumentParser(description="Generates grid for Bayes Bot algorithm")
 
 # For world
-parser.add_argument("-fr", "--fill_ratio", required=True, type=float, default="0.55", help="Fill ratio of generated picture and coordinates")
-parser.add_argument("-ss", "--square_size", required=False, type=int, default="5", help="Determines the size of generated squares")
-parser.add_argument("-sd", "--seed", required=True, type=int, default="16", help="Seed for random generation of map")
-parser.add_argument("-rs", "--robot_seed", required=True, type=int, default="0", help="Seed that is used for the robot random walk a placement for this experiment")
+parser.add_argument("-fr", "--fill_ratio", required=False, type=float, default="0.55", help="Fill ratio of generated picture and coordinates")
+parser.add_argument("-ss", "--square_size", required=False, type=int, default="16", help="Determines the size of generated squares")
+parser.add_argument("-sd", "--seed", required=False, type=int, default="16", help="Seed for random generation of map")
+parser.add_argument("-rs", "--robot_seed", required=False, type=int, default="0", help="Seed that is used for the robot random walk a placement for this experiment")
 
 args = parser.parse_args()
 
@@ -62,8 +62,6 @@ for coord in startArray:
 
 img = img.transpose(method=Image.FLIP_TOP_BOTTOM) #Flip to account for axis change in Webots
 
-#img.show()
-savedFile = "boxrect_" + str(args.robot_seed)
-saveDir = "worlds/textures/" + "boxrect_" + str(args.robot_seed) + ".png"
-img.save("worlds/textures/" + "boxrect_" + str(args.robot_seed) + ".png", quality=100)
-#np.savetxt('controllers/bayes_supervisor/boundary/' + "boxrect_" + str(args.robot_seed) + '.csv', startArray.astype(int), delimiter=',', fmt='%d')
+img.show()
+img.save("boxrect.png", quality=100)
+np.savetxt("boxrect.csv", startArray.astype(int), delimiter=',', fmt='%d')
