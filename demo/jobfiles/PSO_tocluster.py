@@ -274,7 +274,7 @@ os.mkdir(run_dir)
 # Positive Feedback (Binary) | Credibility Thresdhold | Close Distance | Random Walk Forward | Random Walk Backward
 bounds = [0,1,0,1,10,90,10,250,10,100]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
 num_dimensions = 5 # Dimension of particle
-x0=[0.4,0.5,30,150,150] # Initial particle position
+x0=[0.4,0.5,30,250,100] # Initial particle position
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
 PSO(x0, fitness_evaluation, bounds, num_particles=args.nb_particles, maxiter=30)

@@ -24,7 +24,7 @@ p_high = 0.9
 p_low = 0.1
 minD = 0.15
 settlingTime = 0
-endTic = 30 #When to start checking decisions in terms of sim time.
+endTic = 10 #How long robots hold the decision
 initialPos = []
 csvProbData = []
 csvPosData = []
@@ -270,7 +270,7 @@ while supervisor.step(timestep) != -1:
 
         #print(rowProbData)
 
-        if(supervisor.getTime() - sim_time > 100):
+        if(supervisor.getTime() - sim_time > 30):
             if (checkDecision(rowProbData)) and settlingTime <= endTic:
                 settlingTime = settlingTime + 1
             elif (checkDecision(rowProbData)) and settlingTime > endTic:
