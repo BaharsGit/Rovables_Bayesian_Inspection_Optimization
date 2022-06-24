@@ -50,8 +50,8 @@ def launch_webots(i, j):
 
 
 # ---- Read fitness files-------------------------------------------------------+
-def fitness_evaluation(i, j):
-    filename = run_dir + "Generation_%d/local_fitness_%d.txt" % (i, j)
+def fitness_evaluation(iteration, particle, instance = 0):
+    filename = run_dir + "Generation_%d/local_fitness_%d.txt" % (iteration, particle)
     # os.makedirs(os.path.dirname(filename), exist_ok=True)
     # with open( filename, mode='w') as filemy:
     #	filemy.write("1\n")
@@ -59,7 +59,7 @@ def fitness_evaluation(i, j):
         fitness = f.readline().strip()
     if len(fitness) == 0:
         fitness = -1
-        print("PSO_tocluster.py: Generation_" + str(i) + "/local_fitness_" +str(j) + ".txt file is empty \n")
+        print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt file is empty \n")
     else:
         fitness = float(fitness)
     # Simple Fitness Function
@@ -68,7 +68,7 @@ def fitness_evaluation(i, j):
     # 150*(average accuracy) + 100*(average coverage) - (average decision time)
     #fitness_res = (175*fitness[2] + 100*fitness[1] - fitness[0])
     fitness_res = float(fitness)
-    print("Particle: ", i, j)
+    print("Particle: ", iteration, particle)
     print("Fitness Result: ", fitness_res)
     return fitness_res
 
@@ -89,9 +89,9 @@ class Particle:
 
             # evaluate current fitness
 
-    def evaluate(self, costFunc, i, j):
+    def evaluate(self, costFunc, iteration, particle, instance = 0):
         success = 1
-        fitness = costFunc(i, j)
+        fitness = costFunc(iteration, particle, instance)
         if fitness == -1:
             success = 0
         else:
@@ -145,7 +145,7 @@ class Particle:
 
 
 class PSO():
-    def __init__(self, x0, costFunc, bounds, num_particles, maxiter):
+    def __init__(self, x0, costFunc, bounds, num_particles, maxiter, noise_resistance):
         global num_dimensions
 
         fit_best_g = -1  # best global fitness
@@ -165,69 +165,79 @@ class PSO():
             
             swarm.append(Particle(x,bounds))
         print("PSO_tocluster.py: This is the number of particles in swarm: " + str(len(swarm)) + "\n")
-        #print(len(swarm))
 
         # begin optimization loop
-        i = 0
-        ii = 0
-        while i < maxiter:
+        iteration = 0
+
+        while iteration < maxiter:
             particles_fit = []
             # cycle through particles in swarm and evaluate fitness
-            for j in range(0, num_particles):
-                filename = run_dir + "Generation_%d/prob_%d.txt" % (i, j)
-                print("PSO_tocluster.py: Writing the new Generation " + str(i) + " Particle " + str(j) + " text file: " + "Generation_" + str(i) + "/prob_" + str(j) +".txt")
+            for particle in range(0, num_particles):
+                filename = run_dir + "Generation_%d/prob_%d.txt" % (iteration, particle)
+                print("PSO_tocluster.py: Writing the new Generation " + str(iteration) + " Particle " + str(particle) + " text file: " + "Generation_" + str(iteration) + "/prob_" + str(particle) +".txt")
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 with open(filename, mode='w') as myfile:
-                    myfile.write('\n'.join(str(p_w) for p_w in swarm[j].position_i))
-                #launch_webots(i, j)
+                    myfile.write('\n'.join(str(p_w) for p_w in swarm[particle].position_i))
 
-            #debug
-            #outs = ''
-            #end debug
-            ok = 0
-            not_evaluated = list(range(0, num_particles))
- #           print(not_evaluated)
-            while ok < num_particles:
+            num_evaluated_particles = 0
+            pending_particles = list(range(0, num_particles))
+
+            while num_evaluated_particles < num_particles:
                 # wait for all jobs to be finished
-                j=not_evaluated[0]
+                particle = pending_particles[0]
   
-                file_path = run_dir + "Generation_%d/local_fitness_%d.txt" % (i, j)
-                if os.path.exists(file_path):
-                    success = swarm[j].evaluate(costFunc, i, j)
-                    print("PSO_tocluster.py: evaluating Generation_" + str(i) + "/local_fitness_" + str(j) + ".txt \n")
-                    if success == 0:
-                        print("PSO_tocluster.py: Generation_" + str(i) + "/local_fitness_" + str(j) + ".txt file is empty \n")
-                        #launch_webots(i, j)
-                    else:
-                        ok += 1
-                        print("PSO_tocluster.py: remove individual particle " + str(j) + "from the list of unevaluated particles \n")
-                        # print(not_evaluated)
-                        not_evaluated.remove(j)
+                if noise_resistance == 0:
+                    file_path = run_dir + "Generation_%d/local_fitness_%d.txt" % (iteration, particle)
+                    if os.path.exists(file_path):
+                        success = swarm[particle].evaluate(costFunc, iteration, particle)
+                        print("PSO_tocluster.py: evaluating Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt \n")
+                        if success == 0:
+                            print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt file is empty \n")
+                            #launch_webots(iteration, particle)
+                        else:
+                            num_evaluated_particles += 1
+                            print("PSO_tocluster.py: remove individual particle " + str(particle) + "from the list of unevaluated particles \n")
+                            # print(pending_particles)
+                            pending_particles.remove(particle)
+                else:
+                    file_path = run_dir + "Generation_%d/local_fitness_%d_%d.txt" % (iteration, particle, instance)
+                    if os.path.exists(file_path):
+                        success = swarm[particle].evaluate(costFunc, iteration, particle, instance)
+                        print("PSO_tocluster.py: evaluating Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt \n")
+                        if success == 0:
+                            print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt file is empty \n")
+                            #launch_webots(iteration, particle)
+                        else:
+                            num_evaluated_particles += 1
+                            print("PSO_tocluster.py: remove individual particle " + str(particle) + "from the list of unevaluated particles \n")
+                            # print(pending_particles)
+                            pending_particles.remove(particle)
 
-            # read the local fitnesss of each individual
+
+            # read the local fitnesss of each individual particle
             # determine if current particle is the best (globally)
-            for j in range(0, num_particles):
-                if swarm[j].fit_i < fit_best_g or fit_best_g == -1:
-                    pos_best_g = list(swarm[j].position_i)
-                    fit_best_g = float(swarm[j].fit_i)
+            for particle in range(0, num_particles):
+                if swarm[particle].fit_i < fit_best_g or fit_best_g == -1:
+                    pos_best_g = list(swarm[particle].position_i)
+                    fit_best_g = float(swarm[particle].fit_i)
 
-                    # cycle through swarm and update velocities and position
-            for j in range(0,num_particles):
-                swarm[j].update_velocity(pos_best_g)
-                swarm[j].update_position(bounds)
+            # cycle through swarm and update velocities and position
+            for particle in range(0,num_particles):
+                swarm[particle].update_velocity(pos_best_g)
+                swarm[particle].update_position(bounds)
 
 
-            results = run_dir + "Generation_%d/Parameters.txt" %(i)
+            results = run_dir + "Generation_%d/Parameters.txt" %(iteration)
             os.makedirs(os.path.dirname(results), exist_ok=True)
             with open(results, mode='w') as myfile2:
-                for j in range(0, num_particles):
-                    myfile2.write(str(str(i)+'\t'+ str(j) + '\n'+'\t'.join(str(e) for e in swarm[j].velocity_i) + '\n' + '\t'.join(str(ee) for ee in swarm[j].pos_best_i) + '\n'+str(swarm[j].fit_best_i)+'\n'))
-                    particles_fit.append(swarm[j].fit_best_i)
+                for particle in range(0, num_particles):
+                    myfile2.write(str(str(iteration)+'\t'+ str(particle) + '\n'+'\t'.join(str(e) for e in swarm[particle].velocity_i) + '\n' + '\t'.join(str(ee) for ee in swarm[particle].pos_best_i) + '\n'+str(swarm[particle].fit_best_i)+'\n'))
+                    particles_fit.append(swarm[particle].fit_best_i)
             # write back to the files
             fileresults = run_dir + "Final_Results/best_results.txt"
             os.makedirs(os.path.dirname(fileresults), exist_ok=True)
             with open(fileresults, mode='a') as myfile:
-                myfile.write(str(str(i) + '\t'+'\t'.join(str(e) for e in pos_best_g) + '\t' + str(fit_best_g) + '\n'))
+                myfile.write(str(str(iteration) + '\t'+'\t'.join(str(e) for e in pos_best_g) + '\t' + str(fit_best_g) + '\n'))
 
 
             # write back to the files
@@ -237,7 +247,7 @@ class PSO():
                 myfile.write(str(statistics.mean(particles_fit)) + '\t'+str(statistics.stdev(particles_fit))+'\n')
 
             # print("next iter")
-            i += 1
+            iteration += 1
 
         # print final results
         print("PSO_tocluster.py: FINAL, the pso_best_g is " + str(pos_best_g) + "and the fit_best_g is " + str(fit_best_g) + " \n")
