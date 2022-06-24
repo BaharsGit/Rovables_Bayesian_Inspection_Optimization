@@ -13,11 +13,11 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 360
+MAX_TIME = 900
 run = 0
 n_run = 5
 nRobot = 4
-boxSize = 4
+boxSize = 16
 imageDim = 128
 fillRatio = 0.55
 p_high = 0.9
@@ -33,6 +33,7 @@ parameters = []
 #seedIn = str(time.time())
 #BASELINE
 seedIn = str(sys.argv[1])
+print("Using Run: ", seedIn)
 boxData = []
 accuracy = []
 dec_time = []
@@ -118,15 +119,15 @@ def cleanup():
     else:
         run_dec = int(all(i > 0.5 for i in rowProbData))
     print("Run Correct: ", run_dec)
-    _, counts = np.unique(grid, return_counts=True)
-    coverage_arr.append(counts[1] / (imageDim * imageDim))
-    dec_time.append(supervisor.getTime())
-    accuracy.append(run_dec)
+    # _, counts = np.unique(grid, return_counts=True)
+    # coverage_arr.append(counts[1] / (imageDim * imageDim))
+    # dec_time.append(supervisor.getTime())
+    # accuracy.append(run_dec)
 
-    _, counts = np.unique(grid, return_counts=True)
-    fitnessData[0] = sum(dec_time) / n_run
-    fitnessData[1] = sum(coverage_arr) / n_run
-    fitnessData[2] = sum(accuracy) / n_run
+    # _, counts = np.unique(grid, return_counts=True)
+    # fitnessData[0] = sum(dec_time) / n_run
+    # fitnessData[1] = sum(coverage_arr) / n_run
+    # fitnessData[2] = sum(accuracy) / n_run
 
     # USED ONLY FOR PSO LAUNCH
     # if (value is not None):
@@ -151,7 +152,7 @@ def cleanup():
     
 
     #Write the fitness file into the local dir only when number of runs are done
-    # print("Cleaning up Simulation")
+    print("Cleaning up Simulation")
     # if (value is not None):
     #     print("Wrote file: " +  value + "/local_fitness")
     # else:
@@ -201,7 +202,7 @@ def get_pos(xPos, yPos):
     ix = int(int(xPos*imageDim)/boxSize)
     iy = int(int(yPos*imageDim)/boxSize)
     #print(ix, iy)
-    grid[ix][iy] = 1
+    grid[ix-1][iy-1] = 1
 
 def randomizePosition():
     posX = []
@@ -237,7 +238,7 @@ for i in range(nRobot):
     #print(init_data)
     data_array[i].setSFString(init_data) #Init custom data to required format
 
-randomizePosition()
+#randomizePosition()
 
 # MODIFIED FOR AWS LAUNCH
 # Get the current time

@@ -56,9 +56,9 @@ static int nParam = 5;
 static double alpha = 0;
 static double beta = 0;
 static int d_f = -1; 
-static int tao = 200;
-static double p_c = 0.5; //Credibility Threshold 
-static bool u_plus = false; //Positive feedback 
+static int tao = 800;
+static double p_c = 0.99; //Credibility Threshold 
+static bool u_plus = true; //Positive feedback 
 static double comDist = 1;
 static double close_distance = 30.0;
 static int C = 0; //Observed Color
@@ -68,9 +68,9 @@ static int robotNum;
 static int msg_count = 0;
 static int FSM_STATE = 0;
 static std::string name;
-static double speed = 5.0;
+static double speed = 10.0;
 static int rand_const_forward = 250; //Range for random value to go forward
-static int rand_const_turn = 100; //Range for random value to turn
+static int rand_const_turn = 50; //Range for random value to turn
 static int pause_time = 25;
 static double p;
 static char out;
@@ -163,9 +163,9 @@ int main(int argc, char **argv) {
     // Start robots one after the other
       //std::cout << name << " start controller" << std::endl;
     //std::cout << "--------------" << std::endl;
-    if (control_count % 5000 == 0) {
-      std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << std::endl;
-    }
+    // if (control_count % 2500 == 0) {
+      // std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << " -> " << alpha << ", " << beta << std::endl;
+    // }
     //std::cout << " Robot " << robotNum << " : " << alpha << " " << beta << std::endl;
     double distance_sensors_values[4];
     for (int i = 0; i < 4; i++){
@@ -234,7 +234,8 @@ int main(int argc, char **argv) {
         }
         direction = distance_sensors_values[LEFT] < distance_sensors_values[RIGHT] ? RIGHT : LEFT;
         
-        if ((distance_sensors_values[LEFT] < 150) && (distance_sensors_values[RIGHT] < 150) && (distance_sensors_values[2] < 150) && (distance_sensors_values[3] < 150)) {
+        //if ((distance_sensors_values[LEFT] < 140) && (distance_sensors_values[RIGHT] < 140)) {
+        if (((distance_sensors_values[LEFT] < 130) && (distance_sensors_values[RIGHT] < 130)) || ((distance_sensors_values[2] < 130) && (distance_sensors_values[3] < 130))) {
           direction = -1;
         } else if (distance_sensors_values[2] < distance_sensors_values[3]) {   
           direction = RIGHT;
@@ -242,7 +243,7 @@ int main(int argc, char **argv) {
           direction = LEFT;
         } 
         
-        //std::cout << direction << std::endl;
+        //std::cout << robotNum << " "<< direction << std::endl;
         if (direction == LEFT) {
           // set the speed to turn to the left
           motors[LEFT]->setVelocity(-speed);
@@ -506,10 +507,22 @@ static void putMessage() { // color, id, df/C'
        std::string outbound;
        std::string cProb = otherData.substr(4,8);
        
-       if (d_f != -1 && u_plus) {
+       if ((alpha + beta) > 100) {
+         p = incbeta(alpha, beta, 0.5);
+         if ((d_f == -1) && u_plus) {
+           if (p > p_c) {
+             std::cout << "PF Black" << std::endl;
+             d_f = 0;
+           } else if ((1 - p) > p_c) {
+             d_f = 1;
+             std::cout << "PF WHITE" << std::endl;
+           } 
+         }
+       }  
+       
+       if (d_f == -1 && u_plus) {
          out = d_f + '0';
          otherData[robotNum] = out;
-         //outbound = ack + myID + std::to_string(d_f) + cProb;
        } else {
          out = '0' + C;
          //std::cout << "Output char: " << out << " With int: " << C <<  " at location: " << index << std::endl;
