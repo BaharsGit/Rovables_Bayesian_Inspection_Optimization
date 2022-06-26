@@ -12,6 +12,8 @@
 # The first input variable to the shell script is the GEN_ID, the second one is the PARTICLE_ID
 GEN_ID=$1 
 PARTICLE_ID=$2
+# MODIFIED FOR NOISE RESISTANT PSO
+INSTANCE_ID=$3
 
 
 # Setting the worst case fitness value, in case the launch doesn't go well, the worst case fitness value is considered as default
@@ -139,7 +141,7 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
 #mv $WB_WORKING_DIR/global_best_prob.txt $OUTPUT_DIR/global_best_prob_${PARTICLE_ID}.txt
 #mv $WB_WORKING_DIR/local_best_prob.txt $OUTPUT_DIR/local_best_prob_${PARTICLE_ID}.txt
 
-mv $WB_WORKING_DIR/local_fitness.txt ${OUTPUT_DIR}/local_fitness_${PARTICLE_ID}.txt
+#mv $WB_WORKING_DIR/local_fitness.txt ${OUTPUT_DIR}/local_fitness_${PARTICLE_ID}.txt
 
 #mv $WB_WORKING_DIR/prob.txt $OUTPUT_DIR/prob_${PARTICLE_ID}.txt
 #mv $WB_WORKING_DIR/prob_w.txt $OUTPUT_DIR/prob_w_${PARTICLE_ID}.txt
@@ -148,6 +150,15 @@ mv $WB_WORKING_DIR/local_fitness.txt ${OUTPUT_DIR}/local_fitness_${PARTICLE_ID}.
 #mv $WB_WORKING_DIR/run_counter.txt $OUTPUT_DIR/run_counter_${PARTICLE_ID}.txt
 #mv $WB_WORKING_DIR/ttime.txt $OUTPUT_DIR/ttime_${PARTICLE_ID}.txt
 
+# MODIFIED FOR NOISE RESISTANT PSO
+if [ $INSTANCE_ID -ge 0 ]
+then
+   mv $WB_WORKING_DIR/local_fitness.txt ${OUTPUT_DIR}/local_fitness_${PARTICLE_ID}_${INSTANCE_ID}.txt
+
+else 
+   mv $WB_WORKING_DIR/local_fitness.txt ${OUTPUT_DIR}/local_fitness_${PARTICLE_ID}.txt
+
+fi
 
 
 # Remove job base directory, the Webots working directory

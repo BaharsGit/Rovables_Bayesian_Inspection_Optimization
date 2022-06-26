@@ -50,8 +50,12 @@ def launch_webots(i, j):
 
 
 # ---- Read fitness files-------------------------------------------------------+
-def fitness_evaluation(iteration, particle, instance = 0):
-    filename = run_dir + "Generation_%d/local_fitness_%d.txt" % (iteration, particle)
+# MODIFIED FOR NOISE RESISTANT PSO
+def fitness_evaluation(iteration, particle, instance = -1):
+    if instance == -1:
+        filename = run_dir + "Generation_%d/local_fitness_%d.txt" % (iteration, particle)
+    else:
+        filename = run_dir + "Generation_%d/local_fitness_%d_%d.txt" % (iteration, particle, instance)
     # os.makedirs(os.path.dirname(filename), exist_ok=True)
     # with open( filename, mode='w') as filemy:
     #	filemy.write("1\n")
@@ -59,7 +63,10 @@ def fitness_evaluation(iteration, particle, instance = 0):
         fitness = f.readline().strip()
     if len(fitness) == 0:
         fitness = -1
-        print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt file is empty \n")
+        if instance == 0:
+            print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt file is empty \n")
+        else:
+            print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + "_" + str(instance) + ".txt file is empty \n")
     else:
         fitness = float(fitness)
     # Simple Fitness Function
@@ -89,20 +96,22 @@ class Particle:
 
             # evaluate current fitness
 
-    def evaluate(self, costFunc, iteration, particle, instance = 0):
+    # MODIFIED FOR NOISE RESISTANT PSO
+    def evaluate(self, costFunc, iteration, particle, instance = -1, noise_resistance_evals = 0):
         success = 1
         fitness = costFunc(iteration, particle, instance)
         if fitness == -1:
             success = 0
         else:
-            self.fit_i = fitness
+            if noise_resistance_evals == 0:
+                self.fit_i = fitness
+            else:
+                self.fit_i += fitness/noise_resistance_evals
             success = 1
-            if self.fit_i < self.fit_best_i or self.fit_best_i == -1:
+            # check to see if the current position is an individual best
+            if fitness < self.fit_best_i or self.fit_best_i == -1:
                 self.pos_best_i = self.position_i
                 self.fit_best_i = self.fit_i
-
-
-            # check to see if the current position is an individual best
         return success
 
     # update new particle velocity
@@ -143,9 +152,9 @@ class Particle:
 
             dim_index = dim_index + 2
 
-
+# MODIFIED FOR NOISE RESISTANT PSO
 class PSO():
-    def __init__(self, x0, costFunc, bounds, num_particles, maxiter, noise_resistance):
+    def __init__(self, x0, costFunc, bounds, maxiter, num_particles = 15, noise_resistance_evals = 0):
         global num_dimensions
 
         fit_best_g = -1  # best global fitness
@@ -182,11 +191,13 @@ class PSO():
             num_evaluated_particles = 0
             pending_particles = list(range(0, num_particles))
 
+            # MODIFIED FOR NOISE RESISTANT PSO
+            instance = noise_resistance_evals -1    
             while num_evaluated_particles < num_particles:
                 # wait for all jobs to be finished
                 particle = pending_particles[0]
   
-                if noise_resistance == 0:
+                if noise_resistance_evals == 0:
                     file_path = run_dir + "Generation_%d/local_fitness_%d.txt" % (iteration, particle)
                     if os.path.exists(file_path):
                         success = swarm[particle].evaluate(costFunc, iteration, particle)
@@ -199,19 +210,22 @@ class PSO():
                             print("PSO_tocluster.py: remove individual particle " + str(particle) + "from the list of unevaluated particles \n")
                             # print(pending_particles)
                             pending_particles.remove(particle)
+
+                # MODIFIED FOR NOISE RESISTANT PSO
                 else:
                     file_path = run_dir + "Generation_%d/local_fitness_%d_%d.txt" % (iteration, particle, instance)
                     if os.path.exists(file_path):
                         success = swarm[particle].evaluate(costFunc, iteration, particle, instance)
-                        print("PSO_tocluster.py: evaluating Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt \n")
+                        print("PSO_tocluster.py: evaluating Generation_" + str(iteration) + "/local_fitness_" + str(particle) + "_" + str(instance) + ".txt \n")
                         if success == 0:
-                            print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt file is empty \n")
+                            print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + "_" + str(instance) + ".txt file is empty \n")
                             #launch_webots(iteration, particle)
                         else:
-                            num_evaluated_particles += 1
-                            print("PSO_tocluster.py: remove individual particle " + str(particle) + "from the list of unevaluated particles \n")
-                            # print(pending_particles)
-                            pending_particles.remove(particle)
+                            print("PSO_tocluster.py: remove instance " + str(instance) + " of individual particle " + str(particle) + "from the list of unevaluated particles \n")
+                            instance -= 1
+                            if instance == -1:
+                                pending_particles.remove(particle)
+                                instance = noise_resistance_evals -1
 
 
             # read the local fitnesss of each individual particle
@@ -262,7 +276,9 @@ if __name__ == "__PSO__":
 
 # argument for number of particles
 parser = argparse.ArgumentParser(description='Run PSO to optimize parameters in the context of self-assembling robots')
-parser.add_argument("-n", "--nb_particles", required=False, type=int, default="15", help="number of particles for PSO")
+# MODIFIED FOR NOISE RESISTANT PSO
+parser.add_argument("--nb_particles", required=False, type=int, default="15", help="number of particles for PSO")
+parser.add_argument("--nb_noise_res_evals", required=False, type=int, default="0", help="number of noise resistance evaluations for PSO")
 args = parser.parse_args()
 if args.nb_particles < 2:
     parser.error("Minimum number of particles is 2")
@@ -287,7 +303,8 @@ num_dimensions = 5 # Dimension of particle
 x0=[0.4,0.5,30,250,100] # Initial particle position
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
-PSO(x0, fitness_evaluation, bounds, num_particles=args.nb_particles, maxiter=30)
+# MODIFIED FOR NOISE RESISTANT PSO
+PSO(x0, fitness_evaluation, bounds, maxiter=30, num_particles=args.nb_particles, num_noise_res_evals=args.nb_noise_res_evals)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)

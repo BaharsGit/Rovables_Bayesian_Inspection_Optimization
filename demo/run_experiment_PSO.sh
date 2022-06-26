@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# MODIFIED FOR NOISE RESISTANT PSO
+NB_NOISE_RES_EVALS=0
+
 # Get the current AWS job indexes
 MY_ID=$((AWS_BATCH_JOB_NODE_INDEX))
 MAIN_ID=$((AWS_BATCH_JOB_MAIN_NODE_INDEX))
@@ -19,7 +22,8 @@ cd /usr/local/efs/demo/jobfiles
 if [ $MY_ID -eq $MAIN_ID ]; then
   # Run PSO Python script on main node
   echo "Running PSO script"
-  python3 -u PSO_tocluster.py -n $NB_PARTICLES
+  # MODIFIED FOR NOISE RESISTANT PSO
+  python3 -u PSO_tocluster.py -n $NB_PARTICLES $NB_NOISE_RES_EVALS
 
 else
   # Run particle evaluation on other nodes
@@ -35,7 +39,13 @@ else
     if [ -f "Generation_${GEN_ID}/prob_${INDIVID_ID}.txt" ]; then
       # Start one local Webots instance
       echo "Starting a Webots instance for particle evaluation"
-      bash ../job_lily_parallel.sh $GEN_ID $INDIVID_ID
+      # MODIFIED FOR NOISE RESISTANT PSO
+      INSTANCE_ID=$((NB_NOISE_RES_EVALS))
+      while [ INSTANCE_ID -ge 0 ]
+      do 
+        INSTANCE_ID=$(($INSTANCE_ID -1))
+        bash ../job_lily_parallel.sh $GEN_ID $INDIVID_ID $INSTANCE_ID
+      done
       ((GEN_ID++))
     fi
   done
