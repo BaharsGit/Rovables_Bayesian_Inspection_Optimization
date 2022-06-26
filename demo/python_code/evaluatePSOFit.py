@@ -23,7 +23,7 @@ for i in range(n_robots):
 fitness_df = pd.DataFrame()
 savePlots = 0
 rootdir = '/home/darren/Documents/DARS/Run_1/'
-baselinedir = '/home/darren/Documents/DARS/baseline_800TAO/'
+baselinedir = '/home/darren/Documents/DARS/Log/'
 
 ################################### 2D Position Histogram ########################
 def create2dHist(run):
@@ -120,7 +120,7 @@ def psoFitness():
     plt.ylabel('Decision Time')
     plt.plot(np.arange(num_gen), generation_best, color='darkgreen', label='Best')
     plt.plot(np.arange(num_gen), generation_mean, color='red', label='PSO Average')
-    plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, color='lightcoral', alpha=0.3)
+    plt.fill_between(np.arange(num_gen), generation_mean + generation_std, generation_mean - generation_std, color='lightcoral', alpha=0.3)
     plt.legend()
     plt.show()
 
@@ -130,14 +130,14 @@ def createSTD():
     averages['std'] = averages.std(axis=1, ddof=0)
     averages.to_csv('means.csv')
     plt.plot(np.arange(averages.shape[0]), (averages.loc[:, 'mean']).to_list(), color='dodgerblue', label='Simulation Average')
-    plt.fill_between(np.arange(averages.shape[0]),
-    (averages.loc[:, 'mean']) - (averages.loc[:, 'std']), 
-    (averages.loc[:, 'mean']) + (averages.loc[:, 'std']), color='lightskyblue', alpha=0.3, label='One Standard Deviation')
+    plt.fill_between(np.arange(averages.shape[0]), (averages.loc[:, 'mean']) + (averages.loc[:, 'std']), (averages.loc[:, 'mean']) - (averages.loc[:, 'std']), color='lightskyblue', alpha=0.3, label='One Standard Deviation')
     plt.axhline(y=0.5, color='r', linestyle='--')
+    plt.ylim(0, 1.0)
+    plt.plot(averages['std'], color='red',label='Standard Deviation')
     plt.xlabel('Simulation Time')
     plt.ylabel('Robot Belief')
-    plt.title('Credibility Threshold = 0.95')
-    plt.savefig(baselinedir + '/FB_95.png')
+    plt.title('Credibility Threshold = 0.99')
+    plt.savefig(baselinedir + '/FB_99.png')
 
 ################################## READS IN FITNESS FILES ############################################
 # for i in range(num_gen):
@@ -182,7 +182,8 @@ for run in range(100):
 #averages = averages.dropna(axis = 0, how = 'all')
 #averages = averages.dropna()
 
-print(averages)
+# averages = averages.iloc[np.arange(35000)]
 createSTD()
+#averages['std'].to_csv('std.csv')
 plt.legend()
 plt.show()

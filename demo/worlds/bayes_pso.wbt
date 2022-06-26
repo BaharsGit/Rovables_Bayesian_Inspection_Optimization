@@ -11,8 +11,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.24115048068459002 -0.8513812331865067 -0.46582876837247217 3.9849636327319424
-  position 1.5999245458882876 1.85831669139433 -0.20788517017284677
+  orientation 0.21114472728936237 -0.9037565460369725 -0.3723466256503777 4.105195445691772
+  position 1.9945765907578832 1.6639557150911555 -0.39427970745507823
   follow "r1"
 }
 TexturedBackground {
@@ -69,27 +69,27 @@ Robot {
   supervisor TRUE
 }
 DEF rov_0 Rovable {
-  translation 0.42 0.023 0.32
-  rotation 1 0 0 -1.5707953071795862
+  translation 0.818619 0.023 0.725335
+  rotation -0.46994214304900034 -0.6241611899928227 -0.6241611899928227 2.26296
   name "r0"
   controller "bayes_fsm"
   controllerArgs [
     "5"
   ]
-  customData "01010.000000"
+  customData "01110.000000"
 }
 DEF rov_1 Rovable {
-  translation 0.07 0.023 0.21
+  translation 0.769514 0.023 0.166519
   rotation 1 0 0 -1.5707953071795862
   name "r1"
   controller "bayes_fsm"
   controllerArgs [
     "13"
   ]
-  customData "10010.000000"
+  customData "10110.000001"
 }
 DEF rov_2 Rovable {
-  translation 0.632734 0.023 0.814372
+  translation 0.339489 0.023 0.529213
   rotation 1 0 0 -1.5707953071795862
   name "r2"
   controller "bayes_fsm"
@@ -99,12 +99,12 @@ DEF rov_2 Rovable {
   customData "11010.000000"
 }
 DEF rov_3 Rovable {
-  translation 0.16 0.023 0.45
+  translation 0.209388 0.023 0.217339
   rotation 1 0 0 -1.5707953071795862
   name "r3"
   controller "bayes_fsm"
   controllerArgs [
     "2281"
   ]
-  customData "11000.000000"
+  customData "11100.000000"
 }
