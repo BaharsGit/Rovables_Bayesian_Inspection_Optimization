@@ -75,8 +75,8 @@ def fitness_evaluation(iteration, particle, instance = -1):
     # 150*(average accuracy) + 100*(average coverage) - (average decision time)
     #fitness_res = (175*fitness[2] + 100*fitness[1] - fitness[0])
     fitness_res = float(fitness)
-    print("Particle: ", iteration, particle)
-    print("Fitness Result: ", fitness_res)
+    print("Fitness evaluation for particle %d in iteration %d: ", particle, iteration)
+    print("Fitness value read from the file is: ", fitness_res)
     return fitness_res
 
 
@@ -207,7 +207,7 @@ class PSO():
                             #launch_webots(iteration, particle)
                         else:
                             num_evaluated_particles += 1
-                            print("PSO_tocluster.py: remove individual particle " + str(particle) + "from the list of unevaluated particles \n")
+                            print("PSO_tocluster.py: remove individual particle " + str(particle) + " from the list of unevaluated particles \n")
                             # print(pending_particles)
                             pending_particles.remove(particle)
 
@@ -221,7 +221,7 @@ class PSO():
                             print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + "_" + str(instance) + ".txt file is empty \n")
                             #launch_webots(iteration, particle)
                         else:
-                            print("PSO_tocluster.py: remove instance " + str(instance) + " of individual particle " + str(particle) + "from the list of unevaluated particles \n")
+                            print("PSO_tocluster.py: remove instance " + str(instance) + " of individual particle " + str(particle) + " from the list of unevaluated particles \n")
                             instance -= 1
                             if instance == -1:
                                 pending_particles.remove(particle)
@@ -277,8 +277,8 @@ if __name__ == "__PSO__":
 # argument for number of particles
 parser = argparse.ArgumentParser(description='Run PSO to optimize parameters in the context of self-assembling robots')
 # MODIFIED FOR NOISE RESISTANT PSO
-parser.add_argument("--nb_particles", required=False, type=int, default="15", help="number of particles for PSO")
-parser.add_argument("--nb_noise_res_evals", required=False, type=int, default="0", help="number of noise resistance evaluations for PSO")
+parser.add_argument("-n", "--nb_particles", required=False, type=int, default="15", help="number of particles for PSO")
+parser.add_argument("-e", "--nb_noise_res_evals", required=False, type=int, default="0", help="number of noise resistance evaluations for PSO")
 args = parser.parse_args()
 if args.nb_particles < 2:
     parser.error("Minimum number of particles is 2")
@@ -304,7 +304,7 @@ x0=[0.4,0.5,30,250,100] # Initial particle position
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
 # MODIFIED FOR NOISE RESISTANT PSO
-PSO(x0, fitness_evaluation, bounds, maxiter=30, num_particles=args.nb_particles, num_noise_res_evals=args.nb_noise_res_evals)
+PSO(x0, fitness_evaluation, bounds, maxiter=30, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)
