@@ -34,7 +34,7 @@ else
   echo "Waiting for next particle evaluation"
   GEN_ID=0
   # Run PSO Python script on main node
-  PARTICLE_ID=$((($MY_ID-1)%$NB_NOISE_RES_EVALS))
+  PARTICLE_ID=$((($MY_ID-1)%$NB_PARTICLES))
 
   RUN_DIR=$(ls -td */| head -1)
   cd $RUN_DIR
@@ -43,15 +43,17 @@ else
   do
     if [ -f "Generation_${GEN_ID}/prob_${PARTICLE_ID}.txt" ]; then
       # Start one local Webots instance
-      echo "Starting a Webots instance for evaluation of particle" $PARTICLE_ID
       # MODIFIED FOR NOISE RESISTANT PSO
-      INSTANCE_ID=$((NB_NOISE_RES_EVALS))
-      while [ $INSTANCE_ID -ge 0 ]
-      do
-        INSTANCE_ID=$(($INSTANCE_ID -1))
+      if [ $NB_NOISE_RES_EVALS -gt 0 ]
+      then
+        INSTANCE_ID=$(((($MY_ID-1)-$PARTICLE_ID)/$NB_PARTICLES))
         echo "Starting a Webots instance for evaluation of instance $INSTANCE_ID of particle $PARTICLE_ID" 
         bash ../job_lily_parallel.sh $GEN_ID $PARTICLE_ID $INSTANCE_ID
-      done
+      else
+        INSTANCE_ID=-1
+        echo "Starting a Webots instance for evaluation of particle" $PARTICLE_ID
+        bash ../job_lily_parallel.sh $GEN_ID $PARTICLE_ID $INSTANCE_ID
+      fi
       ((GEN_ID++))
     fi
   done
