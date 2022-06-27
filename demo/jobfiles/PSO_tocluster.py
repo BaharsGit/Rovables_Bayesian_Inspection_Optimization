@@ -63,7 +63,7 @@ def fitness_evaluation(iteration, particle, instance = -1):
         fitness = f.readline().strip()
     if len(fitness) == 0:
         fitness = -1
-        if instance == 0:
+        if instance == -1:
             print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt file is empty \n")
         else:
             print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + "_" + str(instance) + ".txt file is empty \n")
@@ -215,7 +215,7 @@ class PSO():
                 else:
                     file_path = run_dir + "Generation_%d/local_fitness_%d_%d.txt" % (iteration, particle, instance)
                     if os.path.exists(file_path):
-                        success = swarm[particle].evaluate(costFunc, iteration, particle, instance)
+                        success = swarm[particle].evaluate(costFunc, iteration, particle, instance, noise_resistance_evals)
                         print("PSO_tocluster.py: evaluating Generation_" + str(iteration) + "/local_fitness_" + str(particle) + "_" + str(instance) + ".txt \n")
                         if success == 0:
                             print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + "_" + str(instance) + ".txt file is empty \n")
