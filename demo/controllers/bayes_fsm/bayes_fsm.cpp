@@ -56,11 +56,11 @@ static int nParam = 5;
 static double alpha = 0;
 static double beta = 0;
 static int d_f = -1; 
-static int tao = 800;
-static double p_c = 0.99; //Credibility Threshold 
+static int tao = 1500;
+static double p_c = 0.95; //Credibility Threshold 
 static bool u_plus = true; //Positive feedback 
 static double comDist = 1;
-static double close_distance = 30.0;
+static double close_distance = 15.0;
 static int C = 0; //Observed Color
 
 //Robot Parameters
@@ -71,7 +71,7 @@ static std::string name;
 static double speed = 10.0;
 static int rand_const_forward = 250; //Range for random value to go forward
 static int rand_const_turn = 50; //Range for random value to turn
-static int pause_time = 25;
+static int pause_time = 100;
 static double p;
 static char out;
 static int direction = LEFT;
@@ -81,10 +81,10 @@ static int turn_count;
 static int control_count = 0;
 
 //Arena Parameters
-int boxSize = 16;
+int boxSize = 8;
 int imageDim = 128;
-int rowCount = 36; // THIS MUST BE CHANGED EVERYTIME A NEW ARENA IS CREATED
-int grid[36][2]; 
+int rowCount = 141; // THIS MUST BE CHANGED EVERYTIME A NEW ARENA IS CREATED
+int grid[141][2]; 
 
 //Function declarations
 double incbeta(double a, double b, double x);
@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
     // Start robots one after the other
       //std::cout << name << " start controller" << std::endl;
     //std::cout << "--------------" << std::endl;
-    // if (control_count % 2500 == 0) {
+    // if (control_count % 8000 == 0) {
       // std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << " -> " << alpha << ", " << beta << std::endl;
     // }
     //std::cout << " Robot " << robotNum << " : " << alpha << " " << beta << std::endl;
@@ -187,13 +187,15 @@ int main(int argc, char **argv) {
         }
         //OBSERVE COLOR 
         else if ((control_count - robotNum) % tao == 0) {
-          pause_count = pause_time;
-          FSM_STATE = FSM_PAUSE;
+          if (d_f == -1) { // Only observe when no decision is made.
+            pause_count = pause_time;
+            FSM_STATE = FSM_PAUSE;
+          }
         } 
         //SEND COLOR
-        else {
-          FSM_STATE = FSM_SEND;
-        }
+        // else {
+          // FSM_STATE = FSM_SEND;
+        // }
         if (forward_count > 0) {
           motors[LEFT]->setVelocity(speed);
           motors[RIGHT]->setVelocity(speed);
@@ -280,6 +282,7 @@ int main(int argc, char **argv) {
         alpha = alpha + C;
         beta = beta + (1 - C);
         FSM_STATE = FSM_SEND;
+        //std::cout <<"Robot " << robotNum << " Index " << control_count + robotNum << std::endl;
         break;
       }
       
@@ -323,13 +326,13 @@ int main(int argc, char **argv) {
     p = incbeta(alpha, beta, 0.5);
     //std::cout << name << " Current CDF: " << p << " with ALPHA: " << alpha << " and BETA: "<< beta <<std::endl;
     
-    if ((d_f == -1) & u_plus) {
-      if (p > p_c) {
-        d_f = 0;
-      } else if ((1 - p) > p_c) {
-        d_f = 1;
-      } 
-    }
+    // if ((d_f == -1) & u_plus) {
+      // if (p > p_c) {
+        // d_f = 0;
+      // } else if ((1 - p) > p_c) {
+        // d_f = 1;
+      // } 
+    // }
     
     control_count = control_count + 1;
     //std::cout << "Alpha: " << alpha << " Beta: " << beta << std::endl;
@@ -515,20 +518,22 @@ static void putMessage() { // color, id, df/C'
              d_f = 0;
            } else if ((1 - p) > p_c) {
              d_f = 1;
-             std::cout << "PF WHITE" << std::endl;
+             std::cout << robotNum << " PF WHITE" << std::endl;
            } 
          }
        }  
        
-       if (d_f == -1 && u_plus) {
+       if (d_f != -1 && u_plus) {
          out = d_f + '0';
          otherData[robotNum] = out;
+         //std::cout << robotNum << " PF: "<< otherData[robotNum] << std::endl;
        } else {
          out = '0' + C;
          //std::cout << "Output char: " << out << " With int: " << C <<  " at location: " << index << std::endl;
          otherData[robotNum] = out;
          //outbound = ack+ myID + std::to_string(C) + cProb;
          //std::cout << outbound << std::endl;
+         //std::cout << robotNum <<" NO PF: "<< otherData[robotNum] << std::endl;
        }
        otherDataField->setSFString(otherData);
        //std::cout << robotNum << " Sent to: " << i << " Color:" << out << "with Data: " << otherData << std::endl;
@@ -575,23 +580,30 @@ static void readParameters() {
       const char *cstr = line.c_str();
       z = std::atof(cstr);
       std::cout << z << std::endl;
-      if (i == 0) {
-        if (z > 0.5) u_plus = true;
-        else u_plus = false;
-      }
+      if (i == 0) tao = z;
+      if (i == 1) alpha = z;
+      if (i == 2) rand_const_forward = z;
+      // if (i == 0) {
+        // if (z > 0.5) u_plus = true;
+        // else u_plus = false;
+      // }
       
-      if (i == 1) p_c = z;
-      if (i == 2) close_distance = z;
-      if (i == 3) rand_const_forward = z;
-      if (i == 4) rand_const_turn = z;
+      // if (i == 1) p_c = z;
+      // if (i == 2) close_distance = z;
+      // if (i == 3) rand_const_forward = z;
+      // if (i == 4) rand_const_turn = z;
     }
     
     file.close();
   }
+  std::cout << "Tao: " << tao << std::endl;
+  std::cout << "Alpha Prior: " << alpha << std::endl;
+  std::cout << "Random Forward: " << rand_const_forward <<std::endl;
   
-  std::cout << "Positive Feedback: " << u_plus << std::endl;
-  std::cout << "Credibility Thresdhold: " << p_c << std::endl;
-  std::cout << "Close Distance: " << close_distance <<std::endl;
-  std::cout << "Random forward: " << rand_const_forward << std::endl;
-  std::cout << "Random Turn: " << rand_const_turn << std::endl;
+  
+  // std::cout << "Positive Feedback: " << u_plus << std::endl;
+  // std::cout << "Credibility Thresdhold: " << p_c << std::endl;
+  // std::cout << "Close Distance: " << close_distance <<std::endl;
+  // std::cout << "Random forward: " << rand_const_forward << std::endl;
+  // std::cout << "Random Turn: " << rand_const_turn << std::endl;
 }

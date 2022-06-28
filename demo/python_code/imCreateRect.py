@@ -14,8 +14,8 @@ parser = argparse.ArgumentParser(description="Generates grid for Bayes Bot algor
 
 # For world
 parser.add_argument("-fr", "--fill_ratio", required=False, type=float, default="0.55", help="Fill ratio of generated picture and coordinates")
-parser.add_argument("-ss", "--square_size", required=False, type=int, default="16", help="Determines the size of generated squares")
-parser.add_argument("-sd", "--seed", required=False, type=int, default="16", help="Seed for random generation of map")
+parser.add_argument("-ss", "--square_size", required=False, type=int, default="8", help="Determines the size of generated squares")
+parser.add_argument("-sd", "--seed", required=False, type=int, default="8", help="Seed for random generation of map")
 parser.add_argument("-rs", "--robot_seed", required=False, type=int, default="0", help="Seed that is used for the robot random walk a placement for this experiment")
 
 args = parser.parse_args()

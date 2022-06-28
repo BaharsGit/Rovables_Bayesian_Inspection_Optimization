@@ -30,13 +30,14 @@ csvProbData = []
 csvPosData = []
 parameters = []
 #PSO
-#seedIn = str(time.time())
+seedIn = str(time.time())
 #BASELINE
-seedIn = str(sys.argv[1])
+#seedIn = str(sys.argv[1])
 print("Using Run: ", seedIn)
 boxData = []
 accuracy = []
-dec_time = []
+dec_time = np.zeros(nRobot)
+dec_hold = np.zeros(nRobot)
 coverage_arr = []
 fitnessData = np.zeros(3) # Decision Time | Coverage | Accuracy
 start_time = time.time()
@@ -89,39 +90,38 @@ def checkDecision(data):
 # Writes to the fitness file for the current iteration of particle
 def cleanup():
     #print("Fitness: ", supervisor.getTime())
-
-    filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
-    filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
+    #supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
+    # filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
+    # filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
 
     # writing to csv file
-    with open(filenameProb, 'w') as csvfile:
-        # creating a csv writer object
-        csvwriter = csv.writer(csvfile)
+    # with open(filenameProb, 'w') as csvfile:
+    #     # creating a csv writer object
+    #     csvwriter = csv.writer(csvfile)
 
-        #Write the header
-        #csvwriter.writerow(defArray)
+    #     #Write the header
+    #     #csvwriter.writerow(defArray)
 
-        # writing the data rows``
-        csvwriter.writerows(csvProbData)
+    #     # writing the data rows``
+    #     csvwriter.writerows(csvProbData)
 
-    with open(filenamePos, 'w') as csvfile:
-        # creating a csv writer object
-        csvwriter = csv.writer(csvfile)
+    # with open(filenamePos, 'w') as csvfile:
+    #     # creating a csv writer object
+    #     csvwriter = csv.writer(csvfile)
 
-        #Write the header
-        #csvwriter.writerow(defArray)
+    #     #Write the header
+    #     #csvwriter.writerow(defArray)
 
-        # writing the data rows
-        csvwriter.writerows(csvPosData)
+    #     # writing the data rows
+    #     csvwriter.writerows(csvPosData)
 
-    if (fillRatio > 0.50):
-        run_dec = int(all(i < 0.5 for i in rowProbData))
-    else:
-        run_dec = int(all(i > 0.5 for i in rowProbData))
-    print("Run Correct: ", run_dec)
+    # if (fillRatio > 0.50):
+    #     run_dec = int(all(i < 0.5 for i in rowProbData))
+    # else:
+    #     run_dec = int(all(i > 0.5 for i in rowProbData))
+    # print("Run Correct: ", run_dec)
     # _, counts = np.unique(grid, return_counts=True)
     # coverage_arr.append(counts[1] / (imageDim * imageDim))
-    # dec_time.append(supervisor.getTime())
     # accuracy.append(run_dec)
 
     # _, counts = np.unique(grid, return_counts=True)
@@ -129,34 +129,33 @@ def cleanup():
     # fitnessData[1] = sum(coverage_arr) / n_run
     # fitnessData[2] = sum(accuracy) / n_run
 
+    fitness = sum(dec_time)
+    print("Fitness of particle: ", fitness)
+
     # USED ONLY FOR PSO LAUNCH
-    # if (value is not None):
-    #     os.chdir(value)
-    #     with open(value + "/local_fitness.txt", 'w') as f:
-    #         fit = supervisor.getTime() - 50*run_dec
-    #         print(fit)
-    #         f.write(str(fit))
-    #         f.write('\n')
-    #         # for line in fitnessData:
-    #         #     f.write(str(line))
-    #         #     f.write('\n')
-    # else:
-    #     with open("local_fitness.txt", 'w') as f:
-    #         fit = supervisor.getTime() - 50*run_dec
-    #         print(fit)
-    #         f.write(str(fit))
-    #         f.write('\n')
-    #         # for line in fitnessData:
-    #         #     f.write(str(line))
-    #         #     f.write('\n')
+    if (value is not None):
+        os.chdir(value)
+        with open(value + "/local_fitness.txt", 'w') as f:
+            f.write(str(fitness))
+            f.write('\n')
+            # for line in fitnessData:
+            #     f.write(str(line))
+            #     f.write('\n')
+    else:
+        with open("local_fitness.txt", 'w') as f:
+            f.write(str(fitness))
+            f.write('\n')
+            # for line in fitnessData:
+            #     f.write(str(line))
+            #     f.write('\n')
     
 
     #Write the fitness file into the local dir only when number of runs are done
     print("Cleaning up Simulation")
-    # if (value is not None):
-    #     print("Wrote file: " +  value + "/local_fitness")
-    # else:
-    #     print("wrote file: local_fitness")
+    if (value is not None):
+        print("Wrote file: " +  value + "/local_fitness")
+    else:
+        print("wrote file: local_fitness")
     supervisor.simulationQuit(0)
 
 def reset():
@@ -176,7 +175,7 @@ def reset():
     #print("Run Correct: ", run_dec)
     _, counts = np.unique(grid, return_counts=True)
     coverage_arr.append(counts[1] / (imageDim * imageDim))
-    dec_time.append(supervisor.getTime())
+    #dec_time.append(supervisor.getTime())
     accuracy.append(run_dec)
 
     #Restart only the rovable controller
@@ -277,28 +276,32 @@ while supervisor.step(timestep) != -1:
 
         #print(rowProbData)
 
-        # if(supervisor.getTime() - sim_time > 100):
-        #     if (checkDecision(rowProbData)) and settlingTime <= endTic:
-        #         settlingTime = settlingTime + 1
-        #         print("hold")
-        #     elif (checkDecision(rowProbData)) and settlingTime > endTic:
-        #         # if run < n_run-1:
-        #         #     reset()
-        #         # else:
-        #         cleanup()
-        #     else:
-        #         settlingTime = 0
+        #Check if there is a time for all robots
+        if np.all((dec_time != 0)):
+            print("Decision Times: ", dec_time)
+            cleanup()
+
+
+        #Logic for marking time down for each robots decision
+        if(supervisor.getTime() - sim_time > 100):
+            for k in range(nRobot):
+                if (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and dec_hold[k] == endTic:
+                    dec_time[k] = supervisor.getTime()
+                elif (rowProbData[k] > 0.99 or rowProbData[k] < 0.01):
+                    dec_hold[k] = dec_hold[k] + 1
+                else:
+                    settlingTime = 0
 
 
         # # MODIFIED FOR AWS LAUNCH
         # if (supervisor.getTime() > endTime):
         #   cleanup()
         
+        #If robots did not make decision after 15 minutes then make them worse case. 
         if (time.time()-start_time > MAX_TIME):
-        #supervisor.simulationQuit(0)
-            # if run < n_run-1:
-            #     reset()
-            # else:
+            for k in range(nRobot):
+                if dec_time[k] == 0:
+                    dec_time[k] = supervisor.getTime()
             cleanup()
 
 # MODIFIED FOR AWS LAUNCH
