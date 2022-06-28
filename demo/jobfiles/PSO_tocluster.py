@@ -75,7 +75,7 @@ def fitness_evaluation(iteration, particle, instance = -1):
     # 150*(average accuracy) + 100*(average coverage) - (average decision time)
     #fitness_res = (175*fitness[2] + 100*fitness[1] - fitness[0])
     fitness_res = float(fitness)
-    print("Fitness evaluation for particle" + str(particle) + " in iteration " + str(iteration) ": \n")
+    print("Fitness evaluation for particle " + str(particle) + " in iteration " + str(iteration) + ": \n")
     print("Fitness value read from the file is: ", fitness_res)
     return fitness_res
 
