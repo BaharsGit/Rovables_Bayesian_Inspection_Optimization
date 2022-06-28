@@ -75,7 +75,7 @@ def fitness_evaluation(iteration, particle, instance = -1):
     # 150*(average accuracy) + 100*(average coverage) - (average decision time)
     #fitness_res = (175*fitness[2] + 100*fitness[1] - fitness[0])
     fitness_res = float(fitness)
-    print("Fitness evaluation for particle %d in iteration %d: ", particle, iteration)
+    print("Fitness evaluation for particle" + str(particle) + " in iteration " + str(iteration) ": \n")
     print("Fitness value read from the file is: ", fitness_res)
     return fitness_res
 
@@ -206,10 +206,10 @@ class PSO():
                             print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt file is empty \n")
                             #launch_webots(iteration, particle)
                         else:
-                            num_evaluated_particles += 1
                             print("PSO_tocluster.py: remove individual particle " + str(particle) + " from the list of unevaluated particles \n")
                             # print(pending_particles)
                             pending_particles.remove(particle)
+                            num_evaluated_particles += 1
 
                 # MODIFIED FOR NOISE RESISTANT PSO
                 else:
@@ -225,6 +225,7 @@ class PSO():
                             instance -= 1
                             if instance == -1:
                                 pending_particles.remove(particle)
+                                num_evaluated_particles += 1
                                 instance = noise_resistance_evals -1
 
 
