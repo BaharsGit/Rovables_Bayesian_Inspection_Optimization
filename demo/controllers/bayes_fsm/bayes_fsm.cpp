@@ -21,6 +21,7 @@
 #include <webots/Supervisor.hpp>
 #include <queue>
 #include <vector>
+#include <cmath>
 // All the webots classes are defined in the "webots" namespace
 using namespace webots;
 
@@ -52,12 +53,12 @@ static int nRobot = 4;
 static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"}; 
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
-static int nParam = 5;
+static int nParam = 3;
 static double alpha = 0;
 static double beta = 0;
 static int d_f = -1; 
 static int tao = 1500;
-static double p_c = 0.95; //Credibility Threshold 
+static double p_c = 0.99; //Credibility Threshold 
 static bool u_plus = true; //Positive feedback 
 static double comDist = 1;
 static double close_distance = 15.0;
@@ -163,9 +164,9 @@ int main(int argc, char **argv) {
     // Start robots one after the other
       //std::cout << name << " start controller" << std::endl;
     //std::cout << "--------------" << std::endl;
-    // if (control_count % 8000 == 0) {
-      // std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << " -> " << alpha << ", " << beta << std::endl;
-    // }
+    if (control_count % 8000 == 0) {
+      std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << " -> " << alpha << ", " << beta << std::endl;
+    }
     //std::cout << " Robot " << robotNum << " : " << alpha << " " << beta << std::endl;
     double distance_sensors_values[4];
     for (int i = 0; i < 4; i++){
@@ -581,7 +582,7 @@ static void readParameters() {
       z = std::atof(cstr);
       std::cout << z << std::endl;
       if (i == 0) tao = z;
-      if (i == 1) alpha = z;
+      if (i == 1) alpha = round(15.3);
       if (i == 2) rand_const_forward = z;
       // if (i == 0) {
         // if (z > 0.5) u_plus = true;
@@ -601,9 +602,10 @@ static void readParameters() {
   std::cout << "Random Forward: " << rand_const_forward <<std::endl;
   
   
-  // std::cout << "Positive Feedback: " << u_plus << std::endl;
-  // std::cout << "Credibility Thresdhold: " << p_c << std::endl;
-  // std::cout << "Close Distance: " << close_distance <<std::endl;
+  std::cout << "Positive Feedback: " << u_plus << std::endl;
+  std::cout << "Credibility Thresdhold: " << p_c << std::endl;
+  std::cout << "Close Distance: " << close_distance <<std::endl;
   // std::cout << "Random forward: " << rand_const_forward << std::endl;
-  // std::cout << "Random Turn: " << rand_const_turn << std::endl;
+  std::cout << "Random Turn: " << rand_const_turn << std::endl;
+  std::cout << "-----------------------------" << std::endl;
 }

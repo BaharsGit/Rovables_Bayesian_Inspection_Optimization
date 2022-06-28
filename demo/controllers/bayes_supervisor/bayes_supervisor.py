@@ -33,7 +33,7 @@ parameters = []
 seedIn = str(time.time())
 #BASELINE
 #seedIn = str(sys.argv[1])
-print("Using Run: ", seedIn)
+# print("Using Run: ", seedIn)
 boxData = []
 accuracy = []
 dec_time = np.zeros(nRobot)
