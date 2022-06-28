@@ -172,4 +172,13 @@ fi
 
 # Remove job base directory, the Webots working directory
 rm -r $JOB_BASE_DIR
-echo "(`date`) Job ${GEN_ID}_${PARTICLE_ID} completed by particle $PARTICLE_ID on node $($(PARTICLE_ID)+1)"
+
+# MODIFIED FOR NOISE RESISTANT PSO
+if [ $INSTANCE_ID -ge 0 ]
+then
+   echo "(`date`) Job ${GEN_ID}_${PARTICLE_ID} completed by instance $INSTANCE_ID of particle $PARTICLE_ID"
+
+else 
+   echo "(`date`) Job ${GEN_ID}_${PARTICLE_ID} completed by particle $PARTICLE_ID"
+
+fi
