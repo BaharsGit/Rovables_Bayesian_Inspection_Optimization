@@ -34,6 +34,7 @@ else
   echo "Waiting for next particle evaluation"
   GEN_ID=0
   # Run PSO Python script on main node
+  # MODIFIED FOR NOISE RESISTANT PSO
   PARTICLE_ID=$((($MY_ID-1)%$NB_PARTICLES))
 
   RUN_DIR=$(ls -td */| head -1)

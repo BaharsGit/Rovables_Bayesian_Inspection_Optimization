@@ -46,7 +46,16 @@ echo "job_lily_parallel.sh output directory is " ${OUTPUT_DIR}
 
 # Set the job base directory, the Webots working directory
 # pwd is acronym for print working directory (pwd), returns current directory
-JOB_BASE_DIR=$(pwd)/tmp/job${GEN_ID}_${PARTICLE_ID}
+
+# MODIFIED FOR NOISE RESISTANT PSO
+if [ $INSTANCE_ID -ge 0 ]
+then
+   JOB_BASE_DIR=$(pwd)/tmp/job${GEN_ID}_${PARTICLE_ID}_${INSTANCE_ID}
+
+else 
+   JOB_BASE_DIR=$(pwd)/tmp/job${GEN_ID}_${PARTICLE_ID}
+
+fi
  
 
 # Create the working directory for Webots, where Webots can write its stuff
