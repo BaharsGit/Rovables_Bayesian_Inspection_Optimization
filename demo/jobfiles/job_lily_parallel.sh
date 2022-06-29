@@ -17,8 +17,9 @@ INSTANCE_ID=$3
 
 
 # Setting the worst case fitness value, in case the launch doesn't go well, the worst case fitness value is considered as default
+# Should be set to worst fitness attainable by the robots within the simulation time allowed by the supervisor 
 #WORST_FITNESS=[360, 0, 0]
-WORST_FITNESS=10000
+WORST_FITNESS=10000 
 
 # Kill webots after WB_TIMEOUT seconds
 WB_TIMEOUT=2000
@@ -84,7 +85,7 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
       # copy the input parameters from the Generation_${GEN_ID} directory to Webots working directory 
       cp ${INPUT_DIR}/prob_${PARTICLE_ID}.txt $WB_WORKING_DIR/prob.txt 
       
-      echo "(`date`) Launching Webots (run $RUN_ID) of particle $PARTICLE_ID"
+      # echo "(`date`) Launching Webots (run $RUN_ID) of particle $PARTICLE_ID"
       
       # launch webots
       # logs are redirected to webots_log.txt file
@@ -101,12 +102,14 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
       if [ -e $WB_WORKING_DIR/local_fitness.txt ] 
       then
 
-         echo "(`date`) Run $RUN_ID successfully completed"
+         echo "(`date`) Run successfully completed, local_fitness.txt was created under $WB_WORKING_DIR/ \n"
+         # echo "(`date`) Run $RUN_ID successfully completed"
          #rm $WB_WORKING_DIR/ack.txt
 
       else
 
-         echo "(`date`) Run $RUN_ID failed, cleaning up, and running again"
+         echo "(`date`) Run failed, local_fitness.txt was not created under $WB_WORKING_DIR/\n"
+         # echo "(`date`) Run $RUN_ID failed, cleaning up, and running again"
          ((TRIAL_COUNT--))
          # ToDo: perform cleanup of unwanted files
 
@@ -121,7 +124,7 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
 
          else 
 
-           echo "(`date`) RUN got stuck, auxilary fitness file created"
+           echo "(`date`) RUN got stuck, auxilary fitness file created with worst fitness $WORST_FITNESS"
    	     echo ${WORST_FITNESS} >> $WB_WORKING_DIR/local_fitness.txt
    	     #rm $WB_WORKING_DIR$/ack.txt
 
@@ -143,21 +146,7 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
 # fi
 
 
-
 # Move results to the final output directory
-
-#mv $WB_WORKING_DIR/global_best_fitness.txt $OUTPUT_DIR/global_best_fitness_${PARTICLE_ID}.txt
-#mv $WB_WORKING_DIR/global_best_prob.txt $OUTPUT_DIR/global_best_prob_${PARTICLE_ID}.txt
-#mv $WB_WORKING_DIR/local_best_prob.txt $OUTPUT_DIR/local_best_prob_${PARTICLE_ID}.txt
-
-#mv $WB_WORKING_DIR/local_fitness.txt ${OUTPUT_DIR}/local_fitness_${PARTICLE_ID}.txt
-
-#mv $WB_WORKING_DIR/prob.txt $OUTPUT_DIR/prob_${PARTICLE_ID}.txt
-#mv $WB_WORKING_DIR/prob_w.txt $OUTPUT_DIR/prob_w_${PARTICLE_ID}.txt
-#mv $WB_WORKING_DIR/rate_log.txt $OUTPUT_DIR/rate_log_${PARTICLE_ID}.txt
-#mv $WB_WORKING_DIR/repeat_counter.txt $OUTPUT_DIR/repeat_counter_${PARTICLE_ID}.txt
-#mv $WB_WORKING_DIR/run_counter.txt $OUTPUT_DIR/run_counter_${PARTICLE_ID}.txt
-#mv $WB_WORKING_DIR/ttime.txt $OUTPUT_DIR/ttime_${PARTICLE_ID}.txt
 
 # MODIFIED FOR NOISE RESISTANT PSO
 if [ $INSTANCE_ID -ge 0 ]
