@@ -71,7 +71,7 @@ fi
 
 # Set Webots working directory, where Webots can write its stuff
 export WB_WORKING_DIR=$JOB_BASE_DIR
-
+export NOISE_SEED=$INSTANCE_ID
 
 echo "(`date`) Performing a total of $N_RUNS runs for particle $PARTICLE_ID"
  

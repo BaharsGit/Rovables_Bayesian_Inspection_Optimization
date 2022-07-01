@@ -24,13 +24,18 @@ p_high = 0.9
 p_low = 0.1
 minD = 0.15
 settlingTime = 0
-endTic = 30 #How long robots hold the decision
+endTic = 100 #How long robots hold the decision
 initialPos = []
 csvProbData = []
 csvPosData = []
 parameters = []
 #PSO
-seedIn = str(time.time())
+seedPtr = os.getenv("NOISE_SEED")
+if (seedPtr is not None):
+    print("Supervisr seed: " + seedPtr)
+    random.seed(seedPtr)
+else:
+    random.seed(time.time())
 #BASELINE
 #seedIn = str(sys.argv[1])
 # print("Using Run: ", seedIn)
@@ -56,7 +61,6 @@ else:
 
 #print(parameters)
 tao = float(parameters[2])
-random.seed(time.time())
 sqArea = boxSize * boxSize
 possibleX = list(range(0, imageDim, boxSize))
 possibleY = list(range(0, imageDim, boxSize))
@@ -129,7 +133,7 @@ def cleanup():
     # fitnessData[1] = sum(coverage_arr) / n_run
     # fitnessData[2] = sum(accuracy) / n_run
 
-    fitness = sum(dec_time)
+    fitness = sum(dec_time)/nRobot
     print("Fitness of particle: ", fitness)
 
     # USED ONLY FOR PSO LAUNCH
@@ -237,7 +241,7 @@ for i in range(nRobot):
     #print(init_data)
     data_array[i].setSFString(init_data) #Init custom data to required format
 
-#randomizePosition()
+randomizePosition()
 
 # MODIFIED FOR AWS LAUNCH
 # Get the current time
@@ -285,8 +289,14 @@ while supervisor.step(timestep) != -1:
         #Logic for marking time down for each robots decision
         if(supervisor.getTime() - sim_time > 100):
             for k in range(nRobot):
-                if (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and dec_hold[k] == endTic:
-                    dec_time[k] = supervisor.getTime()
+                if (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and (dec_hold[k] >= endTic) and (dec_time[k] == 0):
+                    if (rowProbData[k] > 0.5):
+                        dec_time[k] = supervisor.getTime() + 500
+                        print("Robot: " + str(k) + " Penalized with 100 for incorrect evaluation. Finished with time: " + str(dec_time[k]))
+                    else:
+                        dec_time[k] = supervisor.getTime()
+                        print("Robot: " + str(k) + " Finished with time: " + str(dec_time[k]))
+
                 elif (rowProbData[k] > 0.99 or rowProbData[k] < 0.01):
                     dec_hold[k] = dec_hold[k] + 1
                 else:
