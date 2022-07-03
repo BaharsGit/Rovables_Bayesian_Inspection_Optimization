@@ -301,7 +301,7 @@ os.mkdir(run_dir)
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
 # Positive Feedback (Binary) | Credibility Thresdhold | Close Distance | Random Walk Forward | Random Walk Backward
-bounds = [0, 3000, 0, 100, 0, 1000, 0, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+bounds = [10, 3000, 0, 200, 1, 1000, 0, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
 num_dimensions = 4 # Dimension of particle
 # x0=[0.4,0.5,30,250,100] # Initial particle position
 x0=[800, 0, 100, 100]

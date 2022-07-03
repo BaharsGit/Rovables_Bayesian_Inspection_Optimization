@@ -314,6 +314,7 @@ while supervisor.step(timestep) != -1:
             for k in range(nRobot):
                 if dec_time[k] == 0:
                     dec_time[k] = supervisor.getTime()
+            print("Decision Times: ", dec_time)
             cleanup()
 
 # MODIFIED FOR AWS LAUNCH
