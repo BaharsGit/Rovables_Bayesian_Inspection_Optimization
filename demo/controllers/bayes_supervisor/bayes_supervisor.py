@@ -24,7 +24,6 @@ p_high = 0.9
 p_low = 0.1
 minD = 0.15
 settlingTime = 0
-endTic = 100 #How long robots hold the decision
 initialPos = []
 csvProbData = []
 csvPosData = []
@@ -60,7 +59,9 @@ else:
         parameters = f.read().splitlines()
 
 #print(parameters)
-tao = float(parameters[2])
+tao = 1500
+holdTime = float(parameters[3])
+print("Supervisr Hold Time: " + str(holdTime))
 sqArea = boxSize * boxSize
 possibleX = list(range(0, imageDim, boxSize))
 possibleY = list(range(0, imageDim, boxSize))
@@ -94,7 +95,6 @@ def checkDecision(data):
 # Writes to the fitness file for the current iteration of particle
 def cleanup():
     #print("Fitness: ", supervisor.getTime())
-    #supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
     # filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
     # filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
 
@@ -247,8 +247,10 @@ randomizePosition()
 # Get the current time
 start_time = time.time()
 sim_time = supervisor.getTime()
+supervisor.simulationSetMode(supervisor.SIMULATION_MODE_FAST)
 
 while supervisor.step(timestep) != -1:
+
     if (newReset):
         randomizePosition()
         newReset = 0
@@ -281,27 +283,31 @@ while supervisor.step(timestep) != -1:
         #print(rowProbData)
 
         #Check if there is a time for all robots
-        # if np.all((dec_time != 0)):
-        #     print("Decision Times: ", dec_time)
-        #     cleanup()
+        #if np.all((dec_time != 0)):
+        #    print("Decision Times: ", dec_time)
+        #    cleanup()
 
 
         #Logic for marking time down for each robots decision
-        if(supervisor.getTime() - sim_time > 100):
+        if(supervisor.getTime() - sim_time > 30):
             for k in range(nRobot):
-                if (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and (dec_hold[k] >= endTic) and (dec_time[k] == 0):
+                if (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and (supervisor.getTime() - dec_hold[k] >= holdTime) and (dec_hold[k] != 0) and (dec_time[k] == 0):
+                    #print(supervisor.getTime() - dec_hold[k])
                     if (rowProbData[k] > 0.5):
                         dec_time[k] = supervisor.getTime() + 500
-                        print("Robot: " + str(k) + " Penalized with 100 for incorrect evaluation. Finished with time: " + str(dec_time[k]))
+                        print("Robot: " + str(k) + " Penalized with 500 for incorrect evaluation. Finished with time: " + str(dec_time[k]))
                     else:
                         dec_time[k] = supervisor.getTime()
                         print("Robot: " + str(k) + " Finished with time: " + str(dec_time[k]))
 
-                elif (rowProbData[k] > 0.99 or rowProbData[k] < 0.01):
-                    dec_hold[k] = dec_hold[k] + 1
-                else:
-                    settlingTime = 0
+                elif (rowProbData[k] < 0.99 and rowProbData[k] > 0.01):
+                    dec_hold[k] = supervisor.getTime()
+                    
 
+
+        # # MODIFIED FOR AWS LAUNCH
+        # if (supervisor.getTime() > endTime):
+        #   cleanup()
         
         #If robots did not make decision after 15 minutes then make them worse case. 
         if (time.time()-start_time > MAX_TIME):
