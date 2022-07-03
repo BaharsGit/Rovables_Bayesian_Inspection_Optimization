@@ -83,10 +83,11 @@ class Particle:
         self.fit_best_i = -1  # best fitness individual
         self.fit_i = -1  # fitness individual
 
+        dim_index = 1
         for i in range(0, num_dimensions):
-            self.velocity_i.append(random.uniform(-bounds[1], bounds[1]))
+            self.velocity_i.append(random.uniform(-bounds[dim_index], bounds[dim_index]))
             self.position_i.append(x[i])
-
+            dim_index = dim_index + 2
             # evaluate current fitness
 
     def evaluate(self, costFunc, i, j):
@@ -272,9 +273,13 @@ os.mkdir(run_dir)
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
 # Positive Feedback (Binary) | Credibility Thresdhold | Close Distance | Random Walk Forward | Random Walk Backward
-bounds = [0,1,0,1,10,90,10,250,10,100]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-num_dimensions = 5 # Dimension of particle
-x0=[0.4,0.5,30,250,100] # Initial particle position
+bounds = [200, 3000, 0, 200, 200, 1000, 5, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+num_dimensions = 4 # Dimension of particle
+# x0=[0.4,0.5,30,250,100] # Initial particle position
+#[Tao, Alpha, Random Forward, Hold Time]
+x0=[800, 0, 100, 100]
+
+
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
 PSO(x0, fitness_evaluation, bounds, num_particles=args.nb_particles, maxiter=30)

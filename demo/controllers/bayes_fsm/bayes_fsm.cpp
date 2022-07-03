@@ -21,6 +21,7 @@
 #include <webots/Supervisor.hpp>
 #include <queue>
 #include <vector>
+#include <cmath>
 // All the webots classes are defined in the "webots" namespace
 using namespace webots;
 
@@ -52,7 +53,7 @@ static int nRobot = 4;
 static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"}; 
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
-static int nParam = 5;
+static int nParam = 3;
 static double alpha = 0;
 static double beta = 0;
 static int d_f = -1; 
@@ -71,7 +72,7 @@ static std::string name;
 static double speed = 10.0;
 static int rand_const_forward = 250; //Range for random value to go forward
 static int rand_const_turn = 50; //Range for random value to turn
-static int pause_time = 100;
+static int pause_time = 250;
 static double p;
 static char out;
 static int direction = LEFT;
@@ -83,8 +84,8 @@ static int control_count = 0;
 //Arena Parameters
 int boxSize = 8;
 int imageDim = 128;
-  int rowCount = 167; // THIS MUST BE CHANGED EVERYTIME A NEW ARENA IS CREATED
-int grid[167][2]; 
+int rowCount = 141; // THIS MUST BE CHANGED EVERYTIME A NEW ARENA IS CREATED
+int grid[141][2]; 
 
 //Function declarations
 double incbeta(double a, double b, double x);
@@ -103,14 +104,17 @@ int main(int argc, char **argv) {
   int timeStep = (int)robot->getBasicTimeStep();
     
   name = robot->getName();
-  char seed = *argv[1];
   
-  int finalSeed = seed - '0';
   robotNum = name[1] - '0';
-  finalSeed = finalSeed + robotNum;
   //std::cout << "Robot Seed: " << finalSeed << std::endl;
+  char *noise_seed = getenv("NOISE_SEED");
   
-  srand(seed + name[1]); // Initialize seed based on the robot name.
+  if (noise_seed != NULL) {
+    std::cout << "Noise Seed: " << *noise_seed- '0' << std::endl;
+    srand(*noise_seed); // Initialize seed based on instance id from PSO
+  } else {
+    srand(*argv[1]);
+  }
   
   const char *motors_names[2] = {"left motor", "right motor"};
   const char *distance_sensors_names[4] = {"left distance sensor", "right distance sensor", "angle left distance sensor", "angle right distance sensor"};
@@ -163,7 +167,7 @@ int main(int argc, char **argv) {
     // Start robots one after the other
       //std::cout << name << " start controller" << std::endl;
     //std::cout << "--------------" << std::endl;
-    if (control_count % 6000 == 0) {
+    if (control_count % 8000 == 0) {
       std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << " -> " << alpha << ", " << beta << std::endl;
     }
     //std::cout << " Robot " << robotNum << " : " << alpha << " " << beta << std::endl;
@@ -544,7 +548,7 @@ static void putMessage() { // color, id, df/C'
 static void readArena() {
   std::ifstream file("boxrect.csv");
   
-  for (int i = 0; i < rowCount; i++) {
+    for (int i = 0; i < rowCount; i++) {
     std::string line;
     std::getline(file, line);
     
@@ -580,23 +584,30 @@ static void readParameters() {
       const char *cstr = line.c_str();
       z = std::atof(cstr);
       std::cout << z << std::endl;
-      if (i == 0) {
-        if (z > 0.5) u_plus = true;
-        else u_plus = false;
-      }
+      if (i == 0) tao = z;
+      if (i == 1) alpha = round(z);
+      if (i == 2) rand_const_forward = z;
+      // if (i == 0) {
+        // if (z > 0.5) u_plus = true;
+        // else u_plus = false;
+      // }
       
-      if (i == 1) p_c = z;
-      if (i == 2) close_distance = z;
-      if (i == 3) rand_const_forward = z;
-      if (i == 4) rand_const_turn = z;
+      // if (i == 1) p_c = z;
+      // if (i == 2) close_distance = z;
+      // if (i == 3) rand_const_forward = z;
+      // if (i == 4) rand_const_turn = z;
     }
     
     file.close();
   }
+  std::cout << "Tao: " << tao << std::endl;
+  std::cout << "Alpha Prior: " << alpha << std::endl;
+  std::cout << "Random Forward: " << rand_const_forward <<std::endl;  
   
   std::cout << "Positive Feedback: " << u_plus << std::endl;
   std::cout << "Credibility Thresdhold: " << p_c << std::endl;
   std::cout << "Close Distance: " << close_distance <<std::endl;
-  std::cout << "Random forward: " << rand_const_forward << std::endl;
+  // std::cout << "Random forward: " << rand_const_forward << std::endl;
   std::cout << "Random Turn: " << rand_const_turn << std::endl;
+  std::cout << "-----------------------------" << std::endl;
 }
