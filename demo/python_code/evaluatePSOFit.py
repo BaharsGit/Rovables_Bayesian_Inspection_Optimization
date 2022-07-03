@@ -10,7 +10,7 @@ import re
 
 num_particles = 15
 num_noise = 3
-num_gen = 30
+num_gen = 10
 n_robots = 4
 prob_column_names = []
 pos_column_names = []
@@ -23,7 +23,7 @@ for i in range(n_robots):
 
 fitness_df = pd.DataFrame()
 savePlots = 0
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_4/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_0/'
 baselinedir = '/home/darren/Documents/DARS/baseline_800TAO/'
 
 ################################### 2D Position Histogram ########################
@@ -155,7 +155,7 @@ for i in range(num_gen):
             with open(text) as f:
                 fit = f.read().splitlines()
                 #print(float(fit[0]))
-                if (float(fit[0]) < 6000):
+                if (float(fit[0]) < 8000):
                     time_total = float(fit[0]) + time_total
         
         particle_fit_temp.append(float(time_total)/num_noise)
