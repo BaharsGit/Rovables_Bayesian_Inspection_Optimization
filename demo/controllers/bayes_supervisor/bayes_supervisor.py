@@ -281,9 +281,9 @@ while supervisor.step(timestep) != -1:
         #print(rowProbData)
 
         #Check if there is a time for all robots
-        if np.all((dec_time != 0)):
-            print("Decision Times: ", dec_time)
-            cleanup()
+        # if np.all((dec_time != 0)):
+        #     print("Decision Times: ", dec_time)
+        #     cleanup()
 
 
         #Logic for marking time down for each robots decision
@@ -302,10 +302,6 @@ while supervisor.step(timestep) != -1:
                 else:
                     settlingTime = 0
 
-
-        # # MODIFIED FOR AWS LAUNCH
-        # if (supervisor.getTime() > endTime):
-        #   cleanup()
         
         #If robots did not make decision after 15 minutes then make them worse case. 
         if (time.time()-start_time > MAX_TIME):
