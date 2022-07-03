@@ -23,7 +23,8 @@ for i in range(n_robots):
 
 fitness_df = pd.DataFrame()
 savePlots = 0
-rootdir = '/home/darren/Documents/DARS/Run_1/'
+rootdir = '/Users/darrenchiu/Documents/DARS/Run_4/'
+#rootdir = '/home/darren/Documents/DARS/Run_1/'
 baselinedir = '/home/darren/Documents/DARS/baseline_800TAO/'
 
 ################################### 2D Position Histogram ########################
@@ -121,7 +122,9 @@ def psoFitness():
     plt.ylabel('Decision Time')
     plt.plot(np.arange(num_gen), generation_best, color='darkgreen', label='Best')
     plt.plot(np.arange(num_gen), generation_mean, color='red', label='PSO Average')
-    plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, color='lightcoral', alpha=0.3)
+    #plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, color='lightcoral', alpha=0.3)
+    plt.plot(np.arange(num_gen), generation_std, color='blue', label='PSO STD')
+    plt.title('PSO Performance')
     plt.legend()
     plt.show()
 
@@ -147,12 +150,12 @@ for i in range(num_gen):
     #print(gen)
     for j in range(num_particles):
         for k in range(num_noise):
-        text = gen + "/local_fitness_" + str(j) + ".txt"
-        #print(text)
-        with open(text) as f:
-           fit = f.read().splitlines()
-           #print(float(fit[0]))
-           particle_fit_temp.append(float(fit[0]))
+            text = gen + "/local_fitness_" + str(j) + "_" + str(k) + ".txt"
+            #print(text)
+            with open(text) as f:
+                fit = f.read().splitlines()
+                #print(float(fit[0]))
+                particle_fit_temp.append(float(fit[0]))
     #print(particle_fit_temp)
     fitness_df[str(i)] = particle_fit_temp
 
@@ -185,8 +188,8 @@ for i in range(num_gen):
 #averages = averages[:-10]
 #averages = averages.dropna(axis = 0, how = 'all')
 #averages = averages.dropna()
-
-print(averages)
-createSTD()
-plt.legend()
-plt.show()
+psoFitness()
+# print(averages)
+# createSTD()
+# plt.legend()
+# plt.show()
