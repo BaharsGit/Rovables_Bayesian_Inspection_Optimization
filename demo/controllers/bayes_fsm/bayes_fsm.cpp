@@ -72,7 +72,7 @@ static std::string name;
 static double speed = 10.0;
 static int rand_const_forward = 250; //Range for random value to go forward
 static int rand_const_turn = 50; //Range for random value to turn
-static int pause_time = 100;
+static int pause_time = 250;
 static double p;
 static char out;
 static int direction = LEFT;
@@ -104,14 +104,17 @@ int main(int argc, char **argv) {
   int timeStep = (int)robot->getBasicTimeStep();
     
   name = robot->getName();
-  char seed = *argv[1];
   
-  int finalSeed = seed - '0';
   robotNum = name[1] - '0';
-  finalSeed = finalSeed + robotNum;
   //std::cout << "Robot Seed: " << finalSeed << std::endl;
+  char *noise_seed = getenv("NOISE_SEED");
   
-  srand(seed + name[1]); // Initialize seed based on the robot name.
+  if (noise_seed != NULL) {
+    std::cout << "Noise Seed: " << *noise_seed- '0' << std::endl;
+    srand(*noise_seed); // Initialize seed based on instance id from PSO
+  } else {
+    srand(*argv[1]);
+  }
   
   const char *motors_names[2] = {"left motor", "right motor"};
   const char *distance_sensors_names[4] = {"left distance sensor", "right distance sensor", "angle left distance sensor", "angle right distance sensor"};
@@ -545,7 +548,7 @@ static void putMessage() { // color, id, df/C'
 static void readArena() {
   std::ifstream file("boxrect.csv");
   
-  for (int i = 0; i < rowCount; i++) {
+    for (int i = 0; i < rowCount; i++) {
     std::string line;
     std::getline(file, line);
     
@@ -599,8 +602,7 @@ static void readParameters() {
   }
   std::cout << "Tao: " << tao << std::endl;
   std::cout << "Alpha Prior: " << alpha << std::endl;
-  std::cout << "Random Forward: " << rand_const_forward <<std::endl;
-  
+  std::cout << "Random Forward: " << rand_const_forward <<std::endl;  
   
   std::cout << "Positive Feedback: " << u_plus << std::endl;
   std::cout << "Credibility Thresdhold: " << p_c << std::endl;
