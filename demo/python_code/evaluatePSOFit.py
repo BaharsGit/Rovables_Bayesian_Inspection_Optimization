@@ -23,7 +23,7 @@ for i in range(n_robots):
 
 fitness_df = pd.DataFrame()
 savePlots = 0
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_2/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/Rovables_Bayesian_Inspection_Optimization/Run_8/'
 baselinedir = '/home/darren/Documents/DARS/baseline_800TAO/'
 
 ################################### 2D Position Histogram ########################

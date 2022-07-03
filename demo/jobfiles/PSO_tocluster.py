@@ -304,6 +304,7 @@ os.mkdir(run_dir)
 bounds = [10, 3000, 0, 200, 1, 1000, 0, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
 num_dimensions = 4 # Dimension of particle
 # x0=[0.4,0.5,30,250,100] # Initial particle position
+#[Tao, Alpha, Random Forward, Hold Time]
 x0=[800, 0, 100, 100]
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
