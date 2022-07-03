@@ -90,9 +90,11 @@ class Particle:
         self.fit_best_i = -1  # best fitness individual
         self.fit_i = -1  # fitness individual
 
+        dim_index = 1
         for i in range(0, num_dimensions):
-            self.velocity_i.append(random.uniform(-bounds[1], bounds[1]))
+            self.velocity_i.append(random.uniform(-bounds[dim_index], bounds[dim_index]))
             self.position_i.append(x[i])
+            dim_index = dim_index + 2
 
             # evaluate current fitness
 
