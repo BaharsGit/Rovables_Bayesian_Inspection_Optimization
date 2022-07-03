@@ -34,7 +34,7 @@ if (seedPtr is not None):
     print("Supervisr seed: " + seedPtr)
     random.seed(seedPtr)
 else:
-    random.seed(time.time())
+    random.seed(5)
 #BASELINE
 #seedIn = str(sys.argv[1])
 # print("Using Run: ", seedIn)
