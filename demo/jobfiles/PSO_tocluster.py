@@ -301,7 +301,7 @@ os.mkdir(run_dir)
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
 # Positive Feedback (Binary) | Credibility Thresdhold | Close Distance | Random Walk Forward | Random Walk Backward
-bounds = [10, 3000, 0, 200, 1, 1000, 0, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+bounds = [200, 3000, 0, 200, 200, 1000, 5, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
 num_dimensions = 4 # Dimension of particle
 # x0=[0.4,0.5,30,250,100] # Initial particle position
 #[Tao, Alpha, Random Forward, Hold Time]
@@ -309,7 +309,7 @@ x0=[800, 0, 100, 100]
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
 # MODIFIED FOR NOISE RESISTANT PSO
-PSO(x0, fitness_evaluation, bounds, maxiter=5, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
+PSO(x0, fitness_evaluation, bounds, maxiter=10, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)
