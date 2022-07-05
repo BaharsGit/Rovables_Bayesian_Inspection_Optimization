@@ -13,7 +13,7 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 600
+MAX_TIME = 900000 #unit is in milliseconds
 run = 0
 n_run = 5
 nRobot = 4
@@ -79,6 +79,15 @@ trans_value_array = np.empty(nRobot, dtype=object)
 color_array = np.empty(nRobot, dtype=object)
 
 # --------------------------------------------------------------
+def evaluateFitness(time_arr, last_belief):
+    for i in range(nRobot):
+        if (last_belief[i] < 0.5):
+            sign = 1
+        else:
+            print("Robot: " + str(i) + " incorrect decision")
+            sign = -1
+        math.exp(MAX_TIME - time_arr[i]) * sign
+
 def checkDecision(data):
     pSum = 0
     for p in data:
@@ -93,7 +102,7 @@ def checkDecision(data):
         return 0
 
 # Writes to the fitness file for the current iteration of particle
-def cleanup():
+def cleanup(last_belief):
     #print("Fitness: ", supervisor.getTime())
     # filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
     # filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
@@ -133,7 +142,7 @@ def cleanup():
     # fitnessData[1] = sum(coverage_arr) / n_run
     # fitnessData[2] = sum(accuracy) / n_run
 
-    fitness = sum(dec_time)/nRobot
+    fitness = evaluateFitness(dec_time, last_belief=last_belief)
     print("Fitness of particle: ", fitness)
 
     # USED ONLY FOR PSO LAUNCH
@@ -293,12 +302,13 @@ while supervisor.step(timestep) != -1:
             for k in range(nRobot):
                 if (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and (supervisor.getTime() - dec_hold[k] >= holdTime) and (dec_hold[k] != 0) and (dec_time[k] == 0):
                     #print(supervisor.getTime() - dec_hold[k])
-                    if (rowProbData[k] > 0.5):
-                        dec_time[k] = supervisor.getTime() + 500
-                        print("Robot: " + str(k) + " Penalized with 500 for incorrect evaluation. Finished with time: " + str(dec_time[k]))
-                    else:
-                        dec_time[k] = supervisor.getTime()
-                        print("Robot: " + str(k) + " Finished with time: " + str(dec_time[k]))
+                    dec_time[k] = supervisor.getTime()
+                    # if (rowProbData[k] > 0.5):
+                    #     dec_time[k] = supervisor.getTime() + 500
+                    #     print("Robot: " + str(k) + " Penalized with 500 for incorrect evaluation. Finished with time: " + str(dec_time[k]))
+                    # else:
+                    #     dec_time[k] = supervisor.getTime()
+                    #     print("Robot: " + str(k) + " Finished with time: " + str(dec_time[k]))
 
                 elif (rowProbData[k] < 0.99 and rowProbData[k] > 0.01):
                     dec_hold[k] = supervisor.getTime()
@@ -310,12 +320,15 @@ while supervisor.step(timestep) != -1:
         #   cleanup()
         
         #If robots did not make decision after 15 minutes then make them worse case. 
-        if (time.time()-start_time > MAX_TIME):
+        #if (time.time()-start_time > MAX_TIME):
+        if (supervisor.getTime() - sim_time > MAX_TIME):
+
+            #if the robots have not decided then assigned 15 min to decision times.
             for k in range(nRobot):
                 if dec_time[k] == 0:
                     dec_time[k] = supervisor.getTime()
             print("Decision Times: ", dec_time)
-            cleanup()
+            cleanup(rowProbData)
 
 # MODIFIED FOR AWS LAUNCH
 # Enter here exit cleanup code.

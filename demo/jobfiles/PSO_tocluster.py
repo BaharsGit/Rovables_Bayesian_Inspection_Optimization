@@ -62,7 +62,7 @@ def fitness_evaluation(iteration, particle, instance = -1):
     with open(filename, mode='r') as f:
         fitness = f.readline().strip()
     if len(fitness) == 0:
-        fitness = -1
+        fitness = WORST_FITNESS
         if instance == -1:
             print("PSO_tocluster.py: Generation_" + str(iteration) + "/local_fitness_" + str(particle) + ".txt file is empty \n")
         else:
@@ -306,10 +306,12 @@ num_dimensions = 4 # Dimension of particle
 # x0=[0.4,0.5,30,250,100] # Initial particle position
 #[Tao, Alpha, Random Forward, Hold Time]
 x0=[800, 0, 100, 100]
+random.seed(0)
+WORST_FITNESS=10000 
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
 # MODIFIED FOR NOISE RESISTANT PSO
-PSO(x0, fitness_evaluation, bounds, maxiter=30, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
+PSO(x0, fitness_evaluation, bounds, maxiter=15, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)

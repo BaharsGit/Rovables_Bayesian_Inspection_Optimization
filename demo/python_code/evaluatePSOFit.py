@@ -9,7 +9,7 @@ import os
 import re
 
 num_particles = 15
-num_noise = 3
+num_noise = 6
 num_gen = 10
 n_robots = 4
 prob_column_names = []
@@ -23,7 +23,8 @@ for i in range(n_robots):
 
 fitness_df = pd.DataFrame()
 savePlots = 0
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_0/'
+rootdir = '/Users/darrenchiu/Documents/DARS/Run_2/'
+#rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_2/'
 baselinedir = '/home/darren/Documents/DARS/baseline_800TAO/'
 
 ################################### 2D Position Histogram ########################
@@ -116,14 +117,21 @@ def psoFitness():
     generation_mean = fitness_df.mean(axis=0)
     generation_std = fitness_df.std(axis=0, ddof=0)
     generation_best = fitness_df.min(axis=0)
+    best = float('inf')
+    for i in range(len(generation_best)):
+        if generation_best[i] < best:
+            best = generation_best[i]
+        else:
+            generation_best[i] = best
     # print(generation_best)
     # print(generation_std)
-    plt.xlabel('Generation')
-    plt.ylabel('Decision Time')
-    plt.plot(np.arange(num_gen), generation_best, color='darkgreen', label='Best')
-    plt.plot(np.arange(num_gen), generation_mean, color='red', label='PSO Average')
-    # plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, color='lightcoral', alpha=0.3)
-    plt.plot(np.arange(num_gen), generation_std, color='blue', label='Standard Deviation')
+    plt.xlabel('Iterations')
+    plt.ylabel('Fitness')
+    plt.plot(np.arange(num_gen), generation_best, color='red', label='Best')
+    plt.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
+    plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, color='lightcoral', alpha=0.3)
+    plt.plot(np.arange(num_gen), generation_std, color='green', label='Standard Deviation')
+    plt.title('PSO Evaluation')
     plt.legend()
     plt.show()
 
@@ -155,12 +163,13 @@ for i in range(num_gen):
             with open(text) as f:
                 fit = f.read().splitlines()
                 #print(float(fit[0]))
-                if (float(fit[0]) < 8000):
-                    time_total = float(fit[0]) + time_total
+                #if (float(fit[0]) < 8000):
+                time_total = float(fit[0]) + time_total
         
         particle_fit_temp.append(float(time_total)/num_noise)
     #print(particle_fit_temp)
     fitness_df[str(i)] = particle_fit_temp
+fitness_df.to_csv(rootdir + 'means.csv')
 
 ############################### READS IN BASELINE FILES #####################################################
 # for run in range(100):
