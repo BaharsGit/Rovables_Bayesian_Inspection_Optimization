@@ -9,8 +9,8 @@ import os
 import re
 
 num_particles = 15
-num_noise = 6
-num_gen = 10
+num_noise = 5
+num_gen = 5
 n_robots = 4
 prob_column_names = []
 pos_column_names = []
@@ -23,8 +23,8 @@ for i in range(n_robots):
 
 fitness_df = pd.DataFrame()
 savePlots = 0
-rootdir = '/Users/darrenchiu/Documents/DARS/Run_2/'
-#rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_2/'
+#rootdir = '/Users/darrenchiu/Documents/DARS/exp_1/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_1/'
 baselinedir = '/home/darren/Documents/DARS/baseline_800TAO/'
 
 ################################### 2D Position Histogram ########################

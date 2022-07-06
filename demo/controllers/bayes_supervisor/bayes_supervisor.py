@@ -16,7 +16,7 @@ import sys
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
 MAX_TIME = 7200 #unit is in seconds
 #7200
-baseline = 1
+baseline = 0
 run = 0
 n_run = 5
 nRobot = 4
@@ -125,7 +125,7 @@ def cleanup(time_arr, last_belief):
     if (baseline):
         filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
         filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
-        decname = "Data/" + "Temp" + seedIn + "/" + "decTime.csv"
+        decname = "Data/" + "Temp" + seedIn + "/" + "decTime.txt"
 
         #writing to csv file
         with open(filenameProb, 'w') as csvfile:
