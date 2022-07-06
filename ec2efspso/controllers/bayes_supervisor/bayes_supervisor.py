@@ -1,7 +1,6 @@
 """vibration_controller controller."""
 
 #from tracemalloc import startF
-from tkinter.tix import MAX
 from controller import Supervisor
 import os
 import csv
@@ -15,7 +14,6 @@ import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
 MAX_TIME = 7200 #unit is in seconds
-baseline = 0
 run = 0
 n_run = 5
 nRobot = 4
@@ -83,25 +81,16 @@ color_array = np.empty(nRobot, dtype=object)
 
 # --------------------------------------------------------------
 def evaluateFitness(time_arr, last_belief):
-    # Exp Fitness Function
-    # sum = 0
-    # for i in range(nRobot):
-    #     if (last_belief[i] < 0.5):
-    #         sign = 1
-    #     else:
-    #         print("Robot: " + str(i) + " incorrect decision")
-    #         sign = -1
-        
-    #     sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*sign)
-    # return sum
-    #Linear Fitness Function
     sum = 0
     for i in range(nRobot):
         if (last_belief[i] < 0.5):
-            sum = sum + last_belief[i]
-        else:    
-            sum = sum + last_belief[i] + MAX_TIME/2
-    return sum / nRobot
+            sign = 1
+        else:
+            print("Robot: " + str(i) + " incorrect decision")
+            sign = -1
+        
+        sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*sign)
+    return sum
 
 def checkDecision(data):
     pSum = 0
@@ -119,59 +108,71 @@ def checkDecision(data):
 # Writes to the fitness file for the current iteration of particle
 def cleanup(last_belief):
     # print("Fitness: ", supervisor.getTime())
-    if (baseline):
-        filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
-        filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
+    # filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
+    # filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
 
-        #writing to csv file
-        with open(filenameProb, 'w') as csvfile:
-            # creating a csv writer object
-            csvwriter = csv.writer(csvfile)
+    # #writing to csv file
+    # with open(filenameProb, 'w') as csvfile:
+    #     # creating a csv writer object
+    #     csvwriter = csv.writer(csvfile)
 
-            #Write the header
-            #csvwriter.writerow(defArray)
+    #     #Write the header
+    #     #csvwriter.writerow(defArray)
 
-            # writing the data rows``
-            csvwriter.writerows(csvProbData)
+    #     # writing the data rows``
+    #     csvwriter.writerows(csvProbData)
 
-        with open(filenamePos, 'w') as csvfile:
-            # creating a csv writer object
-            csvwriter = csv.writer(csvfile)
+    # with open(filenamePos, 'w') as csvfile:
+    #     # creating a csv writer object
+    #     csvwriter = csv.writer(csvfile)
 
-            #Write the header
-            #csvwriter.writerow(defArray)
+    #     #Write the header
+    #     #csvwriter.writerow(defArray)
 
-            # writing the data rows
-            csvwriter.writerows(csvPosData)
+    #     # writing the data rows
+    #     csvwriter.writerows(csvPosData)
+
+    # if (fillRatio > 0.50):
+    #     run_dec = int(all(i < 0.5 for i in rowProbData))
+    # else:
+    #     run_dec = int(all(i > 0.5 for i in rowProbData))
+    # print("Run Correct: ", run_dec)
+    # _, counts = np.unique(grid, return_counts=True)
+    # coverage_arr.append(counts[1] / (imageDim * imageDim))
+    # accuracy.append(run_dec)
+
+    # _, counts = np.unique(grid, return_counts=True)
+    # fitnessData[0] = sum(dec_time) / n_run    
+    # fitnessData[1] = sum(coverage_arr) / n_run
+    # fitnessData[2] = sum(accuracy) / n_run
+
+    fitness = evaluateFitness(dec_time, last_belief=last_belief)
+    print("Fitness of particle: ", fitness)
+
+    # USED ONLY FOR PSO LAUNCH
+    if (value is not None):
+        os.chdir(value)
+        with open(value + "/local_fitness.txt", 'w') as f:
+            f.write(str(fitness))
+            f.write('\n')
+            # for line in fitnessData:
+            #     f.write(str(line))
+            #     f.write('\n')
     else:
-        fitness = evaluateFitness(dec_time, last_belief=last_belief)
-        print("Fitness of particle: ", fitness)
+        with open("local_fitness.txt", 'w') as f:
+            f.write(str(fitness))
+            f.write('\n')
+            # for line in fitnessData:
+            #     f.write(str(line))
+            #     f.write('\n')
+    
 
-        # USED ONLY FOR PSO LAUNCH
-        if (value is not None):
-            os.chdir(value)
-            with open(value + "/local_fitness.txt", 'w') as f:
-                f.write(str(fitness))
-                f.write('\n')
-                # for line in fitnessData:
-                #     f.write(str(line))
-                #     f.write('\n')
-        else:
-            with open("local_fitness.txt", 'w') as f:
-                f.write(str(fitness))
-                f.write('\n')
-                # for line in fitnessData:
-                #     f.write(str(line))
-                #     f.write('\n')
-        
-
-        #Write the fitness file into the local dir only when number of runs are done
-        if (value is not None):
-            print("Wrote file: " +  value + "/local_fitness")
-        else:
-            print("wrote file: local_fitness")
-
-    print("Ceaning up simulation")
+    #Write the fitness file into the local dir only when number of runs are done
+    print("Cleaning up Simulation")
+    if (value is not None):
+        print("Wrote file: " +  value + "/local_fitness")
+    else:
+        print("wrote file: local_fitness")
     supervisor.simulationQuit(0)
 
 def reset():
