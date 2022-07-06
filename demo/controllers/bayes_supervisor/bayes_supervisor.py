@@ -14,7 +14,7 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 90 #unit is in seconds
+MAX_TIME = 7200 #unit is in seconds
 #7200
 baseline = 1
 run = 0
@@ -147,7 +147,7 @@ def cleanup(time_arr, last_belief):
 
             # writing the data rows
             csvwriter.writerows(csvPosData)
-            
+
         np.savetxt(decname, time_arr, delimiter=',')
  
     else:

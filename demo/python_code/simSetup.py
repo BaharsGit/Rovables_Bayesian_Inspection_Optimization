@@ -49,6 +49,9 @@ except subprocess.TimeoutExpired:
 
 saveDest = "../controllers/bayes_supervisor/Data/Temp"
 for file in os.listdir(tempDir):
+    if file.endswith(".txt"):
+        print("Decision time file found")
+        shutil.move(tempDir + file, folder + file)
     if file.endswith(".csv"):
         print("FILE FOUND")
         shutil.move(tempDir + file, folder + file)
