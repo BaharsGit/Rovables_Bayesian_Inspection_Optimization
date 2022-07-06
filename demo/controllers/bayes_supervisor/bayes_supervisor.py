@@ -14,8 +14,9 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 7200 #unit is in seconds
-baseline = 0
+MAX_TIME = 90 #unit is in seconds
+#7200
+baseline = 1
 run = 0
 n_run = 5
 nRobot = 4
@@ -60,10 +61,10 @@ if (value is not None):
 else:
     with open("prob.txt") as f:
         parameters = f.read().splitlines()
-    holdTime = 5
 #print(parameters)
 tao = 1500
-
+if (baseline):
+    holdTime = 33
 print("Supervisr Hold Time: " + str(holdTime))
 sqArea = boxSize * boxSize
 possibleX = list(range(0, imageDim, boxSize))
@@ -94,13 +95,15 @@ def evaluateFitness(time_arr, last_belief):
         
     #     sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*sign)
     # return sum
+
     #Linear Fitness Function
     sum = 0
     for i in range(nRobot):
         if (last_belief[i] < 0.5):
-            sum = sum + last_belief[i]
-        else:    
-            sum = sum + last_belief[i] + MAX_TIME/2
+            sum = sum + time_arr[i]
+        else: 
+            print("Punished with half max time")   
+            sum = sum + time_arr[i] + MAX_TIME/2
     return sum / nRobot
 
 def checkDecision(data):
@@ -117,11 +120,12 @@ def checkDecision(data):
         return 0
 
 # Writes to the fitness file for the current iteration of particle
-def cleanup(last_belief):
+def cleanup(time_arr, last_belief):
     # print("Fitness: ", supervisor.getTime())
     if (baseline):
         filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
         filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
+        decname = "Data/" + "Temp" + seedIn + "/" + "decTime.csv"
 
         #writing to csv file
         with open(filenameProb, 'w') as csvfile:
@@ -143,6 +147,9 @@ def cleanup(last_belief):
 
             # writing the data rows
             csvwriter.writerows(csvPosData)
+            
+        np.savetxt(decname, time_arr, delimiter=',')
+ 
     else:
         fitness = evaluateFitness(dec_time, last_belief=last_belief)
         print("Fitness of particle: ", fitness)
@@ -339,7 +346,7 @@ while supervisor.step(timestep) != -1:
                 if dec_time[k] == 0:
                     dec_time[k] = supervisor.getTime()
             print("Decision Times: ", dec_time)
-            cleanup(rowProbData)
+            cleanup(dec_time, rowProbData)
 
 # MODIFIED FOR AWS LAUNCH
 # Enter here exit cleanup code.
