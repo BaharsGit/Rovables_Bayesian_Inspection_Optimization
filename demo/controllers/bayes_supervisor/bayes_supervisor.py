@@ -13,7 +13,7 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 90 #unit is in milliseconds
+MAX_TIME = 900000 #unit is in milliseconds
 run = 0
 n_run = 5
 nRobot = 4
@@ -36,8 +36,8 @@ if (seedPtr is not None):
 else:
     random.seed(time.time())
 #BASELINE
-#seedIn = str(sys.argv[1])
-# print("Using Run: ", seedIn)
+seedIn = str(sys.argv[1])
+print("Using Run: ", seedIn)
 boxData = []
 accuracy = []
 dec_time = np.zeros(nRobot)
@@ -54,13 +54,15 @@ if (value is not None):
     os.chdir(value)
     with open(value + "/prob.txt") as f:
         parameters = f.read().splitlines()
+    holdTime = float(parameters[3])
 else:
     with open("prob.txt") as f:
         parameters = f.read().splitlines()
+    holdTime = 5
 
 #print(parameters)
 tao = 1500
-holdTime = float(parameters[3])
+
 print("Supervisr Hold Time: " + str(holdTime))
 sqArea = boxSize * boxSize
 possibleX = list(range(0, imageDim, boxSize))
@@ -106,30 +108,30 @@ def checkDecision(data):
 
 # Writes to the fitness file for the current iteration of particle
 def cleanup(last_belief):
-    #print("Fitness: ", supervisor.getTime())
-    # filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
-    # filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
+    # print("Fitness: ", supervisor.getTime())
+    filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
+    filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
 
-    # writing to csv file
-    # with open(filenameProb, 'w') as csvfile:
-    #     # creating a csv writer object
-    #     csvwriter = csv.writer(csvfile)
+    #writing to csv file
+    with open(filenameProb, 'w') as csvfile:
+        # creating a csv writer object
+        csvwriter = csv.writer(csvfile)
 
-    #     #Write the header
-    #     #csvwriter.writerow(defArray)
+        #Write the header
+        #csvwriter.writerow(defArray)
 
-    #     # writing the data rows``
-    #     csvwriter.writerows(csvProbData)
+        # writing the data rows``
+        csvwriter.writerows(csvProbData)
 
-    # with open(filenamePos, 'w') as csvfile:
-    #     # creating a csv writer object
-    #     csvwriter = csv.writer(csvfile)
+    with open(filenamePos, 'w') as csvfile:
+        # creating a csv writer object
+        csvwriter = csv.writer(csvfile)
 
-    #     #Write the header
-    #     #csvwriter.writerow(defArray)
+        #Write the header
+        #csvwriter.writerow(defArray)
 
-    #     # writing the data rows
-    #     csvwriter.writerows(csvPosData)
+        # writing the data rows
+        csvwriter.writerows(csvPosData)
 
     # if (fillRatio > 0.50):
     #     run_dec = int(all(i < 0.5 for i in rowProbData))
@@ -145,34 +147,34 @@ def cleanup(last_belief):
     # fitnessData[1] = sum(coverage_arr) / n_run
     # fitnessData[2] = sum(accuracy) / n_run
 
-    fitness = evaluateFitness(dec_time, last_belief=last_belief)
-    print("Fitness of particle: ", fitness)
+    # fitness = evaluateFitness(dec_time, last_belief=last_belief)
+    # print("Fitness of particle: ", fitness)
 
-    # USED ONLY FOR PSO LAUNCH
-    if (value is not None):
-        os.chdir(value)
-        with open(value + "/local_fitness.txt", 'w') as f:
-            f.write(str(fitness))
-            f.write('\n')
-            # for line in fitnessData:
-            #     f.write(str(line))
-            #     f.write('\n')
-    else:
-        with open("local_fitness.txt", 'w') as f:
-            f.write(str(fitness))
-            f.write('\n')
-            # for line in fitnessData:
-            #     f.write(str(line))
-            #     f.write('\n')
+    # # USED ONLY FOR PSO LAUNCH
+    # if (value is not None):
+    #     os.chdir(value)
+    #     with open(value + "/local_fitness.txt", 'w') as f:
+    #         f.write(str(fitness))
+    #         f.write('\n')
+    #         # for line in fitnessData:
+    #         #     f.write(str(line))
+    #         #     f.write('\n')
+    # else:
+    #     with open("local_fitness.txt", 'w') as f:
+    #         f.write(str(fitness))
+    #         f.write('\n')
+    #         # for line in fitnessData:
+    #         #     f.write(str(line))
+    #         #     f.write('\n')
     
 
-    #Write the fitness file into the local dir only when number of runs are done
-    print("Cleaning up Simulation")
-    if (value is not None):
-        print("Wrote file: " +  value + "/local_fitness")
-    else:
-        print("wrote file: local_fitness")
-    supervisor.simulationQuit(0)
+    # #Write the fitness file into the local dir only when number of runs are done
+    # print("Cleaning up Simulation")
+    # if (value is not None):
+    #     print("Wrote file: " +  value + "/local_fitness")
+    # else:
+    #     print("wrote file: local_fitness")
+    # supervisor.simulationQuit(0)
 
 def reset():
     global run
