@@ -24,8 +24,8 @@ for i in range(n_robots):
 fitness_df = pd.DataFrame()
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/exp_1/'
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_1/'
-baselinedir = '/home/darren/Documents/DARS/baseline_800TAO/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_2/'
+baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Log'
 
 ################################### 2D Position Histogram ########################
 def create2dHist(run):
@@ -130,7 +130,8 @@ def psoFitness():
     plt.plot(np.arange(num_gen), generation_best, color='red', label='Best')
     plt.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
     plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, color='lightcoral', alpha=0.3)
-    plt.plot(np.arange(num_gen), generation_std, color='green', label='Standard Deviation')
+    #plt.plot(np.arange(num_gen), generation_std, color='green', label='Standard Deviation')
+    #plt.ylim([0, 5])
     plt.title('PSO Evaluation')
     plt.legend()
     plt.show()
@@ -139,7 +140,7 @@ def psoFitness():
 def createSTD():
     averages['mean'] = averages.mean(axis=1)
     averages['std'] = averages.std(axis=1, ddof=0)
-    averages.to_csv('means.csv')
+    #averages.to_csv('means.csv')
     plt.plot(np.arange(averages.shape[0]), (averages.loc[:, 'mean']).to_list(), color='dodgerblue', label='Simulation Average')
     plt.fill_between(np.arange(averages.shape[0]),
     (averages.loc[:, 'mean']) - (averages.loc[:, 'std']), 
@@ -147,12 +148,18 @@ def createSTD():
     plt.axhline(y=0.5, color='r', linestyle='--')
     plt.xlabel('Simulation Time')
     plt.ylabel('Robot Belief')
-    plt.title('Credibility Threshold = 0.95')
+    plt.title('Linear Fitness Baseline')
     plt.savefig(baselinedir + '/FB_95.png')
+    plt.ylim([0, 1])
+    plt.legend()
+    plt.show()
+
 
 ################################## READS IN FITNESS FILES ############################################
 for i in range(num_gen):
     particle_fit_temp = []
+    best_path = ''
+    best_particle = 100000
     gen = rootdir + "Generation_" + str(i)
     #print(gen)
     for j in range(num_particles):
@@ -162,14 +169,18 @@ for i in range(num_gen):
         #print(text)
             with open(text) as f:
                 fit = f.read().splitlines()
-                #print(float(fit[0]))
-                #if (float(fit[0]) < 8000):
+                if (float(fit[0])) < best_particle:
+                    best_particle = float(fit[0])
+                    best_path = text
+
                 time_total = float(fit[0]) + time_total
         
         particle_fit_temp.append(float(time_total)/num_noise)
     #print(particle_fit_temp)
     fitness_df[str(i)] = particle_fit_temp
 fitness_df.to_csv(rootdir + 'means.csv')
+print(best_particle)
+print(best_path)
 
 ############################### READS IN BASELINE FILES #####################################################
 # for run in range(100):
@@ -203,4 +214,4 @@ fitness_df.to_csv(rootdir + 'means.csv')
 #print(fitness_df)
 psoFitness()
 # print(averages)
-# createSTD()
+#createSTD()

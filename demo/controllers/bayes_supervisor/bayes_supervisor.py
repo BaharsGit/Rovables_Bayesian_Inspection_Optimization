@@ -1,7 +1,7 @@
 """vibration_controller controller."""
 
 #from tracemalloc import startF
-from tkinter.tix import MAX
+#from tkinter.tix import MAX
 from controller import Supervisor
 import os
 import csv
@@ -16,7 +16,7 @@ import sys
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
 MAX_TIME = 7200 #unit is in seconds
 #7200
-baseline = 0
+baseline = 1
 run = 0
 n_run = 5
 nRobot = 4
@@ -315,7 +315,7 @@ while supervisor.step(timestep) != -1:
                 #and (dec_hold[k] != 0)
                 if (dec_hold[k] == 0) and (rowProbData[k] > 0.99 or rowProbData[k] < 0.01):
                     #print("Hold set")
-                    dec_hold[k] = supervisor.getTime()
+                    dec_hold[k] = supervisor.getTime() 
                 if (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and (supervisor.getTime() - dec_hold[k] >= holdTime) and (dec_hold[k] != 0) and (dec_time[k] == 0):
                     #print(supervΩsor.getTime() - dec_hold[k])
                     dec_time[k] = supervisor.getTime()
