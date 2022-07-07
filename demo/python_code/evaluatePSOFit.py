@@ -25,7 +25,7 @@ fitness_df = pd.DataFrame()
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/exp_1/'
 rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_2/'
-baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Log'
+baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_baseline'
 
 ################################### 2D Position Histogram ########################
 def create2dHist(run):
@@ -140,7 +140,7 @@ def psoFitness():
 def createSTD():
     averages['mean'] = averages.mean(axis=1)
     averages['std'] = averages.std(axis=1, ddof=0)
-    #averages.to_csv('means.csv')
+    averages.to_csv(baselinedir + '/means.csv')
     plt.plot(np.arange(averages.shape[0]), (averages.loc[:, 'mean']).to_list(), color='dodgerblue', label='Simulation Average')
     plt.fill_between(np.arange(averages.shape[0]),
     (averages.loc[:, 'mean']) - (averages.loc[:, 'std']), 
@@ -183,35 +183,35 @@ print(best_particle)
 print(best_path)
 
 ############################### READS IN BASELINE FILES #####################################################
-# for run in range(100):
-#     posData = []
-#     probData = []
-#     posFile = baselinedir + '/Run' + str(run) + '/runPos.csv'
-#     posData = pd.read_csv(posFile, names=pos_column_names)
+for run in range(100):
+    posData = []
+    probData = []
+    posFile = baselinedir + '/Run' + str(run) + '/runPos.csv'
+    posData = pd.read_csv(posFile, names=pos_column_names)
 
-#     probFile = baselinedir + '/Run' + str(run) + '/runProb.csv'
-#     probData = pd.read_csv(probFile, names=prob_column_names)
-#     probData['mean'] = probData.mean(axis=1)
-#     currentAvgRun = (pd.DataFrame({str(run): (probData.loc[:, 'mean']).to_list()}))
-#     #print(currentAvgRun.reset_index)
-#     averages = pd.concat([averages, currentAvgRun], axis=1)
-#     averages.fillna(method='ffill', inplace=True)
+    probFile = baselinedir + '/Run' + str(run) + '/runProb.csv'
+    probData = pd.read_csv(probFile, names=prob_column_names)
+    probData['mean'] = probData.mean(axis=1)
+    currentAvgRun = (pd.DataFrame({str(run): (probData.loc[:, 'mean']).to_list()}))
+    #print(currentAvgRun.reset_index)
+    averages = pd.concat([averages, currentAvgRun], axis=1)
+    averages.fillna(method='ffill', inplace=True)
 
 
-#     xPos = []
-#     yPos = []
-#     xIndex = 0
-#     yIndex = 1
-#     for i in range(n_robots):
-#         xPos = np.append(xPos, (posData.loc[:, pos_column_names[xIndex]]).to_list(), axis=0)
-#         yPos = np.append(yPos, (posData.loc[:, pos_column_names[yIndex]]).to_list(), axis=0)
-#         xIndex = xIndex + 2
-#         yIndex = yIndex + 2
+    xPos = []
+    yPos = []
+    xIndex = 0
+    yIndex = 1
+    for i in range(n_robots):
+        xPos = np.append(xPos, (posData.loc[:, pos_column_names[xIndex]]).to_list(), axis=0)
+        yPos = np.append(yPos, (posData.loc[:, pos_column_names[yIndex]]).to_list(), axis=0)
+        xIndex = xIndex + 2
+        yIndex = yIndex + 2
 
 #averages = averages[:-10]
 #averages = averages.dropna(axis = 0, how = 'all')
 #averages = averages.dropna()
 #print(fitness_df)
-psoFitness()
+#psoFitness()
 # print(averages)
-#createSTD()
+createSTD()

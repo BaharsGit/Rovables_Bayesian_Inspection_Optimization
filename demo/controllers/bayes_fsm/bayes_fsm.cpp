@@ -54,10 +54,10 @@ static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"};
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
 static int nParam = 3;
-static double alpha = 10;
+static double alpha = 59;
 static double beta = 0;
 static int d_f = -1; 
-static int tao = 100;
+static int tao = 368;
 static double p_c = 0.99; //Credibility Threshold 
 static bool u_plus = true; //Positive feedback 
 static double comDist = 1;
@@ -70,7 +70,7 @@ static int msg_count = 0;
 static int FSM_STATE = 0;
 static std::string name;
 static double speed = 10.0;
-static int rand_const_forward = 200; //Range for random value to go forward
+static int rand_const_forward = 313; //Range for random value to go forward
 static int rand_const_turn = 50; //Range for random value to turn
 static int pause_time = 250;
 static double p;

@@ -64,7 +64,7 @@ else:
 #print(parameters)
 tao = 1500
 if (baseline):
-    holdTime = 33
+    holdTime = 14
 print("Supervisr Hold Time: " + str(holdTime))
 sqArea = boxSize * boxSize
 possibleX = list(range(0, imageDim, boxSize))
