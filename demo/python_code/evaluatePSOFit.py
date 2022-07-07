@@ -15,13 +15,12 @@ n_robots = 4
 prob_column_names = []
 pos_column_names = []
 averages = pd.DataFrame()
+fitness_df = pd.DataFrame()
 
 for i in range(n_robots):
     prob_column_names.append('rov_{}'.format(i))
     pos_column_names.append('rov_{}_x'.format(i))
     pos_column_names.append('rov_{}_y'.format(i))
-
-fitness_df = pd.DataFrame()
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/exp_1/'
 rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_2/'
