@@ -155,31 +155,32 @@ def createSTD():
 
 
 ################################## READS IN FITNESS FILES ############################################
-for i in range(num_gen):
-    particle_fit_temp = []
-    best_path = ''
-    best_particle = 100000
-    gen = rootdir + "Generation_" + str(i)
-    #print(gen)
-    for j in range(num_particles):
-        time_total = 0
-        for k in range(num_noise):
-            text = gen + "/local_fitness_" + str(j) + "_" + str(k) + ".txt"
-        #print(text)
-            with open(text) as f:
-                fit = f.read().splitlines()
-                if (float(fit[0])) < best_particle:
-                    best_particle = float(fit[0])
-                    best_path = text
+def readFitness():
+    for i in range(num_gen):
+        particle_fit_temp = []
+        best_path = ''
+        best_particle = 100000
+        gen = rootdir + "Generation_" + str(i)
+        #print(gen)
+        for j in range(num_particles):
+            time_total = 0
+            for k in range(num_noise):
+                text = gen + "/local_fitness_" + str(j) + "_" + str(k) + ".txt"
+            #print(text)
+                with open(text) as f:
+                    fit = f.read().splitlines()
+                    if (float(fit[0])) < best_particle:
+                        best_particle = float(fit[0])
+                        best_path = text
 
-                time_total = float(fit[0]) + time_total
-        
-        particle_fit_temp.append(float(time_total)/num_noise)
-    #print(particle_fit_temp)
-    fitness_df[str(i)] = particle_fit_temp
-fitness_df.to_csv(rootdir + 'means.csv')
-print(best_particle)
-print(best_path)
+                    time_total = float(fit[0]) + time_total
+            
+            particle_fit_temp.append(float(time_total)/num_noise)
+        #print(particle_fit_temp)
+        fitness_df[str(i)] = particle_fit_temp
+    fitness_df.to_csv(rootdir + 'means.csv')
+    print(best_particle)
+    print(best_path)
 
 ############################### READS IN BASELINE FILES #####################################################
 for run in range(100):
