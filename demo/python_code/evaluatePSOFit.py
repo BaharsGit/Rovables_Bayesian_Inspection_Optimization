@@ -24,8 +24,8 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_x'.format(i))
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
-#rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_3_15gen/'
+rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
+#rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_3_15gen/'
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -176,7 +176,6 @@ def readFitness():
                 probIn = f.read().splitlines()
                 
             particle_param_temp = np.add(np.asarray(probIn, dtype=np.float64), particle_param_temp)
-            print(particle_param_temp)
             for k in range(num_noise):
                 text = gen + "/local_fitness_" + str(j) + "_" + str(k) + ".txt"
             #print(text)
@@ -191,7 +190,8 @@ def readFitness():
 
             particle_fit_temp.append(noise_average)
         #print(particle_fit_temp)
-        param_df[str(i)] = np.divide(particle_param_temp, particle_dim)
+ 
+        param_df[str(i)] = np.divide(particle_param_temp, num_particles)
         fitness_df[str(i)] = particle_fit_temp
     #fitness_df.to_csv(rootdir + 'means.csv')
     print(param_df)
