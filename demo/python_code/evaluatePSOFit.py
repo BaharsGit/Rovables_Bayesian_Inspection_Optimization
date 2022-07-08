@@ -12,18 +12,20 @@ num_particles = 15
 num_noise = 5
 num_gen = 5
 n_robots = 4
+particle_dim = 4
 prob_column_names = []
 pos_column_names = []
 averages = pd.DataFrame()
 fitness_df = pd.DataFrame()
+param_df = pd.DataFrame()
 
 for i in range(n_robots):
     prob_column_names.append('rov_{}'.format(i))
     pos_column_names.append('rov_{}_x'.format(i))
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
-#rootdir = '/Users/darrenchiu/Documents/DARS/exp_1/'
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_3_15gen/'
+rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
+#rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_3_15gen/'
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -127,6 +129,7 @@ def psoFitness():
     plt.xlabel('Iterations')
     plt.ylabel('Fitness')
     plt.yscale('log')
+    plt.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha')
     plt.plot(np.arange(num_gen), generation_best, color='red', label='Best')
     plt.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
     plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, color='lightcoral', alpha=0.3)
@@ -163,27 +166,34 @@ def readFitness():
     text = ''
     for i in range(num_gen):
         particle_fit_temp = []
+        particle_param_temp = np.zeros(particle_dim)
         gen = rootdir + "Generation_" + str(i)
         #print(gen)
         for j in range(num_particles):
             time_total = 0
+            prob_path = gen + "/prob_" + str(j) + ".txt"
+            with open(prob_path) as f:
+                probIn = f.read().splitlines()
+                
+            particle_param_temp = np.add(np.asarray(probIn, dtype=np.float64), particle_param_temp)
             for k in range(num_noise):
                 text = gen + "/local_fitness_" + str(j) + "_" + str(k) + ".txt"
             #print(text)
                 with open(text) as f:
                     fit = f.read().splitlines()
-                    time_total = float(fit[0]) + time_total
+                time_total = float(fit[0]) + time_total
 
             noise_average = float(time_total)/num_noise
-
             if (noise_average < best_particle):
                 best_particle = noise_average
                 best_path = text
 
             particle_fit_temp.append(noise_average)
         #print(particle_fit_temp)
+        param_df[str(i)] = particle_param_temp
         fitness_df[str(i)] = particle_fit_temp
-    fitness_df.to_csv(rootdir + 'means.csv')
+    #fitness_df.to_csv(rootdir + 'means.csv')
+    print(param_df)
     print(best_particle)
     print(best_path)
 
