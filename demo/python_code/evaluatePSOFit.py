@@ -10,7 +10,7 @@ import re
 
 num_particles = 15
 num_noise = 5
-num_gen = 5
+num_gen = 15
 n_robots = 4
 particle_dim = 4
 prob_column_names = []
@@ -24,8 +24,8 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_x'.format(i))
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
-rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
-#rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_3_15gen/'
+#rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_3_15gen/'
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -128,7 +128,7 @@ def psoFitness():
     # print(generation_std)
     plt.xlabel('Iterations')
     plt.ylabel('Fitness')
-    plt.yscale('log')
+    #plt.yscale('log')
     plt.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha')
     plt.plot(np.arange(num_gen), generation_best, color='red', label='Best')
     plt.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
@@ -176,6 +176,7 @@ def readFitness():
                 probIn = f.read().splitlines()
                 
             particle_param_temp = np.add(np.asarray(probIn, dtype=np.float64), particle_param_temp)
+            print(particle_param_temp)
             for k in range(num_noise):
                 text = gen + "/local_fitness_" + str(j) + "_" + str(k) + ".txt"
             #print(text)
@@ -190,7 +191,7 @@ def readFitness():
 
             particle_fit_temp.append(noise_average)
         #print(particle_fit_temp)
-        param_df[str(i)] = particle_param_temp
+        param_df[str(i)] = np.divide(particle_param_temp, particle_dim)
         fitness_df[str(i)] = particle_fit_temp
     #fitness_df.to_csv(rootdir + 'means.csv')
     print(param_df)
