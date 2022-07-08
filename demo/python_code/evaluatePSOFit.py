@@ -24,7 +24,7 @@ for i in range(n_robots):
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/exp_1/'
 rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_2/'
-baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_baseline'
+baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_1_halfMax_baseline'
 
 ################################### 2D Position Histogram ########################
 def create2dHist(run):
@@ -144,12 +144,12 @@ def createSTD():
     plt.fill_between(np.arange(averages.shape[0]),
     (averages.loc[:, 'mean']) - (averages.loc[:, 'std']), 
     (averages.loc[:, 'mean']) + (averages.loc[:, 'std']), color='lightskyblue', alpha=0.3, label='One Standard Deviation')
-    plt.axhline(y=0.5, color='r', linestyle='--')
+    #plt.axhline(y=0.5, color='r', linestyle='--')
     plt.xlabel('Simulation Time')
     plt.ylabel('Robot Belief')
     plt.title('Linear Fitness Baseline')
     plt.savefig(baselinedir + '/FB_95.png')
-    plt.ylim([0, 1])
+    plt.ylim([0, 0.05])
     plt.legend()
     plt.show()
 

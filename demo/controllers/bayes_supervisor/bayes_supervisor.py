@@ -60,8 +60,8 @@ if (value is not None):
     tao = float(parameters[0])
 else:
     #During baseline, manually set hold time. 
-    holdTime = 14
-    tao = 1500
+    holdTime = 50
+    tao = 1811
 
 print("Supervisr Hold Time: " + str(holdTime))
 sqArea = boxSize * boxSize
