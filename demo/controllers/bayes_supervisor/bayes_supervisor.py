@@ -14,13 +14,13 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 7200 #unit is in seconds, corresponds to 2 mintues
+MAX_TIME = 7200 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
 #7200
 baseline = 1
 run = 0
 n_run = 5
 nRobot = 4
-boxSize = 16    
+boxSize = 8    
 imageDim = 128
 fillRatio = 0.55
 p_high = 0.9
