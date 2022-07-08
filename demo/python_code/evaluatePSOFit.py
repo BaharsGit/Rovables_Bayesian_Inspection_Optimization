@@ -23,8 +23,8 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/exp_1/'
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_2/'
-baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_1_halfMax_baseline'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_3_15gen/'
+baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
 def create2dHist(run):
@@ -126,6 +126,7 @@ def psoFitness():
     # print(generation_std)
     plt.xlabel('Iterations')
     plt.ylabel('Fitness')
+    plt.yscale('log')
     plt.plot(np.arange(num_gen), generation_best, color='red', label='Best')
     plt.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
     plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, color='lightcoral', alpha=0.3)
@@ -145,6 +146,7 @@ def createSTD():
     (averages.loc[:, 'mean']) - (averages.loc[:, 'std']), 
     (averages.loc[:, 'mean']) + (averages.loc[:, 'std']), color='lightskyblue', alpha=0.3, label='One Standard Deviation')
     #plt.axhline(y=0.5, color='r', linestyle='--')
+
     plt.xlabel('Simulation Time')
     plt.ylabel('Robot Belief')
     plt.title('Linear Fitness Baseline')
@@ -156,10 +158,11 @@ def createSTD():
 
 ################################## READS IN FITNESS FILES ############################################
 def readFitness():
+    best_particle = 100000
+    best_path = ''
+    text = ''
     for i in range(num_gen):
         particle_fit_temp = []
-        best_path = ''
-        best_particle = 100000
         gen = rootdir + "Generation_" + str(i)
         #print(gen)
         for j in range(num_particles):
@@ -169,13 +172,15 @@ def readFitness():
             #print(text)
                 with open(text) as f:
                     fit = f.read().splitlines()
-                    if (float(fit[0])) < best_particle:
-                        best_particle = float(fit[0])
-                        best_path = text
-
                     time_total = float(fit[0]) + time_total
-            
-            particle_fit_temp.append(float(time_total)/num_noise)
+
+            noise_average = float(time_total)/num_noise
+
+            if (noise_average < best_particle):
+                best_particle = noise_average
+                best_path = text
+
+            particle_fit_temp.append(noise_average)
         #print(particle_fit_temp)
         fitness_df[str(i)] = particle_fit_temp
     fitness_df.to_csv(rootdir + 'means.csv')
@@ -209,10 +214,5 @@ def readBaseline():
             xIndex = xIndex + 2
             yIndex = yIndex + 2
 
-#averages = averages[:-10]
-#averages = averages.dropna(axis = 0, how = 'all')
-#averages = averages.dropna()
-#print(fitness_df)
-#psoFitness()
-# print(averages)
-createSTD()
+readFitness()
+psoFitness()
