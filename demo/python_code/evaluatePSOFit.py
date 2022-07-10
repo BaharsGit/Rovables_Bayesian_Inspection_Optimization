@@ -24,8 +24,8 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_x'.format(i))
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
-rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
-#rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_3_15gen/'
+#rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_3_15gen/'
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -128,8 +128,11 @@ def psoFitness():
     # print(generation_std)
     plt.xlabel('Iterations')
     plt.ylabel('Fitness')
-    #plt.yscale('log')
+    plt.yscale('log')
     plt.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha')
+    plt.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Tao')
+    plt.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward')
+    plt.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='Hysterisis')
     plt.plot(np.arange(num_gen), generation_best, color='red', label='Best')
     plt.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
     plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, color='lightcoral', alpha=0.3)

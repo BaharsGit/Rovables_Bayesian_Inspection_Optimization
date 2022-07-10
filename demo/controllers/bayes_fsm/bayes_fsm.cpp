@@ -54,7 +54,7 @@ static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"};
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
 static int nParam = 3;
-static double alpha = 58;
+static double alpha = 20;
 static double beta = 0;
 static int d_f = -1; 
 static int tao = 1811;

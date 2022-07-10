@@ -101,7 +101,7 @@ def evaluateFitness(time_arr, last_belief):
             sum = sum + time_arr[i]
         else: 
             print("Punished with half max time")   
-            sum = sum + time_arr[i] + MAX_TIME/2
+            sum = sum + time_arr[i] + MAX_TIME
     return sum / nRobot
 
 def checkDecision(data):
