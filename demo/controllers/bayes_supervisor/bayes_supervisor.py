@@ -16,7 +16,7 @@ import sys
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
 MAX_TIME = 7200 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
 #7200
-baseline = 1
+baseline = 0
 run = 0
 n_run = 5
 nRobot = 4
@@ -83,26 +83,26 @@ color_array = np.empty(nRobot, dtype=object)
 # --------------------------------------------------------------
 def evaluateFitness(time_arr, last_belief):
     # Exp Fitness Function
-    # sum = 0
-    # for i in range(nRobot):
-    #     if (last_belief[i] < 0.01):
-    #         sign = -1
-    #     else:
-    #         print("Robot: " + str(i) + " incorrect decision")
-    #         sign = 1
-        
-    #     sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*sign)
-    # return sum
-
-    #Linear Fitness Function
     sum = 0
     for i in range(nRobot):
         if (last_belief[i] < 0.01):
-            sum = sum + time_arr[i]
-        else: 
-            print("Punished with half max time")   
-            sum = sum + time_arr[i] + MAX_TIME
-    return sum / nRobot
+            sign = -1
+        else:
+            print("Robot: " + str(i) + " incorrect decision")
+            sign = 1
+        
+        sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*sign)
+    return sum
+
+    #Linear Fitness Function
+    # sum = 0
+    # for i in range(nRobot):
+    #     if (last_belief[i] < 0.01):
+    #         sum = sum + time_arr[i]
+    #     else: 
+    #         print("Punished with half max time")   
+    #         sum = sum + time_arr[i] + MAX_TIME
+    # return sum / nRobot
 
 def checkDecision(data):
     pSum = 0

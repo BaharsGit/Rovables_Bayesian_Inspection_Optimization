@@ -8,8 +8,8 @@ import pandas as pd
 import os
 import re
 
-num_particles = 15
-num_noise = 5
+num_particles = 5
+num_noise = 15
 num_gen = 15
 n_robots = 4
 particle_dim = 4
@@ -25,7 +25,7 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_3_15gen/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/linear_pso_scaled/'
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -117,6 +117,10 @@ def createGauss(run):
 def psoFitness():
     generation_mean = fitness_df.mean(axis=0)
     generation_std = fitness_df.std(axis=0, ddof=0)
+    for i in range(len(generation_std)):
+        if generation_std[i] < 0:
+            generation_std[i] = 0
+    print(generation_std)
     generation_best = fitness_df.min(axis=0)
     best = float('inf')
     for i in range(len(generation_best)):
@@ -128,14 +132,14 @@ def psoFitness():
     # print(generation_std)
     plt.xlabel('Iterations')
     plt.ylabel('Fitness')
-    plt.yscale('log')
-    plt.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha')
-    plt.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Tao')
-    plt.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward')
-    plt.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='Hysterisis')
+    #plt.yscale('log')
+    # plt.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha')
+    # plt.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Tao')
+    # plt.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward')
+    # plt.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='Hysterisis')
     plt.plot(np.arange(num_gen), generation_best, color='red', label='Best')
     plt.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
-    plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, color='lightcoral', alpha=0.3)
+    plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, where=(generation_mean + generation_std)>0, color='lightcoral', alpha=0.3)
     #plt.plot(np.arange(num_gen), generation_std, color='green', label='Standard Deviation')
     #plt.ylim([0, 5])
     plt.title('PSO Evaluation')
@@ -184,7 +188,8 @@ def readFitness():
             #print(text)
                 with open(text) as f:
                     fit = f.read().splitlines()
-                time_total = float(fit[0]) + time_total
+                if (float(fit[0]) < 10000):
+                    time_total = float(fit[0]) + time_total
 
             noise_average = float(time_total)/num_noise
             if (noise_average < best_particle):
@@ -196,7 +201,7 @@ def readFitness():
  
         param_df[str(i)] = np.divide(particle_param_temp, num_particles)
         fitness_df[str(i)] = particle_fit_temp
-    #fitness_df.to_csv(rootdir + 'means.csv')
+    fitness_df.to_csv(rootdir + 'means.csv')
     print(param_df)
     print(best_particle)
     print(best_path)
