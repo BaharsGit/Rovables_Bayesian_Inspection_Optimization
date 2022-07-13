@@ -91,7 +91,7 @@ def evaluateFitness(time_arr, last_belief):
             print("Robot: " + str(i) + " incorrect decision")
             sign = 1
         
-        sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*sign)
+        sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*(sign/1000))
     return sum
 
     #Linear Fitness Function
@@ -101,7 +101,7 @@ def evaluateFitness(time_arr, last_belief):
     #         sum = sum + time_arr[i]
     #     else: 
     #         print("Punished with half max time")   
-    #         sum = sum + time_arr[i] + MAX_TIME
+    #         sum = sum + time_arr[i] + MAX_TIME/25
     # return sum / nRobot
 
 def checkDecision(data):

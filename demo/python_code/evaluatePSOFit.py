@@ -8,8 +8,8 @@ import pandas as pd
 import os
 import re
 
-num_particles = 5
-num_noise = 15
+num_particles = 15
+num_noise = 3
 num_gen = 15
 n_robots = 4
 particle_dim = 4
@@ -25,7 +25,7 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/linear_pso_scaled/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_4/'
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -144,6 +144,7 @@ def psoFitness():
     #plt.ylim([0, 5])
     plt.title('PSO Evaluation')
     plt.legend()
+    plt.savefig(rootdir + 'figure.png')
     plt.show()
 
 ########################################## CREATES BELIEF STD ###########################################
@@ -188,8 +189,10 @@ def readFitness():
             #print(text)
                 with open(text) as f:
                     fit = f.read().splitlines()
-                if (float(fit[0]) < 10000):
+                if (float(fit[0]) != 10000):
                     time_total = float(fit[0]) + time_total
+                else:
+                    print(prob_path)
 
             noise_average = float(time_total)/num_noise
             if (noise_average < best_particle):
@@ -200,6 +203,7 @@ def readFitness():
         #print(particle_fit_temp)
  
         param_df[str(i)] = np.divide(particle_param_temp, num_particles)
+        print(particle_fit_temp)
         fitness_df[str(i)] = particle_fit_temp
     fitness_df.to_csv(rootdir + 'means.csv')
     print(param_df)
