@@ -57,7 +57,7 @@ static int nParam = 3;
 static double alpha = 20;
 static double beta = 0;
 static int d_f = -1; 
-static int tao = 1811;
+static int tao = 10000;
 static double p_c = 0.99; //Credibility Threshold 
 static bool u_plus = true; //Positive feedback 
 static double comDist = 1;
@@ -70,7 +70,7 @@ static int msg_count = 0;
 static int FSM_STATE = 0;
 static std::string name;
 static double speed = 10.0;
-static int rand_const_forward = 351; //Range for random value to go forward
+static int rand_const_forward = 750; //Range for random value to go forward
 static int rand_const_turn = 50; //Range for random value to turn
 static int pause_time = 250;
 static double p;

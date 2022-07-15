@@ -9,8 +9,8 @@ import os
 import re
 
 num_particles = 15
-num_noise = 3
-num_gen = 15
+num_noise = 10
+num_gen = 30
 n_robots = 4
 particle_dim = 4
 prob_column_names = []
@@ -25,7 +25,7 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_4/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/linear_pso_MAX_15particles_10eval/'
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -139,7 +139,9 @@ def psoFitness():
     # plt.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='Hysterisis')
     plt.plot(np.arange(num_gen), generation_best, color='red', label='Best')
     plt.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
-    plt.fill_between(np.arange(num_gen), generation_mean - generation_std, generation_mean + generation_std, where=(generation_mean + generation_std)>0, color='lightcoral', alpha=0.3)
+    bottom = generation_mean - generation_std
+    bottom[bottom<0] = 0
+    plt.fill_between(np.arange(num_gen), bottom, generation_mean + generation_std, where=(generation_mean + generation_std)>0, color='lightcoral', alpha=0.3)
     #plt.plot(np.arange(num_gen), generation_std, color='green', label='Standard Deviation')
     #plt.ylim([0, 5])
     plt.title('PSO Evaluation')
