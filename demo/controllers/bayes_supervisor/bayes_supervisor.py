@@ -214,7 +214,7 @@ for i in range(nRobot):
     trans_field_array[i] = rov_node_array[i].getField("translation")
     trans_value_array[i] = trans_field_array[i].getSFVec3f()
     data_array[i] = rov_node_array[i].getField("customData")
-    init_data = '00000.000000'
+    init_data = '00000.000000-'
     data_array[i].setSFString(init_data) #Init custom data to required format
 
 randomizePosition()
@@ -262,18 +262,17 @@ while supervisor.step(timestep) != -1:
         cleanup(dec_time, rowProbData)
 
     #Logic for marking time down for each robots decision
-    if(supervisor.getTime() - sim_time > 30):
-        for k in range(nRobot):
-            #Once the robot crosses the threshold for decision mark the time.
-            if (dec_hold[k] == 0) and (rowProbData[k] > 0.99 or rowProbData[k] < 0.01):
-                #print("Hold set")
-                dec_hold[k] = supervisor.getTime() 
+    for k in range(nRobot):
+        #Once the robot crosses the threshold for decision mark the time.
+        if (dec_hold[k] == 0) and (rowProbData[k] > 0.99 or rowProbData[k] < 0.01):
+            #print("Hold set")
+            dec_hold[k] = supervisor.getTime() 
 
-            #If the robot changes their mind, then reset hold time.
-            elif (rowProbData[k] < 0.99 and rowProbData[k] > 0.01):
-                dec_hold[k] = supervisor.getTime()
-            #If the time has passed mark the decision time.
-            elif (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and (supervisor.getTime() - dec_hold[k] >= holdTime) and (dec_hold[k] != 0) and (dec_time[k] == 0):
-                #print(supervΩsor.getTime() - dec_hold[k])
-                dec_time[k] = supervisor.getTime()
-                print("Robot: " + str(k) + " Finished with time: " + str(dec_time[k]))                
+        #If the robot changes their mind, then reset hold time.
+        elif (rowProbData[k] < 0.99 and rowProbData[k] > 0.01):
+            dec_hold[k] = supervisor.getTime()
+        #If the time has passed mark the decision time.
+        elif (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and (supervisor.getTime() - dec_hold[k] >= holdTime) and (dec_hold[k] != 0) and (dec_time[k] == 0):
+            #print(supervΩsor.getTime() - dec_hold[k])
+            dec_time[k] = supervisor.getTime()
+            print("Robot: " + str(k) + " Finished with time: " + str(dec_time[k]))                
