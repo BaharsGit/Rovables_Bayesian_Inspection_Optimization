@@ -514,7 +514,7 @@ static void putMessage() { // color, id, df/C'
        std::string outbound;
        std::string cProb = otherData.substr(4,8);
        
-       if ((alpha + beta) > 100) {
+       if ((alpha + beta) > 200) {
          p = incbeta(alpha, beta, 0.5);
          if ((d_f == -1) && u_plus) {
            if (p > p_c) {
