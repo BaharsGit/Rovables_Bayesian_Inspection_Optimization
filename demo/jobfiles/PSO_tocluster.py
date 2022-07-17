@@ -305,13 +305,13 @@ bounds = [200, 3000, 0, 200, 200, 1000, 5, 250]  # input bounds [(x1_min,x1_max,
 num_dimensions = 4 # Dimension of particle
 # x0=[0.4,0.5,30,250,100] # Initial particle position
 #[Tao, Alpha, Random Forward, Hold Time]
-x0=[800, 0, 100, 100]
+x0=[400, 0, 200, 200]
 random.seed(0)
-WORST_FITNESS=10000 
+WORST_FITNESS=100000 
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
 # MODIFIED FOR NOISE RESISTANT PSO
-PSO(x0, fitness_evaluation, bounds, maxiter=10, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
+PSO(x0, fitness_evaluation, bounds, maxiter=15, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)

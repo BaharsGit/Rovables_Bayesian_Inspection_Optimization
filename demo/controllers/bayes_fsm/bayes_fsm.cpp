@@ -54,15 +54,16 @@ static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"};
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
 static int nParam = 3;
-static double alpha = 20;
-static double beta = 0;
+static double alpha = 1;
+static double beta = 1;
 static int d_f = -1; 
-static int tao = 10000;
+static int tao = 100;
 static double p_c = 0.99; //Credibility Threshold 
 static bool u_plus = true; //Positive feedback 
 static double comDist = 1;
 static double close_distance = 15.0;
 static int C = 0; //Observed Color
+static int obs_h = 0;
 
 //Robot Parameters
 static int robotNum;
@@ -72,7 +73,7 @@ static std::string name;
 static double speed = 10.0;
 static int rand_const_forward = 750; //Range for random value to go forward
 static int rand_const_turn = 50; //Range for random value to turn
-static int pause_time = 250;
+static int pause_time = 100;
 static double p;
 static char out;
 static int direction = LEFT;
@@ -80,6 +81,8 @@ static int forward_count;
 static int pause_count;
 static int turn_count;
 static int control_count = 0;
+static double decision_time = 0;
+static int obs_count = 0;
 
 //Arena Parameters
 int boxSize = 8;
@@ -161,11 +164,13 @@ int main(int argc, char **argv) {
   readParameters();
   
   C = getColor();
+  
+  p = incbeta(alpha, beta, 0.5);
 
   //Main while loop
   while (robot->step(timeStep) != -1) { 
     // Start robots one after the other
-      //std::cout << name << " start controller" << std::endl;
+    //std::cout << name << " start controller" << std::endl;
     //std::cout << "--------------" << std::endl;
     if (control_count % 8000 == 0) {
       std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << " -> " << alpha << ", " << beta << std::endl;
@@ -190,7 +195,7 @@ int main(int argc, char **argv) {
           break;
         }
         //OBSERVE COLOR 
-        else if ((control_count - robotNum) % tao == 0) {
+        else if ((control_count) % tao == 0) {
           if (d_f == -1) { // Only observe when no decision is made.
             pause_count = pause_time;
             FSM_STATE = FSM_PAUSE;
@@ -235,7 +240,7 @@ int main(int argc, char **argv) {
       case FSM_CA:
       {
         if (distance_sensors_values[LEFT] > 130 && distance_sensors_values[RIGHT] > 130 && distance_sensors_values[2] > 130 && distance_sensors_values[3] > 130) { 
-          FSM_STATE = FSM_PAUSE;
+          FSM_STATE = FSM_RW;
           break;
         }
         direction = distance_sensors_values[LEFT] < distance_sensors_values[RIGHT] ? RIGHT : LEFT;
@@ -321,7 +326,11 @@ int main(int argc, char **argv) {
         getMessage();
         FSM_STATE = FSM_RW;
         std::string currentData = myDataField->getSFString();
-        myDataField->setSFString(currentData.substr(0,4) + std::to_string(p));
+        if (d_f == -1) {
+          myDataField->setSFString(currentData.substr(0,4) + std::to_string(p) + "-");
+        } else {
+          myDataField->setSFString(currentData.substr(0,4) + std::to_string(p) + std::to_string(decision_time));
+        }
         //std::cout << "Controller Read: " << currentData << std::endl;
         break;
       }
@@ -487,6 +496,30 @@ static void getMessage() {
       //std::cout << "Robot: " << robotNum << " Alpha: " << alpha << "Beta: " << beta << std::endl;
     }
   }
+  
+  
+ if ((alpha + beta) > 30) {
+   p = incbeta(alpha, beta, 0.5);
+   if ((d_f == -1) && u_plus) {
+     if (obs_count == 0 && (p > p_c || (1 - p) > p_c)) {
+       obs_count = alpha + beta;
+     }
+     else if ((p < p_c) && ((1-p) < p_c)) {
+       obs_count = alpha + beta;
+     } 
+     else if ((p > p_c || (1 - p) > p_c) && ((alpha + beta) - obs_count >= obs_h) && obs_count != 0) {
+       if (p > p_c) {
+         std::cout << "PF Black" << std::endl;
+         d_f = 0;
+       } else if ((1 - p) > p_c) {
+         d_f = 1;
+         std::cout << robotNum << " PF WHITE" << std::endl;
+       }             
+       decision_time = robot->getTime();
+       std::cout << robotNum << " Decision time: " << decision_time << std::endl; 
+     }
+   }
+ }  
   //std::string newMessage = myData.substr(0,3);
   //std::cout << "Get Message: " << newMessage <<std::endl;
   // myDataField->setSFString(newMessage + myData.substr(3,8));
@@ -513,19 +546,6 @@ static void putMessage() { // color, id, df/C'
        
        std::string outbound;
        std::string cProb = otherData.substr(4,8);
-       
-       if ((alpha + beta) > 200) {
-         p = incbeta(alpha, beta, 0.5);
-         if ((d_f == -1) && u_plus) {
-           if (p > p_c) {
-             std::cout << "PF Black" << std::endl;
-             d_f = 0;
-           } else if ((1 - p) > p_c) {
-             d_f = 1;
-             std::cout << robotNum << " PF WHITE" << std::endl;
-           } 
-         }
-       }  
        
        if (d_f != -1 && u_plus) {
          out = d_f + '0';
@@ -587,6 +607,7 @@ static void readParameters() {
       if (i == 0) tao = z;
       if (i == 1) alpha = round(z);
       if (i == 2) rand_const_forward = z;
+      if (i == 3) obs_h = z;
       // if (i == 0) {
         // if (z > 0.5) u_plus = true;
         // else u_plus = false;
@@ -609,5 +630,6 @@ static void readParameters() {
   std::cout << "Close Distance: " << close_distance <<std::endl;
   // std::cout << "Random forward: " << rand_const_forward << std::endl;
   std::cout << "Random Turn: " << rand_const_turn << std::endl;
+  std::cout << "Observation Hold: " << obs_h << std::endl;
   std::cout << "-----------------------------" << std::endl;
 }

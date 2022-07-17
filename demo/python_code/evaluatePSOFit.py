@@ -9,8 +9,8 @@ import os
 import re
 
 num_particles = 15
-num_noise = 10
-num_gen = 10
+num_noise = 15
+num_gen = 30
 n_robots = 4
 particle_dim = 4
 prob_column_names = []
@@ -26,7 +26,7 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/exp_pso_10eval_noscale/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_0/'
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -138,16 +138,16 @@ def psoFitness():
     ax2 = ax.twinx()
     #plt.yscale('log')
     param_fade = 0.4
-    ax2.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha', alpha=param_fade)
-    ax2.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Tao', alpha=param_fade)
-    ax2.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward', alpha=param_fade)
-    ax2.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='Hysterisis', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Tao', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='Hysterisis', alpha=param_fade)
     ax.plot(np.arange(num_gen), generation_best, color='red', label='Best')
     ax.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
     bottom = generation_mean - generation_std
     bottom[bottom<0] = 0
     ax.fill_between(np.arange(num_gen), bottom, generation_mean + generation_std, where=(generation_mean + generation_std)>0, color='lightcoral', alpha=0.3)
-    #plt.plot(np.arange(num_gen), generation_std, color='green', label='Standard Deviation')
+    #ax2.plot(np.arange(num_gen), generation_std, color='green', label='Standard Deviation')
     #plt.ylim([0, 5])
     plt.title('PSO Evaluation')
     ax.legend(fancybox=True, shadow=True)
@@ -207,10 +207,10 @@ def readFitness():
             #print(text)
                 with open(text) as f:
                     fit = f.read().splitlines()
-                if (float(fit[0]) != 10000):
+                if (float(fit[0]) < 10000):
                     time_total = float(fit[0]) + time_total
                 else:
-                    print(prob_path)
+                    print(text)
 
             noise_average = float(time_total)/num_noise
             if (noise_average < best_particle):

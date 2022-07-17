@@ -177,7 +177,8 @@ def cleanup(time_arr, last_belief):
             print("wrote file: local_fitness")
 
     print("Ceaning up simulation")
-    supervisor.simulationQuit(0)
+    supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
+    #supervisor.simulationQuit(0)
 
 def get_pos(xPos, yPos):
     ix = int(int(xPos*imageDim)/boxSize)
@@ -214,7 +215,7 @@ for i in range(nRobot):
     trans_field_array[i] = rov_node_array[i].getField("translation")
     trans_value_array[i] = trans_field_array[i].getSFVec3f()
     data_array[i] = rov_node_array[i].getField("customData")
-    init_data = '00000.000000-'
+    init_data = '00000.500000-'
     data_array[i].setSFString(init_data) #Init custom data to required format
 
 randomizePosition()
@@ -223,7 +224,7 @@ randomizePosition()
 # Get the current time
 start_time = time.time()
 sim_time = supervisor.getTime()
-supervisor.simulationSetMode(supervisor.SIMULATION_MODE_FAST)
+#supervisor.simulationSetMode(supervisor.SIMULATION_MODE_FAST)
 
 while supervisor.step(timestep) != -1:
     #print(supervisor.getTime() - sim_time)
@@ -241,6 +242,10 @@ while supervisor.step(timestep) != -1:
         remaining = currentData[1:]
         probability = currentData[4:11]
         rowProbData.append(float(probability))
+
+        if (currentData[12] != '-'):
+            dec_time[i] = currentData[12:]
+
         #newString = color_array[i] + remaining
         # print("Current Data: ", currentData)
         # print("Removed Color: ", remaining)
@@ -261,18 +266,18 @@ while supervisor.step(timestep) != -1:
         print("Decision Times: ", dec_time)
         cleanup(dec_time, rowProbData)
 
-    #Logic for marking time down for each robots decision
-    for k in range(nRobot):
-        #Once the robot crosses the threshold for decision mark the time.
-        if (dec_hold[k] == 0) and (rowProbData[k] > 0.99 or rowProbData[k] < 0.01):
-            #print("Hold set")
-            dec_hold[k] = supervisor.getTime() 
+    # #Logic for marking time down for each robots decision
+    # for k in range(nRobot):
+    #     #Once the robot crosses the threshold for decision mark the time.
+    #     if (dec_hold[k] == 0) and (rowProbData[k] > 0.99 or rowProbData[k] < 0.01):
+    #         #print("Hold set")
+    #         dec_hold[k] = supervisor.getTime() 
 
-        #If the robot changes their mind, then reset hold time.
-        elif (rowProbData[k] < 0.99 and rowProbData[k] > 0.01):
-            dec_hold[k] = supervisor.getTime()
-        #If the time has passed mark the decision time.
-        elif (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and (supervisor.getTime() - dec_hold[k] >= holdTime) and (dec_hold[k] != 0) and (dec_time[k] == 0):
-            #print(supervΩsor.getTime() - dec_hold[k])
-            dec_time[k] = supervisor.getTime()
-            print("Robot: " + str(k) + " Finished with time: " + str(dec_time[k]))                
+    #     #If the robot changes their mind, then reset hold time.
+    #     elif (rowProbData[k] < 0.99 and rowProbData[k] > 0.01):
+    #         dec_hold[k] = supervisor.getTime()
+    #     #If the time has passed mark the decision time.
+    #     elif (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and (supervisor.getTime() - dec_hold[k] >= holdTime) and (dec_hold[k] != 0) and (dec_time[k] == 0):
+    #         #print(supervΩsor.getTime() - dec_hold[k])
+    #         dec_time[k] = supervisor.getTime()
+    #         print("Robot: " + str(k) + " Finished with time: " + str(dec_time[k]))                
