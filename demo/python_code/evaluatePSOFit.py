@@ -9,16 +9,19 @@ import os
 import re
 
 num_particles = 15
-num_noise = 15
-num_gen = 30
+num_noise = 10
+num_gen = 14
 n_robots = 4
 particle_dim = 4
+probIn = []
 prob_column_names = []
 pos_column_names = []
+best_param = []
 param_max = [3000, 200, 1000, 250]
 averages = pd.DataFrame()
 fitness_df = pd.DataFrame()
 param_df = pd.DataFrame()
+best_param_df = pd.DataFrame()
 
 for i in range(n_robots):
     prob_column_names.append('rov_{}'.format(i))
@@ -26,7 +29,7 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_0/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/psov2_linear_10eval_15particles/'
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -138,10 +141,21 @@ def psoFitness():
     ax2 = ax.twinx()
     #plt.yscale('log')
     param_fade = 0.4
-    # ax2.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha', alpha=param_fade)
-    # ax2.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Tao', alpha=param_fade)
-    # ax2.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward', alpha=param_fade)
-    # ax2.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='Hysterisis', alpha=param_fade)
+    ax2.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Tao', alpha=param_fade)
+    ax2.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha', alpha=param_fade)
+    ax2.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward', alpha=param_fade)
+    ax2.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='Hysterisis', alpha=param_fade)
+    # ------------------------------------------#
+    ax2.plot(np.arange(num_gen), best_param_df.iloc[0], color='magenta', linestyle='--')
+    ax2.plot(np.arange(num_gen), best_param_df.iloc[1], color='green', linestyle='--')
+    ax2.plot(np.arange(num_gen), best_param_df.iloc[2], color='yellow', linestyle='--')
+    ax2.plot(np.arange(num_gen), best_param_df.iloc[3], color='cyan', linestyle='--')
+    # ------------------------------------------#
+    # ax2.plot(np.arange(num_gen), np.linalg.norm(param_df.iloc[0] - best_param_df.iloc[0]), color='green', label='Alpha', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), np.linalg.norm(param_df.iloc[0] - best_param_df.iloc[1]), color='magenta', label='Tao', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), np.linalg.norm(param_df.iloc[0] -  best_param_df.iloc[2]), color='yellow', label='Forward', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), np.linalg.norm(param_df.iloc[0] - best_param_df.iloc[3]), color='cyan', label='Hysterisis', alpha=param_fade)
+    # ------------------------------------------#
     ax.plot(np.arange(num_gen), generation_best, color='red', label='Best')
     ax.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
     bottom = generation_mean - generation_std
@@ -179,6 +193,7 @@ def createSTD():
 
 ################################## READS IN FITNESS FILES ############################################
 def readFitness():
+    global best_param
     best_particle = 100000
     best_path = ''
     text = ''
@@ -207,7 +222,7 @@ def readFitness():
             #print(text)
                 with open(text) as f:
                     fit = f.read().splitlines()
-                if (float(fit[0]) < 10000):
+                if (float(fit[0]) != 100000):
                     time_total = float(fit[0]) + time_total
                 else:
                     print(text)
@@ -215,14 +230,17 @@ def readFitness():
             noise_average = float(time_total)/num_noise
             if (noise_average < best_particle):
                 best_particle = noise_average
-                best_path = text
+                best_path = prob_path
+                best_param = probIn
 
             particle_fit_temp.append(noise_average)
         #print(particle_fit_temp)
- 
+
+        best_param_df[str(i)] = best_param
         param_df[str(i)] = np.divide(particle_param_temp, num_particles)
         #print(particle_fit_temp)
         fitness_df[str(i)] = particle_fit_temp
+    print(best_path)
     fitness_df.to_csv(rootdir + 'means.csv')
     #print(fitness_df)
     # print(param_df)
@@ -256,4 +274,7 @@ def readBaseline():
             xIndex = xIndex + 2
             yIndex = yIndex + 2
 readFitness()
+# print(param_df.iloc[0])
+# print(best_param_df.iloc[0])
+# print(np.linalg.norm(param_df.iloc[0] - best_param_df.iloc[0]))
 psoFitness()

@@ -91,7 +91,7 @@ def evaluateFitness(time_arr, last_belief):
             print("Robot: " + str(i) + " incorrect decision")
             sign = 1
         
-        sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*(sign/1000))
+        sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*(sign))
     return sum
 
     #Linear Fitness Function
@@ -101,7 +101,7 @@ def evaluateFitness(time_arr, last_belief):
     #         sum = sum + time_arr[i]
     #     else: 
     #         print("Punished with half max time")   
-    #         sum = sum + time_arr[i] + MAX_TIME/25
+    #         sum = sum + time_arr[i] + MAX_TIME
     # return sum / nRobot
 
 def checkDecision(data):
@@ -177,8 +177,8 @@ def cleanup(time_arr, last_belief):
             print("wrote file: local_fitness")
 
     print("Ceaning up simulation")
-    supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
-    #supervisor.simulationQuit(0)
+    #supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
+    supervisor.simulationQuit(0)
 
 def get_pos(xPos, yPos):
     ix = int(int(xPos*imageDim)/boxSize)

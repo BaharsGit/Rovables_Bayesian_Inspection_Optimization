@@ -53,7 +53,7 @@ static int nRobot = 4;
 static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"}; 
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
-static int nParam = 3;
+static int nParam = 4;
 static double alpha = 1;
 static double beta = 1;
 static int d_f = -1; 
@@ -196,10 +196,8 @@ int main(int argc, char **argv) {
         }
         //OBSERVE COLOR 
         else if ((control_count) % tao == 0) {
-          if (d_f == -1) { // Only observe when no decision is made.
-            pause_count = pause_time;
-            FSM_STATE = FSM_PAUSE;
-          }
+          pause_count = pause_time;
+          FSM_STATE = FSM_PAUSE;
         } 
         //SEND COLOR
         // else {
@@ -498,7 +496,7 @@ static void getMessage() {
   }
   
   
- if ((alpha + beta) > 30) {
+ if ((alpha + beta) > 250) {
    p = incbeta(alpha, beta, 0.5);
    if ((d_f == -1) && u_plus) {
      if (obs_count == 0 && (p > p_c || (1 - p) > p_c)) {
