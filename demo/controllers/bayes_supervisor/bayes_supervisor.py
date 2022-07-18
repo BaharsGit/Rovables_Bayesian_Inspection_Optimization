@@ -14,7 +14,7 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 7200 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
+MAX_TIME = 600 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
 #7200
 baseline = 0
 run = 0
@@ -52,18 +52,18 @@ sim_time = 0
 control_count = 0
 
 value = os.getenv("WB_WORKING_DIR")
-if (value is not None):
-    os.chdir(value)
-    with open(value + "/prob.txt") as f:
-        parameters = f.read().splitlines()
-    holdTime = float(parameters[3])
-    tao = float(parameters[0])
-else:
-    #During baseline, manually set hold time. 
-    holdTime = 50
-    tao = 1811
+# if (value is not None):
+#     os.chdir(value)
+#     with open(value + "/prob.txt") as f:
+#         parameters = f.read().splitlines()
+#     holdTime = float(parameters[3])
+#     tao = float(parameters[0])
+# else:
+#     #During baseline, manually set hold time. 
+#     holdTime = 50
+#     tao = 1811
 
-print("Supervisr Hold Time: " + str(holdTime))
+# print("Supervisr Hold Time: " + str(holdTime))
 sqArea = boxSize * boxSize
 possibleX = list(range(0, imageDim, boxSize))
 possibleY = list(range(0, imageDim, boxSize))
@@ -83,26 +83,26 @@ color_array = np.empty(nRobot, dtype=object)
 # --------------------------------------------------------------
 def evaluateFitness(time_arr, last_belief):
     # Exp Fitness Function
-    sum = 0
-    for i in range(nRobot):
-        if (last_belief[i] < 0.01):
-            sign = -1
-        else:
-            print("Robot: " + str(i) + " incorrect decision")
-            sign = 1
-        
-        sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*(sign))
-    return sum
-
-    #Linear Fitness Function
     # sum = 0
     # for i in range(nRobot):
     #     if (last_belief[i] < 0.01):
-    #         sum = sum + time_arr[i]
-    #     else: 
-    #         print("Punished with half max time")   
-    #         sum = sum + time_arr[i] + MAX_TIME
-    # return sum / nRobot
+    #         sign = -1
+    #     else:
+    #         print("Robot: " + str(i) + " incorrect decision")
+    #         sign = 1
+        
+    #     sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*(sign))
+    # return sum
+
+    #Linear Fitness Function
+    sum = 0
+    for i in range(nRobot):
+        if (last_belief[i] < 0.01):
+            sum = sum + time_arr[i]
+        else: 
+            print("Punished with max time")   
+            sum = sum + time_arr[i] + MAX_TIME
+    return sum / nRobot
 
 def checkDecision(data):
     pSum = 0
@@ -177,8 +177,8 @@ def cleanup(time_arr, last_belief):
             print("wrote file: local_fitness")
 
     print("Ceaning up simulation")
-    #supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
-    supervisor.simulationQuit(0)
+    supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
+    #supervisor.simulationQuit(0)
 
 def get_pos(xPos, yPos):
     ix = int(int(xPos*imageDim)/boxSize)
@@ -215,7 +215,7 @@ for i in range(nRobot):
     trans_field_array[i] = rov_node_array[i].getField("translation")
     trans_value_array[i] = trans_field_array[i].getSFVec3f()
     data_array[i] = rov_node_array[i].getField("customData")
-    init_data = '00000.500000-'
+    init_data = '0.500000-'
     data_array[i].setSFString(init_data) #Init custom data to required format
 
 randomizePosition()
@@ -236,15 +236,15 @@ while supervisor.step(timestep) != -1:
         trans_value_array[i] = trans_field_array[i].getSFVec3f()
         rowPosData.append(trans_value_array[i][2])
         rowPosData.append(trans_value_array[i][0])
-        if (control_count % tao == 0):
-            get_pos(trans_value_array[i][2], trans_value_array[i][0])
+        # if (control_count % tao == 0):
+        #     get_pos(trans_value_array[i][2], trans_value_array[i][0])
         currentData = data_array[i].getSFString()
         remaining = currentData[1:]
-        probability = currentData[4:11]
+        probability = currentData[0:7]
         rowProbData.append(float(probability))
 
-        if (currentData[12] != '-'):
-            dec_time[i] = currentData[12:]
+        if (currentData[8] != '-'):
+            dec_time[i] = currentData[8:]
 
         #newString = color_array[i] + remaining
         # print("Current Data: ", currentData)

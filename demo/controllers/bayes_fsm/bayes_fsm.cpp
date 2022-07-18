@@ -16,6 +16,8 @@
 #include <webots/Accelerometer.hpp>
 #include <webots/Camera.hpp>
 #include <webots/DistanceSensor.hpp>
+#include <webots/Emitter.hpp>
+#include <webots/Receiver.hpp>
 #include <webots/Keyboard.hpp>
 #include <webots/PositionSensor.hpp>
 #include <webots/Supervisor.hpp>
@@ -49,6 +51,8 @@ static Node* rovNode[4];
 static Field* rovData[4];
 static Node* me;
 static Field* myDataField;
+static Emitter* emitter;
+static Receiver* receiver;
 static int nRobot = 4;
 static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"}; 
 
@@ -60,22 +64,19 @@ static int d_f = -1;
 static int tao = 100;
 static double p_c = 0.99; //Credibility Threshold 
 static bool u_plus = true; //Positive feedback 
-static double comDist = 1;
 static double close_distance = 15.0;
 static int C = 0; //Observed Color
 static int obs_h = 0;
 
 //Robot Parameters
 static int robotNum;
-static int msg_count = 0;
 static int FSM_STATE = 0;
 static std::string name;
 static double speed = 10.0;
-static int rand_const_forward = 750; //Range for random value to go forward
+static int rand_const_forward = 750; //Range for random value to go forward 
 static int rand_const_turn = 50; //Range for random value to turn
 static int pause_time = 100;
 static double p;
-static char out;
 static int direction = LEFT;
 static int forward_count;
 static int pause_count;
@@ -94,8 +95,8 @@ int grid[141][2];
 double incbeta(double a, double b, double x);
 double getEuclidean(double meX, double meY, double otherX, double otherY);
 static int getColor(void);
-static void getMessage(void);
-static void putMessage(void);
+// static void getMessage(void);
+// static void putMessage(void);
 static void readArena(void);
 static void readParameters(void);
 
@@ -143,6 +144,7 @@ int main(int argc, char **argv) {
     encoders[i]->enable(TIME_STEP);
   }
   
+  //Distance Sensors
   for (int i = 0; i < 4; i++) {
     distance_sensors[i] = robot->getDistanceSensor(distance_sensors_names[i]);
     distance_sensors[i]->enable(TIME_STEP);
@@ -153,6 +155,13 @@ int main(int argc, char **argv) {
     rovNode[i] = robot->getFromDef(rovDef[i]);
     rovData[i] = rovNode[i]->getField("customData");
   }
+  
+  //Receiver
+  receiver = robot->getReceiver("receiver");
+  receiver->enable(TIME_STEP);
+ 
+  //Emitter
+  emitter = robot->getEmitter("emitter");
   
   me = robot->getSelf();
   myDataField = me->getField("customData");
@@ -195,7 +204,7 @@ int main(int argc, char **argv) {
           break;
         }
         //OBSERVE COLOR 
-        else if ((control_count) % tao == 0) {
+        else if ((control_count - robotNum) % tao == 0) {
           pause_count = pause_time;
           FSM_STATE = FSM_PAUSE;
         } 
@@ -295,40 +304,50 @@ int main(int argc, char **argv) {
       
       case FSM_SEND:
       {
-        // Update custom data one by one but wait until all robots finish to move to next state.
-        //std::cout << msg_count << std::endl;
-        if (msg_count == robotNum) {
-          //std::cout << "FSM_SEND " << robotNum << std::endl;
-          putMessage();
-          FSM_STATE = FSM_SEND;
-          msg_count = msg_count + 1;
+        const int *message;
+        if (d_f != -1 && u_plus) {
+          message = &d_f;
         } else {
-          // Move on to next robot to push msg.
-          //std::cout << "FSM_SEND ELSE" << std::endl;
-          msg_count = msg_count + 1;
-          FSM_STATE = FSM_SEND;
+          message = &C;
         }
-        
-        //
-        if (msg_count > (nRobot-1)) {
-          //std::cout << "FSM_PULL" << std::endl;
-          //std::cout << "TO PULL" << std::endl;
-          msg_count = 0;
-          FSM_STATE = FSM_PULL;
-        }
+        emitter->send(message, 4);
+        FSM_STATE = FSM_PULL;
         break;
       }
       
       case FSM_PULL:
       {
-        getMessage();
-        FSM_STATE = FSM_RW;
-        std::string currentData = myDataField->getSFString();
-        if (d_f == -1) {
-          myDataField->setSFString(currentData.substr(0,4) + std::to_string(p) + "-");
-        } else {
-          myDataField->setSFString(currentData.substr(0,4) + std::to_string(p) + std::to_string(decision_time));
+        while (receiver->getQueueLength() > 0) {
+          const int *cPrime = (const int *)receiver->getData();
+          alpha = alpha + *cPrime;
+          beta = beta + (1 - *cPrime);
+          //std::cout << "Received Data: " << *cPrime << " Size: " << receiver->getDataSize() << std::endl;          
+          receiver->nextPacket();
         }
+        //std::cout << "Queue Length: " << receiver->getQueueLength() << std::endl;
+        if ((alpha + beta) > 250) {
+           p = incbeta(alpha, beta, 0.5);
+           if ((d_f == -1) && u_plus) {
+             if (obs_count == 0 && (p > p_c || (1 - p) > p_c)) {
+               obs_count = alpha + beta;
+             }
+             else if ((p < p_c) && ((1-p) < p_c)) {
+               obs_count = alpha + beta;
+             } 
+             else if ((p > p_c || (1 - p) > p_c) && ((alpha + beta) - obs_count >= obs_h) && obs_count != 0) {
+               if (p > p_c) {
+                 std::cout << "PF Black" << std::endl;
+                 d_f = 0;
+               } else if ((1 - p) > p_c) {
+                 d_f = 1;
+                 std::cout << robotNum << " PF WHITE" << std::endl;
+               }             
+             decision_time = robot->getTime();
+             std::cout << robotNum << " Decision time: " << decision_time << std::endl; 
+             }
+           }
+        }
+        FSM_STATE = FSM_RW;
         //std::cout << "Controller Read: " << currentData << std::endl;
         break;
       }
@@ -337,13 +356,12 @@ int main(int argc, char **argv) {
     p = incbeta(alpha, beta, 0.5);
     //std::cout << name << " Current CDF: " << p << " with ALPHA: " << alpha << " and BETA: "<< beta <<std::endl;
     
-    // if ((d_f == -1) & u_plus) {
-      // if (p > p_c) {
-        // d_f = 0;
-      // } else if ((1 - p) > p_c) {
-        // d_f = 1;
-      // } 
-    // }
+    std::string currentData = myDataField->getSFString();
+    if (d_f == -1) {
+      myDataField->setSFString(std::to_string(p) + "-");
+    } else {
+      myDataField->setSFString(std::to_string(p) + std::to_string(decision_time));
+    }
     
     control_count = control_count + 1;
     //std::cout << "Alpha: " << alpha << " Beta: " << beta << std::endl;
@@ -374,7 +392,7 @@ int main(int argc, char **argv) {
  * 1. The origin of this software must not be misrepresented; you must not
  *    claim that you wrote the original software. If you use this software
  *    in a product, an acknowledgement in the product documentation would be
- *    appreciated but is nBE0ot required.
+ *    appreciated but is nBE0ot required.e
  * 2. Altered source versions must be plainly marked as such, and must not be
  *    misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
@@ -479,89 +497,68 @@ static int getColor() {
   // }
 // }
 
-static void getMessage() {
-  int cPrime;
-  Node* me = robot->getSelf();
-  Field *myDataField = me->getField("customData");
-  std::string myData = myDataField->getSFString();
-  for (int i = 0; i < nRobot; i++) {
-    if (i != robotNum) {
-      cPrime = myData[i] - '0';
-      //std::cout << cPrime << std::endl;
-      alpha = alpha + cPrime;
-      beta = beta + (1 - cPrime);
-      //std::cout << "Robot: " << robotNum << " Color: " << cPrime << std::endl;
-      //std::cout << "Robot: " << robotNum << " Alpha: " << alpha << "Beta: " << beta << std::endl;
-    }
-  }
+// static void getMessage() {
+  // int cPrime;
+  // Node* me = robot->getSelf();
+  // Field *myDataField = me->getField("customData");
+  // std::string myData = myDataField->getSFString();
+  // for (int i = 0; i < nRobot; i++) {
+    // if (i != robotNum) {
+      // cPrime = myData[i] - '0';
+      // //std::cout << cPrime << std::endl;
+      // alpha = alpha + cPrime;
+      // beta = beta + (1 - cPrime);
+      // //std::cout << "Robot: " << robotNum << " Color: " << cPrime << std::endl;
+      // //std::cout << "Robot: " << robotNum << " Alpha: " << alpha << "Beta: " << beta << std::endl;
+    // }
+  // }
   
   
- if ((alpha + beta) > 250) {
-   p = incbeta(alpha, beta, 0.5);
-   if ((d_f == -1) && u_plus) {
-     if (obs_count == 0 && (p > p_c || (1 - p) > p_c)) {
-       obs_count = alpha + beta;
-     }
-     else if ((p < p_c) && ((1-p) < p_c)) {
-       obs_count = alpha + beta;
-     } 
-     else if ((p > p_c || (1 - p) > p_c) && ((alpha + beta) - obs_count >= obs_h) && obs_count != 0) {
-       if (p > p_c) {
-         std::cout << "PF Black" << std::endl;
-         d_f = 0;
-       } else if ((1 - p) > p_c) {
-         d_f = 1;
-         std::cout << robotNum << " PF WHITE" << std::endl;
-       }             
-       decision_time = robot->getTime();
-       std::cout << robotNum << " Decision time: " << decision_time << std::endl; 
-     }
-   }
- }  
-  //std::string newMessage = myData.substr(0,3);
-  //std::cout << "Get Message: " << newMessage <<std::endl;
-  // myDataField->setSFString(newMessage + myData.substr(3,8));
+  
+  // //std::string newMessage = myData.substr(0,3);
+  // //std::cout << "Get Message: " << newMessage <<std::endl;
+  //myDataField->setSFString(newMessage + myData.substr(3,8));
  
-}
+// }
 
 
-static void putMessage() { // color, id, df/C'
-  Field *meField = me->getField("translation");
-  const double *meV = meField->getSFVec3f();
-  //Iterate through to find distance.
-  for (int i = 0; i < nRobot; i++) {
-    Field *otherField = rovNode[i]->getField("translation");
-    const double *otherV = otherField->getSFVec3f();
-    double dist = getEuclidean(meV[0], meV[2], otherV[0], otherV[1]);
-    //std::cout << "Euclidean Distance: " << dist << std::endl;
-    if ((dist < comDist) && (dist != 0.0) && (i != robotNum)) {
-       //std::cout << "FOUND with distance: " << dist << std::endl;
-       Field *otherDataField = rovNode[i]->getField("customData");
-       std::string otherData = otherDataField->getSFString();
-       //std::cout << "Other Data: " << otherData << std::endl;
+// static void putMessage() { // color, id, df/C'
+  // Field *meField = me->getField("translation");
+  // const double *meV = meField->getSFVec3f();
+  // //Iterate through to find distance.
+  // for (int i = 0; i < nRobot; i++) {
+    // Field *otherField = rovNode[i]->getField("translation");
+    // const double *otherV = otherField->getSFVec3f();
+    // double dist = getEuclidean(meV[0], meV[2], otherV[0], otherV[1]);
+    // //std::cout << "Euclidean Distance: " << dist << std::endl;
+    // if ((dist < comDist) && (dist != 0.0) && (i != robotNum)) {
+       // //std::cout << "FOUND with distance: " << dist << std::endl;
+       // Field *otherDataField = rovNode[i]->getField("customData");
+       // std::string otherData = otherDataField->getSFString();
+       // //std::cout << "Other Data: " << otherData << std::endl;
 
-       std::string myData = myDataField->getSFString();
+       // std::string myData = myDataField->getSFString();
        
-       std::string outbound;
-       std::string cProb = otherData.substr(4,8);
+       // std::string outbound;
+       // std::string cProb = otherData.substr(4,8);
        
-       if (d_f != -1 && u_plus) {
-         out = d_f + '0';
-         otherData[robotNum] = out;
-         //std::cout << robotNum << " PF: "<< otherData[robotNum] << std::endl;
-       } else {
-         out = '0' + C;
-         //std::cout << "Output char: " << out << " With int: " << C <<  " at location: " << index << std::endl;
-         otherData[robotNum] = out;
-         //outbound = ack+ myID + std::to_string(C) + cProb;
-         //std::cout << outbound << std::endl;
-         //std::cout << robotNum <<" NO PF: "<< otherData[robotNum] << std::endl;
-       }
-       otherDataField->setSFString(otherData);
-       //std::cout << robotNum << " Sent to: " << i << " Color:" << out << "with Data: " << otherData << std::endl;
-    }
-  }
-}
+       // if (d_f != -1 && u_plus) {
+         // out = d_f + '0';
+         // otherData[robotNum] = out;
+         // //std::cout << robotNum << " PF: "<< otherData[robotNum] << std::endl;
+       // } else {
+         // out = '0' + C;
+         // //std::cout << "Output char: " << out << " With int: " << C <<  " at location: " << index << std::endl;
+         // otherData[robotNum] = out;
+         // //outbound = ack+ myID + std::to_string(C) + cProb;
+         // //std::cout << outbound << std::endl;
+         // //std::cout << robotNum <<" NO PF: "<< otherData[robotNum] << std::endl;
+       // }
+       // otherDataField->setSFString(otherData);
+       // //std::cout << robotNum << " Sent to: " << i << " Color:" << out << "with Data: " << otherData << std::endl;
+    // }
+  // }
+// }
 
 static void readArena() {
   std::ifstream file("boxrect.csv");
