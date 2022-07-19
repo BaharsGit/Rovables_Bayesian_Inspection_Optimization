@@ -58,15 +58,15 @@ static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"};
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
 static int nParam = 4;
-static double alpha = 1;
-static double beta = 1;
-static int d_f = -1; 
-static int tao = 100;
+static double alpha = 1; //Alpha Prior
+static double beta = 1; //Beta Prior
+static int d_f = -1; //Decision Flag
+static int tao = 100; //Observation interval
 static double p_c = 0.99; //Credibility Threshold 
 static bool u_plus = true; //Positive feedback 
-static double close_distance = 15.0;
+static double close_distance = 15.0; //Used to check collision avoidance
 static int C = 0; //Observed Color
-static int obs_h = 0;
+static int obs_hysteresis = 0; //Hysterisis 
 
 //Robot Parameters
 static int robotNum;
@@ -83,7 +83,7 @@ static int pause_count;
 static int turn_count;
 static int control_count = 0;
 static double decision_time = 0;
-static int obs_count = 0;
+static int obs_initial = 0;
 
 //Arena Parameters
 int boxSize = 8;
@@ -92,13 +92,10 @@ int rowCount = 141; // THIS MUST BE CHANGED EVERYTIME A NEW ARENA IS CREATED
 int grid[141][2]; 
 
 //Function declarations
-double incbeta(double a, double b, double x);
-double getEuclidean(double meX, double meY, double otherX, double otherY);
-static int getColor(void);
-// static void getMessage(void);
-// static void putMessage(void);
-static void readArena(void);
-static void readParameters(void);
+double incbeta(double a, double b, double x); //Beta function used for calculating posterior
+static int getColor(void); //Check against grid arena to observe color
+static void readArena(void); //Reads in arena file
+static void readParameters(void); //Reads in prob.txt produced from PSO
 
 int main(int argc, char **argv) {
   // create the Robot instance.
@@ -106,18 +103,17 @@ int main(int argc, char **argv) {
   
   // get the time step of the current world.
   int timeStep = (int)robot->getBasicTimeStep();
-    
+  
   name = robot->getName();
   
   robotNum = name[1] - '0';
-  //std::cout << "Robot Seed: " << finalSeed << std::endl;
+
   char *noise_seed = getenv("NOISE_SEED");
-  
   if (noise_seed != NULL) {
-    std::cout << "Noise Seed: " << *noise_seed- '0' << std::endl;
+    std::cout << "Noise Seed: " << *noise_seed - '0' << std::endl;
     srand(*noise_seed); // Initialize seed based on instance id from PSO
   } else {
-    srand(*argv[1]);
+    srand(*argv[1]); //During baseline set based off generated .wbt file
   }
   
   const char *motors_names[2] = {"left motor", "right motor"};
@@ -129,16 +125,10 @@ int main(int argc, char **argv) {
   electromagnet->setPosition(INFINITY);
   electromagnet->setVelocity(1);
   
-  //Output data file for analysis
-  std::ofstream probData;
-  std::string fileName = name + "_data.csv";
-  probData.open(fileName);
-  
-  //Device Tags
+  //Motors and Encoders
   for (int i = 0; i < 2; i++) {
-    
     motors[i] = robot->getMotor(motors_names[i]);
-    (motors[i])->setPosition(INFINITY); // For linear mode 
+    motors[i]->setPosition(INFINITY); // For linear mode 
 
     encoders[i] = robot->getPositionSensor(encoder_names[i]);
     encoders[i]->enable(TIME_STEP);
@@ -166,9 +156,11 @@ int main(int argc, char **argv) {
   me = robot->getSelf();
   myDataField = me->getField("customData");
   
+  //Create an initial random forward and turn counter
   forward_count = rand() % rand_const_forward;
   turn_count = rand() % rand_const_turn;
   
+  //Read in the 
   readArena();
   readParameters();
   
@@ -178,40 +170,37 @@ int main(int argc, char **argv) {
 
   //Main while loop
   while (robot->step(timeStep) != -1) { 
-    // Start robots one after the other
-    //std::cout << name << " start controller" << std::endl;
-    //std::cout << "--------------" << std::endl;
+
+    //Print statements every 8000 Simulation Steps
     if (control_count % 8000 == 0) {
       std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << " -> " << alpha << ", " << beta << std::endl;
     }
-    //std::cout << " Robot " << robotNum << " : " << alpha << " " << beta << std::endl;
+
+    //Distance Sensor values to be updated at each simulation step
     double distance_sensors_values[4];
     for (int i = 0; i < 4; i++){
       distance_sensors_values[i] = distance_sensors[i]->getValue();
     }
-    //std::cout << "Robot: " << name << " in state: " << FSM_STATE << std::endl;
 
-    //FSM 
+    //Main FSM Logic 
     switch(FSM_STATE) {
 
       //RANDOM WALK STATE
       case FSM_RW:
       { 
-        //std::cout << "RW" << std::endl;
-        //COLLISION AVOIDANCE
+
+        //COLLISION AVOIDANCE -- Enter if any distance sensor reads less than "close_distance"
         if (distance_sensors_values[LEFT] < close_distance || distance_sensors_values[RIGHT] < close_distance || distance_sensors_values[2] < close_distance || distance_sensors_values[3] < close_distance) { 
           FSM_STATE = FSM_CA;
           break;
         }
         //OBSERVE COLOR 
-        else if ((control_count - robotNum) % tao == 0) {
-          pause_count = pause_time;
+        else if ((control_count) % tao == 0) {
+          pause_count = pause_time; //Reset the pause count
           FSM_STATE = FSM_PAUSE;
         } 
-        //SEND COLOR
-        // else {
-          // FSM_STATE = FSM_SEND;
-        // }
+
+        //Random Walk Logic
         if (forward_count > 0) {
           motors[LEFT]->setVelocity(speed);
           motors[RIGHT]->setVelocity(speed);
@@ -228,15 +217,13 @@ int main(int argc, char **argv) {
             motors[RIGHT]->setVelocity(-speed);
           }
         } else if((forward_count == 0) & (turn_count == 0)) {
-            //Once done turning check distance sensors to pick turn direction.
+            //Once done turning, randomize again to pick turn direction, forward, and turn
             forward_count = rand() % rand_const_forward;
             turn_count = rand() % rand_const_turn;
             double dir = rand() / (float) RAND_MAX;
             if (dir > 0.5) {
-              //std::cout << "RIGHT" << std::endl;
               direction = RIGHT;
             } else {
-              //std::cout << "LEFT" << std::endl;
               direction = LEFT;
             } 
           }
@@ -246,13 +233,14 @@ int main(int argc, char **argv) {
       //COLLISION AVOIDANCE STATE
       case FSM_CA:
       {
+        //If nothing is in front, then go back to Random Walk
         if (distance_sensors_values[LEFT] > 130 && distance_sensors_values[RIGHT] > 130 && distance_sensors_values[2] > 130 && distance_sensors_values[3] > 130) { 
           FSM_STATE = FSM_RW;
           break;
         }
+
         direction = distance_sensors_values[LEFT] < distance_sensors_values[RIGHT] ? RIGHT : LEFT;
         
-        //if ((distance_sensors_values[LEFT] < 140) && (distance_sensors_values[RIGHT] < 140)) {
         if (((distance_sensors_values[LEFT] < 130) && (distance_sensors_values[RIGHT] < 130)) || ((distance_sensors_values[2] < 130) && (distance_sensors_values[3] < 130))) {
           direction = -1;
         } else if (distance_sensors_values[2] < distance_sensors_values[3]) {   
@@ -320,54 +308,58 @@ int main(int argc, char **argv) {
         while (receiver->getQueueLength() > 0) {
           const int *cPrime = (const int *)receiver->getData();
           alpha = alpha + *cPrime;
-          beta = beta + (1 - *cPrime);
-          //std::cout << "Received Data: " << *cPrime << " Size: " << receiver->getDataSize() << std::endl;          
+          beta = beta + (1 - *cPrime);         
           receiver->nextPacket();
         }
-        //std::cout << "Queue Length: " << receiver->getQueueLength() << std::endl;
-        if ((alpha + beta) > 250) {
-           p = incbeta(alpha, beta, 0.5);
-           if ((d_f == -1) && u_plus) {
-             if (obs_count == 0 && (p > p_c || (1 - p) > p_c)) {
-               obs_count = alpha + beta;
-             }
-             else if ((p < p_c) && ((1-p) < p_c)) {
-               obs_count = alpha + beta;
-             } 
-             else if ((p > p_c || (1 - p) > p_c) && ((alpha + beta) - obs_count >= obs_h) && obs_count != 0) {
-               if (p > p_c) {
-                 std::cout << "PF Black" << std::endl;
-                 d_f = 0;
-               } else if ((1 - p) > p_c) {
-                 d_f = 1;
-                 std::cout << robotNum << " PF WHITE" << std::endl;
-               }             
-             decision_time = robot->getTime();
-             std::cout << robotNum << " Decision time: " << decision_time << std::endl; 
-             }
-           }
+        
+        p = incbeta(alpha, beta, 0.5);
+        if ((d_f == -1) && u_plus) {
+          int currentObservationcount = alpha + beta;
+
+          //Set initial observation hysterisis state 
+          if (obs_initial == 0 && (p > p_c || (1 - p) > p_c)) {
+            obs_initial = currentObservationcount;
+          }
+          //Resets hysterisis state 
+          else if (obs_initial != 0 && (p < p_c) && ((1-p) < p_c)) {
+            obs_initial = currentObservationcount;
+          } 
+          //Hysteresis has been met, decision flag can be set
+          else if ((p > p_c || (1 - p) > p_c) && (currentObservationcount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
+            if (p > p_c) {
+              std::cout << "Positive Feedback - Black" << std::endl;
+              d_f = 0;
+            } else if ((1 - p) > p_c) {
+              std::cout << robotNum << " Positive Feedback - White" << std::endl;
+              d_f = 1;
+            }
+
+          //Mark decision times     
+          decision_time = robot->getTime();
+          std::cout << robotNum << " Decision time: " << decision_time << std::endl; 
+          }
         }
         FSM_STATE = FSM_RW;
-        //std::cout << "Controller Read: " << currentData << std::endl;
         break;
       }
       
     }
-    p = incbeta(alpha, beta, 0.5);
-    //std::cout << name << " Current CDF: " << p << " with ALPHA: " << alpha << " and BETA: "<< beta <<std::endl;
-    
+    //Update robot custom data field with recent belief, and decision time (if available)
     std::string currentData = myDataField->getSFString();
+
+    p = incbeta(alpha, beta, 0.5);   
+
     if (d_f == -1) {
       myDataField->setSFString(std::to_string(p) + "-");
     } else {
       myDataField->setSFString(std::to_string(p) + std::to_string(decision_time));
     }
     
+    //Increment control count used with observation interval
     control_count = control_count + 1;
-    //std::cout << "Alpha: " << alpha << " Beta: " << beta << std::endl;
   }
+
   // Enter here exit cleanup code.
-  
   delete robot;
   return 0;
 }
@@ -446,19 +438,13 @@ double incbeta(double a, double b, double x) {
     return 1.0/0.0; /*Needed more loops, did not converge.*/
 }
 
-double getEuclidean(double meX, double meY, double otherX, double otherY) {
-  return sqrt(pow(meX - otherX, 2) + pow(meY - otherY, 2));
-}
-
-
 static int getColor() {
-  // std::string color = robot->getCustomData();
-  // int iColor = color[0] - '0';
-  // return iColor;
+
   Field *meField = me->getField("translation");
   const double *meV = meField->getSFVec3f();
   double xPos = meV[2];
   double yPos = meV[0];
+
   for (int i = 0; i < rowCount; i++) {
       if ((xPos >= 1.0 * grid[i][0]/imageDim) && 
       (xPos <= (1.0 * grid[i][0] + boxSize)/imageDim) && 
@@ -467,98 +453,9 @@ static int getColor() {
           return 1; //Returns 1 if the current robot is on a white square
       }
   }
-  //std::cout << robotNum << " BLACK" << std::endl;
-  //print(xPos, yPos)
+
   return 0;
 }
-
-// static int checkQ(int who) {
-  // if (commHistory.empty()) {
-    // return 1;
-  // }
-  // if (commHistory.size() < qSize) {
-     // if (commHistory.front() == who) {
-       // commHistory.push(who);
-       // return 0;
-     // } else {
-       // commHistory.push(who);
-       // return 1;
-     // }
-  // } else {
-     // if (commHistory.front() == who) {
-       // commHistory.pop();
-       // commHistory.push(who);
-       // return 0;
-     // } else {
-       // commHistory.pop();
-       // commHistory.push(who);
-       // return 1;
-     // }
-  // }
-// }
-
-// static void getMessage() {
-  // int cPrime;
-  // Node* me = robot->getSelf();
-  // Field *myDataField = me->getField("customData");
-  // std::string myData = myDataField->getSFString();
-  // for (int i = 0; i < nRobot; i++) {
-    // if (i != robotNum) {
-      // cPrime = myData[i] - '0';
-      // //std::cout << cPrime << std::endl;
-      // alpha = alpha + cPrime;
-      // beta = beta + (1 - cPrime);
-      // //std::cout << "Robot: " << robotNum << " Color: " << cPrime << std::endl;
-      // //std::cout << "Robot: " << robotNum << " Alpha: " << alpha << "Beta: " << beta << std::endl;
-    // }
-  // }
-  
-  
-  
-  // //std::string newMessage = myData.substr(0,3);
-  // //std::cout << "Get Message: " << newMessage <<std::endl;
-  //myDataField->setSFString(newMessage + myData.substr(3,8));
- 
-// }
-
-
-// static void putMessage() { // color, id, df/C'
-  // Field *meField = me->getField("translation");
-  // const double *meV = meField->getSFVec3f();
-  // //Iterate through to find distance.
-  // for (int i = 0; i < nRobot; i++) {
-    // Field *otherField = rovNode[i]->getField("translation");
-    // const double *otherV = otherField->getSFVec3f();
-    // double dist = getEuclidean(meV[0], meV[2], otherV[0], otherV[1]);
-    // //std::cout << "Euclidean Distance: " << dist << std::endl;
-    // if ((dist < comDist) && (dist != 0.0) && (i != robotNum)) {
-       // //std::cout << "FOUND with distance: " << dist << std::endl;
-       // Field *otherDataField = rovNode[i]->getField("customData");
-       // std::string otherData = otherDataField->getSFString();
-       // //std::cout << "Other Data: " << otherData << std::endl;
-
-       // std::string myData = myDataField->getSFString();
-       
-       // std::string outbound;
-       // std::string cProb = otherData.substr(4,8);
-       
-       // if (d_f != -1 && u_plus) {
-         // out = d_f + '0';
-         // otherData[robotNum] = out;
-         // //std::cout << robotNum << " PF: "<< otherData[robotNum] << std::endl;
-       // } else {
-         // out = '0' + C;
-         // //std::cout << "Output char: " << out << " With int: " << C <<  " at location: " << index << std::endl;
-         // otherData[robotNum] = out;
-         // //outbound = ack+ myID + std::to_string(C) + cProb;
-         // //std::cout << outbound << std::endl;
-         // //std::cout << robotNum <<" NO PF: "<< otherData[robotNum] << std::endl;
-       // }
-       // otherDataField->setSFString(otherData);
-       // //std::cout << robotNum << " Sent to: " << i << " Color:" << out << "with Data: " << otherData << std::endl;
-    // }
-  // }
-// }
 
 static void readArena() {
   std::ifstream file("boxrect.csv");
@@ -583,7 +480,6 @@ static void readArena() {
 //Read in the parameters from prob.txt
 static void readParameters() {
   char *pPath = getenv("WB_WORKING_DIR");
-  //printf("The current path is: %s\n", pPath);
   char prob_name[256];
   sprintf(prob_name, "%s/prob.txt", pPath);
   
@@ -602,16 +498,7 @@ static void readParameters() {
       if (i == 0) tao = z;
       if (i == 1) alpha = round(z);
       if (i == 2) rand_const_forward = z;
-      if (i == 3) obs_h = z;
-      // if (i == 0) {
-        // if (z > 0.5) u_plus = true;
-        // else u_plus = false;
-      // }
-      
-      // if (i == 1) p_c = z;
-      // if (i == 2) close_distance = z;
-      // if (i == 3) rand_const_forward = z;
-      // if (i == 4) rand_const_turn = z;
+      if (i == 3) obs_hysteresis = z;
     }
     
     file.close();
@@ -625,6 +512,6 @@ static void readParameters() {
   std::cout << "Close Distance: " << close_distance <<std::endl;
   // std::cout << "Random forward: " << rand_const_forward << std::endl;
   std::cout << "Random Turn: " << rand_const_turn << std::endl;
-  std::cout << "Observation Hold: " << obs_h << std::endl;
+  std::cout << "Observation Hold: " << obs_hysteresis << std::endl;
   std::cout << "-----------------------------" << std::endl;
 }
