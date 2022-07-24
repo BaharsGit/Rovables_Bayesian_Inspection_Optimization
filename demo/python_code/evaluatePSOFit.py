@@ -29,7 +29,7 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/linear_pso_MAX_15particles_15eval/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/psov2_linear_10eval_15particles/'
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -128,28 +128,29 @@ def psoFitness():
             generation_std[i] = 0
     #print(generation_std)
     generation_best = fitness_df.min(axis=0)
+    print(generation_best)
     best = float('inf')
-    for i in range(len(generation_best)):
-        if generation_best[i] < best:
-            best = generation_best[i]
-        else:
-            generation_best[i] = best
-    # print(generation_best)
+    # for i in range(len(generation_best)):
+    #     if generation_best[i] < best:
+    #         best = generation_best[i]
+    #     else:
+    #         generation_best[i] = best
+    print(generation_best)
     # print(generation_std)
     ax.set_xlabel('Iterations')
     ax.set_ylabel('Fitness')
     ax2 = ax.twinx()
     #plt.yscale('log')
     param_fade = 0.4
-    ax2.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Tao', alpha=param_fade)
-    ax2.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha', alpha=param_fade)
-    ax2.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward', alpha=param_fade)
-    ax2.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='Hysterisis', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Tao', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='Hysterisis', alpha=param_fade)
     # ------------------------------------------#
-    ax2.plot(np.arange(num_gen), best_param_df.iloc[0], color='magenta', linestyle='--')
-    ax2.plot(np.arange(num_gen), best_param_df.iloc[1], color='green', linestyle='--')
-    ax2.plot(np.arange(num_gen), best_param_df.iloc[2], color='yellow', linestyle='--')
-    ax2.plot(np.arange(num_gen), best_param_df.iloc[3], color='cyan', linestyle='--')
+    # ax2.plot(np.arange(num_gen), best_param_df.iloc[0], color='magenta', linestyle='--')
+    # ax2.plot(np.arange(num_gen), best_param_df.iloc[1], color='green', linestyle='--')
+    # ax2.plot(np.arange(num_gen), best_param_df.iloc[2], color='yellow', linestyle='--')
+    # ax2.plot(np.arange(num_gen), best_param_df.iloc[3], color='cyan', linestyle='--')
     # ------------------------------------------#
     # ax2.plot(np.arange(num_gen), np.linalg.norm(param_df.iloc[0] - best_param_df.iloc[0]), color='green', label='Alpha', alpha=param_fade)
     # ax2.plot(np.arange(num_gen), np.linalg.norm(param_df.iloc[0] - best_param_df.iloc[1]), color='magenta', label='Tao', alpha=param_fade)
@@ -222,7 +223,7 @@ def readFitness():
             #print(text)
                 with open(text) as f:
                     fit = f.read().splitlines()
-                if (float(fit[0]) != 100000):
+                if (float(fit[0]) < 100000):
                     time_total = float(fit[0]) + time_total
                 else:
                     print(text)

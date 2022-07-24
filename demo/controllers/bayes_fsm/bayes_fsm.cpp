@@ -54,7 +54,8 @@ static Field* myDataField;
 static Emitter* emitter;
 static Receiver* receiver;
 static int nRobot = 4;
-static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"}; 
+static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"};
+char *noise_seed; 
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
 static int nParam = 4;
@@ -88,8 +89,9 @@ static int obs_initial = 0;
 //Arena Parameters
 int boxSize = 8;
 int imageDim = 128;
-int rowCount = 141; // THIS MUST BE CHANGED EVERYTIME A NEW ARENA IS CREATED
-int grid[141][2]; 
+std::vector<int> grid_x;
+std::vector<int> grid_y;
+ 
 
 //Function declarations
 double incbeta(double a, double b, double x); //Beta function used for calculating posterior
@@ -108,7 +110,7 @@ int main(int argc, char **argv) {
   
   robotNum = name[1] - '0';
 
-  char *noise_seed = getenv("NOISE_SEED");
+  noise_seed = getenv("NOISE_SEED");
   if (noise_seed != NULL) {
     std::cout << "Noise Seed: " << *noise_seed - '0' << std::endl;
     srand(*noise_seed); // Initialize seed based on instance id from PSO
@@ -195,7 +197,7 @@ int main(int argc, char **argv) {
           break;
         }
         //OBSERVE COLOR 
-        else if ((control_count) % tao == 0) {
+        else if ((control_count + robotNum) % tao == 0) {
           pause_count = pause_time; //Reset the pause count
           FSM_STATE = FSM_PAUSE;
         } 
@@ -313,8 +315,9 @@ int main(int argc, char **argv) {
         }
         
         p = incbeta(alpha, beta, 0.5);
+        int currentObservationcount = alpha + beta;
+        // Logic for first time making decision
         if ((d_f == -1) && u_plus) {
-          int currentObservationcount = alpha + beta;
 
           //Set initial observation hysterisis state 
           if (obs_initial == 0 && (p > p_c || (1 - p) > p_c)) {
@@ -336,8 +339,28 @@ int main(int argc, char **argv) {
 
           //Mark decision times     
           decision_time = robot->getTime();
-          std::cout << robotNum << " Decision time: " << decision_time << std::endl; 
+          std::cout << robotNum << " Decision time: " << decision_time << std::endl;
+          obs_initial = 0; 
           }
+        } else {
+        
+          // Check if decision is ever flipped
+          if (((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c))) {
+            if (obs_initial == 0) obs_initial = currentObservationcount;
+            if ((currentObservationcount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
+              decision_time = robot->getTime();
+              std::cout << robotNum << " Reset Decision time: " << decision_time << std::endl;
+              if (p > p_c) {
+                std::cout << "Positive Feedback - Black" << std::endl;
+                d_f = 0;
+              } else if ((1 - p) > p_c) {
+                std::cout << robotNum << " Positive Feedback - White" << std::endl;
+                d_f = 1;
+              }
+            }  
+          } else {
+            obs_initial = 0;
+          }  
         }
         FSM_STATE = FSM_RW;
         break;
@@ -445,11 +468,11 @@ static int getColor() {
   double xPos = meV[2];
   double yPos = meV[0];
 
-  for (int i = 0; i < rowCount; i++) {
-      if ((xPos >= 1.0 * grid[i][0]/imageDim) && 
-      (xPos <= (1.0 * grid[i][0] + boxSize)/imageDim) && 
-      (yPos >= 1.0 *grid[i][1]/imageDim) && 
-      (yPos <= (1.0 *grid[i][1] + boxSize)/imageDim)) { 
+  for (int i = 0; i < (int) grid_x.size(); i++) {
+      if ((xPos >= 1.0 * grid_x[i]/imageDim) && 
+      (xPos <= (1.0 * grid_x[i] + boxSize)/imageDim) && 
+      (yPos >= 1.0 *grid_y[i]/imageDim) && 
+      (yPos <= (1.0 *grid_y[i] + boxSize)/imageDim)) { 
           return 1; //Returns 1 if the current robot is on a white square
       }
   }
@@ -458,9 +481,15 @@ static int getColor() {
 }
 
 static void readArena() {
-  std::ifstream file("boxrect.csv");
-  
-    for (int i = 0; i < rowCount; i++) {
+  std::string filePath;
+  if (noise_seed != NULL) {
+    filePath = "boxrect_" + std::string(noise_seed) + ".csv";
+  } else {
+    filePath = "boxrect.csv";
+  }
+  std::ifstream file(filePath);
+
+  while(!file.eof()){
     std::string line;
     std::getline(file, line);
     
@@ -470,10 +499,12 @@ static void readArena() {
       std::string val;
       std::getline (iss, val, ',');
       std::stringstream converter(val);
-      converter >> grid[i][j];
+      std::cout << val << std::endl;
+      //Add to X or Y vector depending on location
+      if (j == 0) grid_x.push_back(std::stoi(val));
+      if (j == 1) grid_y.push_back(std::stoi(val));
     }
   }
-  
   file.close();
 }
 

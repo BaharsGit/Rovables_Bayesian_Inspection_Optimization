@@ -44,12 +44,14 @@ else:
 boxData = []
 accuracy = []
 dec_time = np.zeros(nRobot)
+time_track = np.zeros(nRobot)
 dec_hold = np.zeros(nRobot)
 coverage_arr = []
 fitnessData = np.zeros(3) # Decision Time | Coverage | Accuracy
 start_time = time.time()
 sim_time = 0
 control_count = 0
+fitness = 0
 
 value = os.getenv("WB_WORKING_DIR")
 # if (value is not None):
@@ -76,33 +78,28 @@ defArray = ["rov_0", "rov_1", "rov_2", "rov_3"]
 
 rov_node_array = np.empty(nRobot, dtype=object)
 trans_field_array = np.empty(nRobot, dtype=object)
+rot_field_array = np.empty(nRobot, dtype=object)
 data_array = np.empty(nRobot, dtype=object)
 trans_value_array = np.empty(nRobot, dtype=object)
 color_array = np.empty(nRobot, dtype=object)
 
 # --------------------------------------------------------------
-def evaluateFitness(time_arr, last_belief):
+def evaluateFitness(dec_time, last_belief):
     # Exp Fitness Function
-    # sum = 0
-    # for i in range(nRobot):
-    #     if (last_belief[i] < 0.01):
-    #         sign = -1
-    #     else:
-    #         print("Robot: " + str(i) + " incorrect decision")
-    #         sign = 1
-        
-    #     sum = sum + math.exp(((MAX_TIME * 1.66667e-5)- (time_arr[i]*1.66667e-5))*(sign))
-    # return sum
+    # if (last_belief < 0.01):
+    #     sign = -1
+    # else:
+    #     print("Robot: " + str(i) + " incorrect decision")
+    #     sign = 1
+    
+    # return math.exp(((MAX_TIME * 1.66667e-5)- (dec_time*1.66667e-5))*(sign))
 
     #Linear Fitness Function
-    sum = 0
-    for i in range(nRobot):
-        if (last_belief[i] < 0.01):
-            sum = sum + time_arr[i]
-        else: 
-            print("Punished with max time")   
-            sum = sum + time_arr[i] + MAX_TIME
-    return sum / nRobot
+    if (last_belief < 0.01):
+        return dec_time
+    else: 
+        print("Punished with max time")   
+        return dec_time + MAX_TIME
 
 def checkDecision(data):
     pSum = 0
@@ -118,8 +115,9 @@ def checkDecision(data):
         return 0
 
 # Writes to the fitness file for the current iteration of particle
-def cleanup(time_arr, last_belief):
-    # print("Fitness: ", supervisor.getTime())
+def cleanup(time_arr, fitness):
+
+    #Used for baseline 
     if (baseline):
         filenameProb = "Data/" + "Temp" + seedIn + "/" + "runProb.csv"
         filenamePos = "Data/" + "Temp" + seedIn + "/" + "runPos.csv"
@@ -130,9 +128,6 @@ def cleanup(time_arr, last_belief):
             # creating a csv writer object
             csvwriter = csv.writer(csvfile)
 
-            #Write the header
-            #csvwriter.writerow(defArray)
-
             # writing the data rows``
             csvwriter.writerows(csvProbData)
 
@@ -140,16 +135,12 @@ def cleanup(time_arr, last_belief):
             # creating a csv writer object
             csvwriter = csv.writer(csvfile)
 
-            #Write the header
-            #csvwriter.writerow(defArray)
-
             # writing the data rows
             csvwriter.writerows(csvPosData)
 
         np.savetxt(decname, time_arr, delimiter=',')
  
     else:
-        fitness = evaluateFitness(dec_time, last_belief=last_belief)
         print("Fitness of particle: ", fitness)
 
         # USED ONLY FOR PSO LAUNCH
@@ -158,16 +149,10 @@ def cleanup(time_arr, last_belief):
             with open(value + "/local_fitness.txt", 'w') as f:
                 f.write(str(fitness))
                 f.write('\n')
-                # for line in fitnessData:
-                #     f.write(str(line))
-                #     f.write('\n')
         else:
             with open("local_fitness.txt", 'w') as f:
                 f.write(str(fitness))
                 f.write('\n')
-                # for line in fitnessData:
-                #     f.write(str(line))
-                #     f.write('\n')
         
 
         #Write the fitness file into the local dir only when number of runs are done
@@ -177,8 +162,8 @@ def cleanup(time_arr, last_belief):
             print("wrote file: local_fitness")
 
     print("Ceaning up simulation")
-    supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
-    #supervisor.simulationQuit(0)
+    #supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
+    supervisor.simulationQuit(0)
 
 def get_pos(xPos, yPos):
     ix = int(int(xPos*imageDim)/boxSize)
@@ -186,21 +171,12 @@ def get_pos(xPos, yPos):
     grid[ix-1][iy-1] = 1
 
 def randomizePosition():
-    posX = []
-    posY = []
     for i in range(nRobot):
-        while(1):
-            x = random.uniform(0.05,0.95)
-            y = random.uniform(0.05,0.95)
-            if ((x not in posX) and (y not in posY)):
-                posX.append(x)
-                posY.append(y)
-                break
-        initialPos.append([posX[i], 0.023, posY[i]])
-    for i in range(nRobot):
-        INITIAL = [random.uniform(0.05,0.95), 0.32, random.uniform(0.05,0.95)]
+        INITIAL = [random.uniform(0.05,0.95), 0.023, random.uniform(0.05,0.95)]
+        POSE = [0, 1, 0, random.uniform(0, 2*math.pi)]
+        print(POSE)
         trans_field_array[i].setSFVec3f(INITIAL)
-        trans_field_array[i].setSFVec3f(initialPos[i])
+        #rot_field_array[i].setMFVec3f(POSE)
 
 # --------------------------------------------------------------------
 
@@ -213,6 +189,7 @@ timestep = int(supervisor.getBasicTimeStep())
 for i in range(nRobot):
     rov_node_array[i] = supervisor.getFromDef(defArray[i])
     trans_field_array[i] = rov_node_array[i].getField("translation")
+    rot_field_array[i] = rov_node_array[i].getField("rotation")
     trans_value_array[i] = trans_field_array[i].getSFVec3f()
     data_array[i] = rov_node_array[i].getField("customData")
     init_data = '0.500000-'
@@ -220,38 +197,28 @@ for i in range(nRobot):
 
 randomizePosition()
 
-# MODIFIED FOR AWS LAUNCH
-# Get the current time
-start_time = time.time()
 sim_time = supervisor.getTime()
-#supervisor.simulationSetMode(supervisor.SIMULATION_MODE_FAST)
 
 while supervisor.step(timestep) != -1:
-    #print(supervisor.getTime() - sim_time)
-    #print("----------------------------------------------------------")
     rowProbData = []
     rowPosData = []
 
     for i in range(nRobot):
         trans_value_array[i] = trans_field_array[i].getSFVec3f()
+        # Save position data 
         rowPosData.append(trans_value_array[i][2])
         rowPosData.append(trans_value_array[i][0])
-        # if (control_count % tao == 0):
-        #     get_pos(trans_value_array[i][2], trans_value_array[i][0])
         currentData = data_array[i].getSFString()
         remaining = currentData[1:]
         probability = currentData[0:7]
         rowProbData.append(float(probability))
 
         if (currentData[8] != '-'):
-            dec_time[i] = currentData[8:]
-
-        #newString = color_array[i] + remaining
-        # print("Current Data: ", currentData)
-        # print("Removed Color: ", remaining)
-        # print("Probability: ", probability)
-        #print("New String: ", newString)
-        #data_array[i].setSFString(newString)
+            fitness = fitness + evaluateFitness(currentData[8:], float(probability))
+            time_track[i] = currentData[8:]
+            if (time_track[i] != currentData[8:]):
+                fitness = fitness + evaluateFitness(currentData[8:], float(probability))
+                time_track[i] = currentData[8:]
 
     csvProbData.append(rowProbData)
     csvPosData.append(rowPosData)
@@ -264,20 +231,5 @@ while supervisor.step(timestep) != -1:
             if dec_time[k] == 0:
                 dec_time[k] = supervisor.getTime()
         print("Decision Times: ", dec_time)
-        cleanup(dec_time, rowProbData)
-
-    # #Logic for marking time down for each robots decision
-    # for k in range(nRobot):
-    #     #Once the robot crosses the threshold for decision mark the time.
-    #     if (dec_hold[k] == 0) and (rowProbData[k] > 0.99 or rowProbData[k] < 0.01):
-    #         #print("Hold set")
-    #         dec_hold[k] = supervisor.getTime() 
-
-    #     #If the robot changes their mind, then reset hold time.
-    #     elif (rowProbData[k] < 0.99 and rowProbData[k] > 0.01):
-    #         dec_hold[k] = supervisor.getTime()
-    #     #If the time has passed mark the decision time.
-    #     elif (rowProbData[k] > 0.99 or rowProbData[k] < 0.01) and (supervisor.getTime() - dec_hold[k] >= holdTime) and (dec_hold[k] != 0) and (dec_time[k] == 0):
-    #         #print(supervΩsor.getTime() - dec_hold[k])
-    #         dec_time[k] = supervisor.getTime()
-    #         print("Robot: " + str(k) + " Finished with time: " + str(dec_time[k]))                
+        cleanup(dec_time, fitness)
+                
