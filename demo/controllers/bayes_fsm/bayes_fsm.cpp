@@ -56,6 +56,7 @@ static Receiver* receiver;
 static int nRobot = 4;
 static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"};
 char *noise_seed; 
+char *pPath = getenv("WB_WORKING_DIR");
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
 static int nParam = 4;
@@ -111,12 +112,7 @@ int main(int argc, char **argv) {
   robotNum = name[1] - '0';
 
   noise_seed = getenv("NOISE_SEED");
-  if (noise_seed != NULL) {
-    std::cout << "Noise Seed: " << *noise_seed - '0' << std::endl;
-    srand(*noise_seed); // Initialize seed based on instance id from PSO
-  } else {
-    srand(*argv[1]); //During baseline set based off generated .wbt file
-  }
+  srand(*argv[1]); //During baseline set based off generated .wbt file
   
   const char *motors_names[2] = {"left motor", "right motor"};
   const char *distance_sensors_names[4] = {"left distance sensor", "right distance sensor", "angle left distance sensor", "angle right distance sensor"};
@@ -482,12 +478,10 @@ static int getColor() {
 
 static void readArena() {
   std::string filePath;
-  if (noise_seed != NULL) {
-    filePath = "boxrect_" + std::string(noise_seed) + ".csv";
-  } else {
-    filePath = "boxrect.csv";
-  }
-  std::ifstream file(filePath);
+  char arena_name[256];
+  sprintf(arena_name, "%s/arena.csv", pPath);
+  
+  std::ifstream file(arena_name);
 
   while(!file.eof()){
     std::string line;
@@ -510,7 +504,6 @@ static void readArena() {
 
 //Read in the parameters from prob.txt
 static void readParameters() {
-  char *pPath = getenv("WB_WORKING_DIR");
   char prob_name[256];
   sprintf(prob_name, "%s/prob.txt", pPath);
   

@@ -20,7 +20,7 @@ class WorldGenerator():
         - A single .wbt file that is specific to the given seed.
     """
 
-    def __init__(self, world_seed=16, robot_seed=0, robot_number=4, path=None):
+    def __init__(self, world_seed=0, robot_seed=0, robot_number=4, path=None):
         self.world_seed = world_seed
         self.robot_seed = robot_seed
         self.robot_number = robot_number
@@ -40,18 +40,21 @@ class WorldGenerator():
       
       return 1
 
-    def createTexture(self):
+    def createArena(self):
 
-      saveFile = 1
+      fill = []
+      with open('/usr/local/efs/demo/fill_array.txt') as fillfile:
+        for line in fillfile:
+          fill.append(float(line.rstrip()))
+
       picDim = 128
-      fillRatio = 0.55
-      a = 0
-      b = 25
+      fillRatio = fill[self.world_seed]
+
+      print("Generating Arena with Fill Ratio: ", fillRatio)
 
       random.seed(self.world_seed) 
 
-      img = Image.new('1', (picDim, picDim))
-      sqSize = 3
+      sqSize = 8
       picArea = picDim * picDim
       sqArea = sqSize * sqSize
       fillCount = math.ceil((fillRatio * picArea) / sqArea)
@@ -69,16 +72,8 @@ class WorldGenerator():
               startArray[i][1] = possibleY[rY]
               i = i + 1
 
-      draw = ImageDraw.Draw(img)
-
-      for coord in startArray:
-          draw.rectangle((coord[0], coord[1] + (sqSize - 1), coord[0] + (sqSize - 1), coord[1]), fill=1, outline=1)
-
-      img = img.transpose(method=Image.FLIP_TOP_BOTTOM) #Flip to account for axis change in Webots
-
-      #img.show()
-      img.save('../worlds/textures/textrect.png', quality=100)
-      np.savetxt('../controllers/bayes_supervisor/boxrect.csv', startArray.astype(int), delimiter=',', fmt='%d')
+      #Save arena file to instance id specific path
+      np.savetxt(self.path + '/arena.csv', startArray.astype(int), delimiter=',', fmt='%d')
 
 
     def createPos(self):
@@ -205,3 +200,5 @@ Wall {
         print("World Written with Seed: " + str(self.robot_seed))
 
         file.close()
+
+        self.createArena()

@@ -30,11 +30,6 @@ WB_TIMEOUT=5000
 N_RUNS=1 
 
 
-# PATH : This line defines the path to the Webots world to be launched, should be modified for a different world name
-#WEBWORLD="../../worlds/24Lilies_LaLn.wbt"
-WEBWORLD="../../worlds/bayes_pso.wbt"
-
-
 # Set the input directory (relative to the current working directory)
 INPUT_DIR=Generation_${GEN_ID}
 echo "job_lily_parallel.sh input directory is " ${INPUT_DIR}
@@ -57,6 +52,9 @@ else
    JOB_BASE_DIR=$(pwd)/tmp/job${GEN_ID}_${PARTICLE_ID}
 
 fi
+
+# PATH : This line defines the path to the Webots world to be launched, each instance will open a unique world file. 
+WEBWORLD= "${JOB_BASE_DIR}/bayes_pso_${INSTANCE_ID}.wbt"  
  
 
 # Create the working directory for Webots, where Webots can write its stuff
@@ -72,6 +70,10 @@ fi
 # Set Webots working directory, where Webots can write its stuff
 export WB_WORKING_DIR=$JOB_BASE_DIR
 export NOISE_SEED=$INSTANCE_ID
+
+echo "Generating world and arena files..."
+
+python3 -u simSetupPSO.py -s $INSTANCE_ID -p $JOB_BASE_DIR 
 
 echo "(`date`) Performing a total of $N_RUNS runs for particle $PARTICLE_ID"
  

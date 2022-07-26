@@ -54,16 +54,6 @@ control_count = 0
 fitness = 0
 
 value = os.getenv("WB_WORKING_DIR")
-# if (value is not None):
-#     os.chdir(value)
-#     with open(value + "/prob.txt") as f:
-#         parameters = f.read().splitlines()
-#     holdTime = float(parameters[3])
-#     tao = float(parameters[0])
-# else:
-#     #During baseline, manually set hold time. 
-#     holdTime = 50
-#     tao = 1811
 
 # print("Supervisr Hold Time: " + str(holdTime))
 sqArea = boxSize * boxSize

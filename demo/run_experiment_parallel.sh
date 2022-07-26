@@ -47,4 +47,4 @@ seed=$(sed -n ${line}p /usr/local/efs/demo/seed_array.txt)
 # Run experiment according to the seed and simulation parameters
 echo "Running experiment version $seed"
 # MODIFIED FOR AWS LAUNCH, LINES 48, USING PY_PATH
-python3 -u simSetup.py -s $seed #Setup directories and run the simulation
+python3 -u simSetupParallel.py -s $seed #Setup directories and run the simulation
