@@ -97,7 +97,7 @@ std::vector<int> grid_y;
 //Function declarations
 double incbeta(double a, double b, double x); //Beta function used for calculating posterior
 static int getColor(void); //Check against grid arena to observe color
-static void readArena(void); //Reads in arena file
+static int readArena(void); //Reads in arena file
 static void readParameters(void); //Reads in prob.txt produced from PSO
 
 int main(int argc, char **argv) {
@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
   
   //Read in the 
   readArena();
-  readParameters();
+  //readParameters();
   
   C = getColor();
   
@@ -476,11 +476,15 @@ static int getColor() {
   return 0;
 }
 
-static void readArena() {
+static int readArena() {
   std::string filePath;
   char arena_name[256];
-  sprintf(arena_name, "%s/arena.csv", pPath);
-  
+  if (pPath != NULL) {
+    sprintf(arena_name, "%s/arena.txt", pPath);
+  } else {
+    sprintf(arena_name, "arena.txt");
+  }
+  std::cout << arena_name << std::endl;
   std::ifstream file(arena_name);
 
   while(!file.eof()){
@@ -491,15 +495,23 @@ static void readArena() {
     
     for (int j = 0; j < 2; j++) {
       std::string val;
+      std::string end = "# -1";
       std::getline (iss, val, ',');
       std::stringstream converter(val);
-      std::cout << val << std::endl;
+      // std::cout << val << std::endl;
+      if (val.compare(end) == 0) {
+        std::cout << "File end" << std::endl;
+        file.close();
+        return 1;
+      }
       //Add to X or Y vector depending on location
       if (j == 0) grid_x.push_back(std::stoi(val));
       if (j == 1) grid_y.push_back(std::stoi(val));
+      
     }
   }
   file.close();
+  return 0;
 }
 
 //Read in the parameters from prob.txt

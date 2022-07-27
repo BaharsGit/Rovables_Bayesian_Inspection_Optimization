@@ -14,7 +14,7 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 600 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
+MAX_TIME = 300 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
 #7200
 baseline = 0
 run = 0
@@ -51,9 +51,19 @@ fitnessData = np.zeros(3) # Decision Time | Coverage | Accuracy
 start_time = time.time()
 sim_time = 0
 control_count = 0
-fitness = 0
+fitness = np.zeros(nRobot)
 
 value = os.getenv("WB_WORKING_DIR")
+# if (value is not None):
+#     os.chdir(value)
+#     with open(value + "/prob.txt") as f:
+#         parameters = f.read().splitlines()
+#     holdTime = float(parameters[3])
+#     tao = float(parameters[0])
+# else:
+#     #During baseline, manually set hold time. 
+#     holdTime = 50
+#     tao = 1811
 
 # print("Supervisr Hold Time: " + str(holdTime))
 sqArea = boxSize * boxSize
@@ -131,17 +141,18 @@ def cleanup(time_arr, fitness):
         np.savetxt(decname, time_arr, delimiter=',')
  
     else:
-        print("Fitness of particle: ", fitness)
+        fitOut = sum(fitness)/nRobot
+        print("Fitness of particle: ", fitOut)
 
         # USED ONLY FOR PSO LAUNCH
         if (value is not None):
             os.chdir(value)
             with open(value + "/local_fitness.txt", 'w') as f:
-                f.write(str(fitness))
+                f.write(str(fitOut))
                 f.write('\n')
         else:
             with open("local_fitness.txt", 'w') as f:
-                f.write(str(fitness))
+                f.write(str(fitOut))
                 f.write('\n')
         
 
@@ -204,11 +215,15 @@ while supervisor.step(timestep) != -1:
         rowProbData.append(float(probability))
 
         if (currentData[8] != '-'):
-            fitness = fitness + evaluateFitness(currentData[8:], float(probability))
-            time_track[i] = currentData[8:]
-            if (time_track[i] != currentData[8:]):
-                fitness = fitness + evaluateFitness(currentData[8:], float(probability))
-                time_track[i] = currentData[8:]
+            if (fitness[i] == 0):
+                fitness[i] = fitness[i] + evaluateFitness(float(currentData[8:]), float(probability))
+            dec_time[i] = currentData[8:]
+            if (dec_time[i] != float(currentData[8:])):
+                # print("ADD")
+                # print("Dec Time: ", dec_time[i])
+                # print("Current Data: ", currentData[8:])
+                fitness[i] = fitness[i] + evaluateFitness(float(currentData[8:]), float(probability))
+                dec_time[i] = currentData[8:]
 
     csvProbData.append(rowProbData)
     csvPosData.append(rowPosData)
@@ -220,6 +235,7 @@ while supervisor.step(timestep) != -1:
         for k in range(nRobot):
             if dec_time[k] == 0:
                 dec_time[k] = supervisor.getTime()
+                fitness[i] = fitness[i] + evaluateFitness(supervisor.getTime(), float(probability))
         print("Decision Times: ", dec_time)
         cleanup(dec_time, fitness)
                 

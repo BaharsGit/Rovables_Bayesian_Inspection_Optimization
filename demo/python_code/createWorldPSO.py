@@ -6,7 +6,7 @@ import math
 import shutil
 import numpy as np
 import random 
-from PIL import Image, ImageDraw
+import os
 
 class WorldGenerator():
     """
@@ -32,18 +32,19 @@ class WorldGenerator():
 
         random.seed(self.robot_seed)
 
-    def checkCoord(x, y, array):
-      #Iterates through 
+    def checkCoord(self, x, y, array):
+    #Iterates through 
       for coord in array:
-          if ((coord[0] == x) & (coord[1] == y)):
-              return 0
-      
+        if ((coord[0] == x) & (coord[1] == y)):
+            return 0
+    
       return 1
 
     def createArena(self):
 
       fill = []
-      with open('/usr/local/efs/demo/fill_array.txt') as fillfile:
+      with open('/home/darren/Documents/DARS/NoiseResistance/Rovables_Bayesian_Inspection_Optimization/demo/fill_array.txt') as fillfile:
+      # with open('/usr/local/efs/demo/fill_array.txt') as fillfile:
         for line in fillfile:
           fill.append(float(line.rstrip()))
 
@@ -73,7 +74,15 @@ class WorldGenerator():
               i = i + 1
 
       #Save arena file to instance id specific path
-      np.savetxt(self.path + '/arena.csv', startArray.astype(int), delimiter=',', fmt='%d')
+      np.savetxt(self.path + '/arena.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
+      # with open(self.path + '/arena.csv', 'w') as fout:
+      #   NEWLINE_SIZE_IN_BYTES = 1 # 2 on Windows?
+      #   np.savetxt(fout, startArray.astype(int)) # Use np.savetxt.
+      #   fout.seek(0, os.SEEK_END) # Go to the end of the file.
+      #   # Go backwards one byte from the end of the file.
+      #   fout.seek(fout.tell() - NEWLINE_SIZE_IN_BYTES, os.SEEK_SET)
+      #   fout.truncate() # Truncate the file to this point.
+
 
 
     def createPos(self):
@@ -87,7 +96,7 @@ class WorldGenerator():
                     break
 
     def createTitle(self):
-        title = "bayesian_rovables_sim_"
+        title = "/bayes_pso_"
         title += str(self.robot_seed)
 
         return title
@@ -178,14 +187,17 @@ Wall {
   controller "bayes_fsm"
   controllerArgs """ + arg + """
   supervisor TRUE
-  customData "0001.000000"
+  customData "0.500000-"
+  extensionSlot [
+    Receiver {
+    }
+    Emitter {
+    }
+  ]
 }\n""")
 
     def createWorld(self):
-        if (self.path is None):
-          file = open(r"../worlds/" + self.createTitle() + ".wbt", 'w')
-        else:
-          file = open(self.path + self.createTitle() + ".wbt", 'w')
+        file = open(r"../worlds/" + self.createTitle() + ".wbt", 'w')
         #Start with Header
         self.createHeader(file)
 

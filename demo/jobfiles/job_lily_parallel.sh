@@ -18,7 +18,6 @@ INSTANCE_ID=$3
 
 # Setting the worst case fitness value, in case the launch doesn't go well, the worst case fitness value is considered as default
 # Should be set to worst fitness attainable by the robots within the simulation time allowed by the supervisor 
-#WORST_FITNESS=[360, 0, 0]
 WORST_FITNESS=100000 
 
 # Kill webots after WB_TIMEOUT seconds
