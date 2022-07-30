@@ -196,8 +196,6 @@ for i in range(nRobot):
     init_data = '0.500000-'
     data_array[i].setSFString(init_data) #Init custom data to required format
 
-randomizePosition()
-
 sim_time = supervisor.getTime()
 
 while supervisor.step(timestep) != -1:

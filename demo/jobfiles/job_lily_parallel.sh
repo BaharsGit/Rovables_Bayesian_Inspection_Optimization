@@ -14,6 +14,7 @@ GEN_ID=$1
 PARTICLE_ID=$2
 # MODIFIED FOR NOISE RESISTANT PSO
 INSTANCE_ID=$3
+NUM_ROBOTS=$4
 
 
 # Setting the worst case fitness value, in case the launch doesn't go well, the worst case fitness value is considered as default
@@ -51,11 +52,7 @@ else
    JOB_BASE_DIR=$(pwd)/tmp/job${GEN_ID}_${PARTICLE_ID}
 
 fi
-
-# PATH : This line defines the path to the Webots world to be launched, each instance will open a unique world file. 
-WEBWORLD= "${JOB_BASE_DIR}/bayes_pso_${INSTANCE_ID}.wbt"  
  
-
 # Create the working directory for Webots, where Webots can write its stuff
 if [ ! -d $JOB_BASE_DIR ]
 
@@ -72,9 +69,12 @@ export NOISE_SEED=$INSTANCE_ID
 
 echo "Generating world and arena files..."
 
-python3 -u simSetupPSO.py -s $INSTANCE_ID -p $JOB_BASE_DIR 
+python3 -u simSetupPSO.py -pid $PARTICLE_ID -iid $INSTANCE_ID -p $JOB_BASE_DIR -r $NUM_ROBOTS
 
 echo "(`date`) Performing a total of $N_RUNS runs for particle $PARTICLE_ID"
+
+# PATH : This line defines the path to the Webots world to be launched, each instance will open a unique world file. 
+WEBWORLD= "${JOB_BASE_DIR}/bayes_pso_${PARTICLE_ID}_${INSTANCE_ID}.wbt"  
  
 # if Webots crashes after its launch, or fails to create local_fitness.txt, the script will do a number of follow-up trials
 TRIAL_COUNT=1
@@ -162,6 +162,7 @@ fi
 
 # Remove job base directory, the Webots working directory
 rm -r $JOB_BASE_DIR
+rm ../worlds/bayes_pso_$PARTICLE_ID_$INSTANCE_ID.wbt
 
 # MODIFIED FOR NOISE RESISTANT PSO
 if [ $INSTANCE_ID -ge 0 ]

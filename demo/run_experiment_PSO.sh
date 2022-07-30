@@ -2,6 +2,7 @@
 
 # MODIFIED FOR NOISE RESISTANT PSO
 NB_NOISE_RES_EVALS=10
+NUM_ROBOTS=4
 
 # Get the current AWS job indexes
 MY_ID=$((AWS_BATCH_JOB_NODE_INDEX))
@@ -49,11 +50,11 @@ else
       then
         INSTANCE_ID=$(((($MY_ID-1)-$PARTICLE_ID)/$NB_PARTICLES))
         echo "Starting a Webots instance for evaluation of instance $INSTANCE_ID of particle $PARTICLE_ID" 
-        bash ../job_lily_parallel.sh $GEN_ID $PARTICLE_ID $INSTANCE_ID
+        bash ../job_lily_parallel.sh $GEN_ID $PARTICLE_ID $INSTANCE_ID $NUM_ROBOTS
       else
         INSTANCE_ID=-1
         echo "Starting a Webots instance for evaluation of particle" $PARTICLE_ID
-        bash ../job_lily_parallel.sh $GEN_ID $PARTICLE_ID $INSTANCE_ID
+        bash ../job_lily_parallel.sh $GEN_ID $PARTICLE_ID $INSTANCE_ID $NUM_ROBOTS
       fi
       ((GEN_ID++))
     fi

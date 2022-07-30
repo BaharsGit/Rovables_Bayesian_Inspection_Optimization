@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
   
   //Read in the 
   readArena();
-  //readParameters();
+  readParameters();
   
   C = getColor();
   

@@ -1,7 +1,8 @@
 #This shell script tests changes in PSO implementation
 GEN_ID=0
-PARTICLE_ID=1
-INSTANCE_ID=2
+PARTICLE_ID=9
+INSTANCE_ID=4
+NUM_ROBOTS=4
 
 WB_TIMEOUT=45
 
@@ -32,15 +33,18 @@ fi
 
 echo "Generating world and arena files..."
 
-python3 -u ../python_code/simSetupPSO.py -s $INSTANCE_ID -p $JOB_BASE_DIR 
+python3 -u ../python_code/simSetupPSO.py -pid $PARTICLE_ID -iid $INSTANCE_ID -p $JOB_BASE_DIR -r $NUM_ROBOTS
 
-WEBWORLD="../worlds/bayes_pso_${INSTANCE_ID}.wbt"
+WEBWORLD="../worlds/bayes_pso_${PARTICLE_ID}_${INSTANCE_ID}.wbt"
 
 echo "WEBOTS DIR: ${WEBWORLD}"
-
-cp ${INPUT_DIR}/prob_${PARTICLE_ID}.txt $WB_WORKING_DIR/prob.txt
 
 export WB_WORKING_DIR=$JOB_BASE_DIR
 export NOISE_SEED=$INSTANCE_ID
 
-timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD
+# sudo cp ${INPUT_DIR}/prob_${PARTICLE_ID}.txt $WB_WORKING_DIR/prob.txt
+
+# timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD
+
+# rm -r $JOB_BASE_DIR
+# rm ../worlds/bayes_pso_${PARTICLE_ID}_${INSTANCE_ID}.wbt

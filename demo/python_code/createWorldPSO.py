@@ -13,24 +13,22 @@ class WorldGenerator():
     Generates the .wbt folder based an input seed.
 
     Inputs:
-        - world_seed 
-        - robot_seed
+        - particle_id
+        - instance_id
         - robot_number
     Output:
         - A single .wbt file that is specific to the given seed.
     """
 
-    def __init__(self, world_seed=0, robot_seed=0, robot_number=4, path=None):
-        self.world_seed = world_seed
-        self.robot_seed = robot_seed
+    def __init__(self, particle_id=0, instance_id=0, robot_number=4, path=None):
+        self.particle_id = particle_id
+        self.instance_id = instance_id
         self.robot_number = robot_number
         self.path = path
 
         #This will store the intial positions of the robots.
         self.initialX = [] 
         self.initialY = []
-
-        random.seed(self.robot_seed)
 
     def checkCoord(self, x, y, array):
     #Iterates through 
@@ -43,17 +41,17 @@ class WorldGenerator():
     def createArena(self):
 
       fill = []
-      with open('/home/darren/Documents/DARS/NoiseResistance/Rovables_Bayesian_Inspection_Optimization/demo/fill_array.txt') as fillfile:
-      # with open('/usr/local/efs/demo/fill_array.txt') as fillfile:
+      #with open('/home/darren/Documents/DARS/NoiseResistance/Rovables_Bayesian_Inspection_Optimization/demo/fill_array.txt') as fillfile:
+      with open('/usr/local/efs/demo/fill_array.txt') as fillfile:
         for line in fillfile:
           fill.append(float(line.rstrip()))
 
       picDim = 128
-      fillRatio = fill[self.world_seed]
+      fillRatio = fill[self.instance_id]
 
       print("Generating Arena with Fill Ratio: ", fillRatio)
 
-      random.seed(self.world_seed) 
+      random.seed(self.instance_id) 
 
       sqSize = 8
       picArea = picDim * picDim
@@ -95,9 +93,17 @@ class WorldGenerator():
                     self.initialY.append(y)
                     break
 
+    def generateRot(self):
+      # angle
+      rot = str(round(random.uniform(0.0, 2*math.pi), 2))
+
+      return rot
+
     def createTitle(self):
         title = "/bayes_pso_"
-        title += str(self.robot_seed)
+        title += str(self.particle_id)
+        title += "_"
+        title += str(self.instance_id)
 
         return title
 
@@ -168,7 +174,7 @@ Wall {
 }\n""")
     
     def createRobots(self, file):
-        arg = "\"" + str(self.robot_seed) + "\""
+        arg = "\"" + str(self.instance_id) + "\""
         file.write(
         """Robot {
   name "Bayes Bot Supervisor"
@@ -209,7 +215,7 @@ Wall {
         #Creates the number of Rovables in a randomized position
         self.createRobots(file)
 
-        print("World Written with Seed: " + str(self.robot_seed))
+        print("World Written with Seed: " + str(self.instance_id))
 
         file.close()
 
