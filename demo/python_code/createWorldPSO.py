@@ -20,9 +20,10 @@ class WorldGenerator():
         - A single .wbt file that is specific to the given seed.
     """
 
-    def __init__(self, particle_id=0, instance_id=0, robot_number=4, path=None):
+    def __init__(self, particle_id=0, instance_id=0, fill_ratio= 0.52, robot_number=4, path=None):
         self.particle_id = particle_id
         self.instance_id = instance_id
+        self.fill_ratio = fill_ratio
         self.robot_number = robot_number
         self.path = path
 
@@ -39,24 +40,16 @@ class WorldGenerator():
       return 1
 
     def createArena(self):
-
-      fill = []
-      #with open('/home/darren/Documents/DARS/NoiseResistance/Rovables_Bayesian_Inspection_Optimization/demo/fill_array.txt') as fillfile:
-      with open('/usr/local/efs/demo/fill_array.txt') as fillfile:
-        for line in fillfile:
-          fill.append(float(line.rstrip()))
-
       picDim = 128
-      fillRatio = fill[self.instance_id]
 
-      print("Generating Arena with Fill Ratio: ", fillRatio)
+      print("Generating Arena with Fill Ratio: ", self.fill_ratio)
 
       random.seed(self.instance_id) 
 
       sqSize = 8
       picArea = picDim * picDim
       sqArea = sqSize * sqSize
-      fillCount = math.ceil((fillRatio * picArea) / sqArea)
+      fillCount = math.ceil((self.fill_ratio * picArea) / sqArea)
       startArray = np.zeros((fillCount,2)) #Defines bottom left of white square
       possibleX = list(range(0, picDim, sqSize))
       possibleY = list(range(0, picDim, sqSize))
@@ -73,13 +66,6 @@ class WorldGenerator():
 
       #Save arena file to instance id specific path
       np.savetxt(self.path + '/arena.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
-      # with open(self.path + '/arena.csv', 'w') as fout:
-      #   NEWLINE_SIZE_IN_BYTES = 1 # 2 on Windows?
-      #   np.savetxt(fout, startArray.astype(int)) # Use np.savetxt.
-      #   fout.seek(0, os.SEEK_END) # Go to the end of the file.
-      #   # Go backwards one byte from the end of the file.
-      #   fout.seek(fout.tell() - NEWLINE_SIZE_IN_BYTES, os.SEEK_SET)
-      #   fout.truncate() # Truncate the file to this point.
 
 
 
@@ -203,7 +189,8 @@ Wall {
 }\n""")
 
     def createWorld(self):
-        file = open(r"../worlds/" + self.createTitle() + ".wbt", 'w')
+        #file = open(r"../worlds" + self.createTitle() + ".wbt", 'w')
+        file = open(r"/usr/local/efs/demo/worlds" + self.createTitle() + ".wbt", 'w')
         #Start with Header
         self.createHeader(file)
 

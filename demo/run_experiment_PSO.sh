@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # MODIFIED FOR NOISE RESISTANT PSO
-NB_NOISE_RES_EVALS=10
+NB_NOISE_RES_EVALS=3
 NUM_ROBOTS=4
 
 # Get the current AWS job indexes

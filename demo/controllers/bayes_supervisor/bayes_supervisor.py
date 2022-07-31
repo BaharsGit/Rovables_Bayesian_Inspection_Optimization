@@ -1,7 +1,5 @@
 """vibration_controller controller."""
 
-#from tracemalloc import startF
-#from tkinter.tix import MAX
 from controller import Supervisor
 import os
 import csv
@@ -14,15 +12,14 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 300 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
-#7200
+MAX_TIME = 2700 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
+#2700 45 min good?
 baseline = 0
 run = 0
 n_run = 5
 nRobot = 4
 boxSize = 8    
 imageDim = 128
-fillRatio = 0.55
 p_high = 0.9
 p_low = 0.1
 minD = 0.15
@@ -54,25 +51,18 @@ control_count = 0
 fitness = np.zeros(nRobot)
 
 value = os.getenv("WB_WORKING_DIR")
-# if (value is not None):
-#     os.chdir(value)
-#     with open(value + "/prob.txt") as f:
-#         parameters = f.read().splitlines()
-#     holdTime = float(parameters[3])
-#     tao = float(parameters[0])
-# else:
-#     #During baseline, manually set hold time. 
-#     holdTime = 50
-#     tao = 1811
+fill_ratio = os.getenv("FILL_RATIO")
+if (fill_ratio is None):
+    fill_ratio = 0.55
+print("Supervisor Fill Ratio: ", fill_ratio)
 
-# print("Supervisr Hold Time: " + str(holdTime))
-sqArea = boxSize * boxSize
-possibleX = list(range(0, imageDim, boxSize))
-possibleY = list(range(0, imageDim, boxSize))
-grid = np.zeros((len(possibleY), len(possibleX)))
+# sqArea = boxSize * boxSize
+# possibleX = list(range(0, imageDim, boxSize))
+# possibleY = list(range(0, imageDim, boxSize))
+# grid = np.zeros((len(possibleY), len(possibleX)))
 
-fitnessFile = "local_fitness.txt"
-inputFile = "prob.txt"
+# fitnessFile = "local_fitness.txt"
+# inputFile = "prob.txt"
 
 defArray = ["rov_0", "rov_1", "rov_2", "rov_3"]
 
@@ -86,33 +76,46 @@ color_array = np.empty(nRobot, dtype=object)
 # --------------------------------------------------------------
 def evaluateFitness(dec_time, last_belief):
     # Exp Fitness Function
-    # if (last_belief < 0.01):
-    #     sign = -1
+    # if (float(fill_ratio) > 0.5):
+    #     if (last_belief < 0.01):
+    #         sign = -1
+    #     else:
+    #         print("Robot: " + str(i) + " incorrect decision")
+    #         sign = 1
     # else:
-    #     print("Robot: " + str(i) + " incorrect decision")
-    #     sign = 1
-    
+    #     if (last_belief > 0.99):
+    #         sign = -1
+    #     else:
+    #         print("Robot: " + str(i) + " incorrect decision")
+    #         sign = 1
     # return math.exp(((MAX_TIME * 1.66667e-5)- (dec_time*1.66667e-5))*(sign))
 
     #Linear Fitness Function
-    if (last_belief < 0.01):
-        return dec_time
-    else: 
-        print("Punished with max time")   
-        return dec_time + MAX_TIME
-
-def checkDecision(data):
-    pSum = 0
-    for p in data:
-        if (p > p_low and p < p_high):
-            return 0
-        else:
-            pSum = pSum + p
-    
-    if (pSum <= 4*0.1 or pSum >= 4*0.9):
-        return 1
+    if (float(fill_ratio) > 0.5):
+        if (last_belief < 0.01):
+            return dec_time
+        else: 
+            print("Punished with max time")   
+            return dec_time + MAX_TIME
     else:
-        return 0
+        if (last_belief > 0.99):
+            return dec_time
+        else: 
+            print("Punished with max time")   
+            return dec_time + MAX_TIME
+
+# def checkDecision(data):
+#     pSum = 0
+#     for p in data:
+#         if (p > p_low and p < p_high):
+#             return 0
+#         else:
+#             pSum = pSum + p
+    
+#     if (pSum <= 4*0.1 or pSum >= 4*0.9):
+#         return 1
+#     else:
+#         return 0
 
 # Writes to the fitness file for the current iteration of particle
 def cleanup(time_arr, fitness):
@@ -166,16 +169,15 @@ def cleanup(time_arr, fitness):
     #supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
     supervisor.simulationQuit(0)
 
-def get_pos(xPos, yPos):
-    ix = int(int(xPos*imageDim)/boxSize)
-    iy = int(int(yPos*imageDim)/boxSize)
-    grid[ix-1][iy-1] = 1
+# def get_pos(xPos, yPos):
+#     ix = int(int(xPos*imageDim)/boxSize)
+#     iy = int(int(yPos*imageDim)/boxSize)
+#     grid[ix-1][iy-1] = 1
 
 def randomizePosition():
     for i in range(nRobot):
         INITIAL = [random.uniform(0.05,0.95), 0.023, random.uniform(0.05,0.95)]
         POSE = [0, 1, 0, random.uniform(0, 2*math.pi)]
-        print(POSE)
         trans_field_array[i].setSFVec3f(INITIAL)
         #rot_field_array[i].setMFVec3f(POSE)
 

@@ -16,13 +16,19 @@ PARTICLE_ID=$2
 INSTANCE_ID=$3
 NUM_ROBOTS=$4
 
+line=$((INSTANCE_ID + 1))
+
+FILL_RATIO=$(sed -n ${line}p /usr/local/efs/demo/fill_array.txt)
+# FILL_RATIO=$(sed -n ${line}p $(pwd)../fill_array.txt)
+echo "Using Fill Ratio " ${FILL_RATIO}
+
 
 # Setting the worst case fitness value, in case the launch doesn't go well, the worst case fitness value is considered as default
 # Should be set to worst fitness attainable by the robots within the simulation time allowed by the supervisor 
 WORST_FITNESS=100000 
 
 # Kill webots after WB_TIMEOUT seconds
-WB_TIMEOUT=5000
+WB_TIMEOUT=300
 
  
 # N_RUNS can be used for noise resistant evaluation of a particle
@@ -66,15 +72,16 @@ fi
 # Set Webots working directory, where Webots can write its stuff
 export WB_WORKING_DIR=$JOB_BASE_DIR
 export NOISE_SEED=$INSTANCE_ID
+export FILL_RATIO=$FILL_RATIO
 
 echo "Generating world and arena files..."
 
-python3 -u simSetupPSO.py -pid $PARTICLE_ID -iid $INSTANCE_ID -p $JOB_BASE_DIR -r $NUM_ROBOTS
+python3 -u $(pwd)/../../python_code/simSetupPSO.py -pid $PARTICLE_ID -iid $INSTANCE_ID -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS
 
 echo "(`date`) Performing a total of $N_RUNS runs for particle $PARTICLE_ID"
 
 # PATH : This line defines the path to the Webots world to be launched, each instance will open a unique world file. 
-WEBWORLD= "${JOB_BASE_DIR}/bayes_pso_${PARTICLE_ID}_${INSTANCE_ID}.wbt"  
+WEBWORLD="$(pwd)/../../worlds/bayes_pso_${PARTICLE_ID}_${INSTANCE_ID}.wbt"  
  
 # if Webots crashes after its launch, or fails to create local_fitness.txt, the script will do a number of follow-up trials
 TRIAL_COUNT=1
@@ -91,7 +98,8 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
       # launch webots
       # logs are redirected to webots_log.txt file
       # timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt 
-      timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD
+      echo "Running file $WEBWORLD"
+      time timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD
     
 
       # waiting just a while before copying the output
@@ -162,7 +170,7 @@ fi
 
 # Remove job base directory, the Webots working directory
 rm -r $JOB_BASE_DIR
-rm ../worlds/bayes_pso_$PARTICLE_ID_$INSTANCE_ID.wbt
+rm $WEBWORLD
 
 # MODIFIED FOR NOISE RESISTANT PSO
 if [ $INSTANCE_ID -ge 0 ]

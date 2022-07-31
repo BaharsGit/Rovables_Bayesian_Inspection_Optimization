@@ -169,8 +169,8 @@ int main(int argc, char **argv) {
   //Main while loop
   while (robot->step(timeStep) != -1) { 
 
-    //Print statements every 8000 Simulation Steps
-    if (control_count % 8000 == 0) {
+    //Print statements every 10000 Simulation Steps
+    if (control_count % 10000 == 0) {
       std::cout << "FSM State: " << FSM_STATE << " Robot " << robotNum << " Belief: " << p << " -> " << alpha << ", " << beta << std::endl;
     }
 
@@ -311,41 +311,26 @@ int main(int argc, char **argv) {
         }
         
         p = incbeta(alpha, beta, 0.5);
-        int currentObservationcount = alpha + beta;
-        // Logic for first time making decision
-        if ((d_f == -1) && u_plus) {
-
-          //Set initial observation hysterisis state 
-          if (obs_initial == 0 && (p > p_c || (1 - p) > p_c)) {
-            obs_initial = currentObservationcount;
-          }
-          //Resets hysterisis state 
-          else if (obs_initial != 0 && (p < p_c) && ((1-p) < p_c)) {
-            obs_initial = currentObservationcount;
-          } 
-          //Hysteresis has been met, decision flag can be set
-          else if ((p > p_c || (1 - p) > p_c) && (currentObservationcount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
-            if (p > p_c) {
-              std::cout << "Positive Feedback - Black" << std::endl;
-              d_f = 0;
-            } else if ((1 - p) > p_c) {
-              std::cout << robotNum << " Positive Feedback - White" << std::endl;
-              d_f = 1;
-            }
-
-          //Mark decision times     
-          decision_time = robot->getTime();
-          std::cout << robotNum << " Decision time: " << decision_time << std::endl;
-          obs_initial = 0; 
-          }
-        } else {
+        int currentObservationCount = alpha + beta;
         
-          // Check if decision is ever flipped
-          if (((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c))) {
-            if (obs_initial == 0) obs_initial = currentObservationcount;
-            if ((currentObservationcount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
-              decision_time = robot->getTime();
-              std::cout << robotNum << " Reset Decision time: " << decision_time << std::endl;
+        if ((currentObservationCount) > 100) {
+        
+          // Logic for first time making decision
+          if ((d_f == -1) && u_plus) {
+  
+            //Set initial observation hysterisis state 
+            if (obs_initial == 0 && (p > p_c || (1 - p) > p_c)) {
+              obs_initial = currentObservationCount;
+              std::cout << robotNum << " Initial Hysteresis Start " << obs_initial << std::endl;
+            }
+            //Resets hysterisis state 
+            else if (obs_initial != 0 && (p < p_c) && ((1-p) < p_c)) {
+              std::cout << robotNum << " Reset Intiial Hysteresis State" << std::endl;
+              obs_initial = currentObservationCount;
+            } 
+            //Hysteresis has been met, decision flag can be set
+            else if ((p > p_c || (1 - p) > p_c) && (currentObservationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
+              std::cout << robotNum << " Hysteresis Condition Check" << std::endl;
               if (p > p_c) {
                 std::cout << "Positive Feedback - Black" << std::endl;
                 d_f = 0;
@@ -353,10 +338,36 @@ int main(int argc, char **argv) {
                 std::cout << robotNum << " Positive Feedback - White" << std::endl;
                 d_f = 1;
               }
-            }  
+  
+              //Mark decision times     
+              decision_time = robot->getTime();
+              std::cout << robotNum << " Decision time: " << decision_time << std::endl;
+              obs_initial = 0; 
+            }
           } else {
-            obs_initial = 0;
-          }  
+          
+            // Check if decision is ever flipped
+            if (((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c))) {
+              std::cout << robotNum << " Decision Flipped!" << std::endl;
+              //Conditional to start counting 
+              if (obs_initial == 0) obs_initial = currentObservationCount;
+              
+              // Once Counting passes hysteresis threshold then change decision
+              if ((currentObservationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
+                decision_time = robot->getTime();
+                std::cout << robotNum << " Reset Decision time: " << decision_time << std::endl;
+                if (p > p_c) {
+                  std::cout << "Positive Feedback - Black" << std::endl;
+                  d_f = 0;
+                } else if ((1 - p) > p_c) {
+                  std::cout << robotNum << " Positive Feedback - White" << std::endl;
+                  d_f = 1;
+                }
+              }  
+            } else {
+              obs_initial = 0;
+            } 
+          } 
         }
         FSM_STATE = FSM_RW;
         break;
@@ -484,7 +495,6 @@ static int readArena() {
   } else {
     sprintf(arena_name, "arena.txt");
   }
-  std::cout << arena_name << std::endl;
   std::ifstream file(arena_name);
 
   while(!file.eof()){
@@ -500,7 +510,6 @@ static int readArena() {
       std::stringstream converter(val);
       // std::cout << val << std::endl;
       if (val.compare(end) == 0) {
-        std::cout << "File end" << std::endl;
         file.close();
         return 1;
       }
