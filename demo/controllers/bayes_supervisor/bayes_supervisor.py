@@ -2,6 +2,7 @@
 
 from controller import Supervisor
 import os
+import platform
 import csv
 import math
 import random
@@ -12,7 +13,7 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 2700 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
+MAX_TIME = 30 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
 #2700 45 min good?
 baseline = 0
 run = 0
@@ -50,6 +51,9 @@ sim_time = 0
 control_count = 0
 fitness = np.zeros(nRobot)
 
+
+print(os.name)
+print(platform.system())
 value = os.getenv("WB_WORKING_DIR")
 fill_ratio = os.getenv("FILL_RATIO")
 if (fill_ratio is None):

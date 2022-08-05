@@ -7,10 +7,10 @@ from matplotlib import image
 import pandas as pd
 import os
 import re
-
+crash_fitness = 100000
 num_particles = 15
-num_noise = 10
-num_gen = 14
+num_noise = 4
+num_gen = 20
 n_robots = 4
 particle_dim = 4
 probIn = []
@@ -29,7 +29,7 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_y'.format(i))
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/psov2_linear_10eval_15particles/'
+rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_0/'
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -128,14 +128,14 @@ def psoFitness():
             generation_std[i] = 0
     #print(generation_std)
     generation_best = fitness_df.min(axis=0)
-    print(generation_best)
+    #print(generation_best)
     best = float('inf')
     # for i in range(len(generation_best)):
     #     if generation_best[i] < best:
     #         best = generation_best[i]
     #     else:
     #         generation_best[i] = best
-    print(generation_best)
+    #print(generation_best)
     # print(generation_std)
     ax.set_xlabel('Iterations')
     ax.set_ylabel('Fitness')
@@ -223,10 +223,10 @@ def readFitness():
             #print(text)
                 with open(text) as f:
                     fit = f.read().splitlines()
-                if (float(fit[0]) < 100000):
+                if (float(fit[0]) < crash_fitness):
                     time_total = float(fit[0]) + time_total
                 else:
-                    print(text)
+                    print("Particle Crashed: ", text)
 
             noise_average = float(time_total)/num_noise
             if (noise_average < best_particle):
@@ -241,7 +241,7 @@ def readFitness():
         param_df[str(i)] = np.divide(particle_param_temp, num_particles)
         #print(particle_fit_temp)
         fitness_df[str(i)] = particle_fit_temp
-    print(best_path)
+    print("Best Particle: ", best_path)
     fitness_df.to_csv(rootdir + 'means.csv')
     #print(fitness_df)
     # print(param_df)
