@@ -130,11 +130,11 @@ def psoFitness():
     generation_best = fitness_df.min(axis=0)
     #print(generation_best)
     best = float('inf')
-    # for i in range(len(generation_best)):
-    #     if generation_best[i] < best:
-    #         best = generation_best[i]
-    #     else:
-    #         generation_best[i] = best
+    for i in range(len(generation_best)):
+        if generation_best[i] < best:
+            best = generation_best[i]
+        else:
+            generation_best[i] = best
     #print(generation_best)
     # print(generation_std)
     ax.set_xlabel('Iterations')
