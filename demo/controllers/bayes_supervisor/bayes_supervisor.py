@@ -14,6 +14,7 @@ import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
 MAX_TIME = 2700 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
+WALL_TIME = 600
 #2700 45 min good?
 baseline = 0
 run = 0
@@ -235,7 +236,8 @@ while supervisor.step(timestep) != -1:
     control_count = control_count + 1
 
 
-    if (supervisor.getTime() - sim_time > MAX_TIME):
+
+    if (supervisor.getTime() - sim_time > MAX_TIME) or (time.time()-start_time > WALL_TIME):
         #if the robots have not decided then assigned 15 min to decision times.
         for k in range(nRobot):
             if dec_time[k] == 0:

@@ -28,7 +28,7 @@ echo "Using Fill Ratio " ${FILL_RATIO}
 WORST_FITNESS=100000 
 
 # Kill webots after WB_TIMEOUT seconds
-WB_TIMEOUT=600
+WB_TIMEOUT=900
 
  
 # N_RUNS can be used for noise resistant evaluation of a particle
