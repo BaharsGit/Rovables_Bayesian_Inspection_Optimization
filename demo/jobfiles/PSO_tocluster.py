@@ -300,12 +300,28 @@ os.mkdir(run_dir)
 # initial=[5,5]               
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
-# Positive Feedback (Binary) | Credibility Thresdhold | Close Distance | Random Walk Forward | Random Walk Backward
-bounds = [200, 3000, 0, 200, 200, 1000, 5, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-num_dimensions = 4 # Dimension of particle
-# x0=[0.4,0.5,30,250,100] # Initial particle position
-#[Tao, Alpha, Random Forward, Hold Time]
-x0=[400, 0, 200, 200]
+PARTICLE_SET = 4
+bounds = []
+num_dimensions = 0
+x0 = []
+
+if (PARTICLE_SET is 1): # SET ONE 
+    bounds = [0, 100, 20, 500, 20, 3000, 10, 90, 5, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    num_dimensions = 5 # Dimension of particle
+    x0=[0, 400, 200, 30, 200] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis]
+if (PARTICLE_SET is 2):
+    bounds = [0, 100, 20, 500, 20, 3000, 10, 90, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    num_dimensions = 5 # Dimension of particle
+    x0=[0, 400, 200, 30, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis]
+if (PARTICLE_SET is 3):
+    bounds = [0, 0, 20, 500, 20, 3000, 10, 90, 5, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    num_dimensions = 5 # Dimension of particle
+    x0=[0, 400, 200, 30, 200]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis]
+if (PARTICLE_SET is 4):
+    bounds = [0, 0, 20, 500, 20, 3000, 10, 90, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    num_dimensions = 5 # Dimension of particle
+    x0=[0, 400, 200, 30, 0]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis]
+
 random.seed(0)
 WORST_FITNESS=100000 
 # ------------------------------------------------------------------------------+

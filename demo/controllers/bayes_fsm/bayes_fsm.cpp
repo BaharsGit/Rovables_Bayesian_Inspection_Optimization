@@ -59,7 +59,7 @@ char *noise_seed;
 char *pPath = getenv("WB_WORKING_DIR");
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
-static int nParam = 4;
+static int nParam = 5;
 static double alpha = 1; //Alpha Prior
 static double beta = 1; //Beta Prior
 static int d_f = -1; //Decision Flag
@@ -540,10 +540,11 @@ static void readParameters() {
       const char *cstr = line.c_str();
       z = std::atof(cstr);
       std::cout << z << std::endl;
-      if (i == 0) tao = z;
-      if (i == 1) alpha = round(z);
+      if (i == 0) alpha = round(z);
+      if (i == 1) tao = z;
       if (i == 2) rand_const_forward = z;
-      if (i == 3) obs_hysteresis = z;
+      if (i == 3) close_distance = z;
+      if (i == 4) obs_hysteresis = z;
     }
     
     file.close();
