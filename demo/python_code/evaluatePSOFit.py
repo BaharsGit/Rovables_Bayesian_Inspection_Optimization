@@ -27,9 +27,12 @@ for i in range(n_robots):
     prob_column_names.append('rov_{}'.format(i))
     pos_column_names.append('rov_{}_x'.format(i))
     pos_column_names.append('rov_{}_y'.format(i))
+    
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
+#PSO FITNESS
 rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_0/'
+#BASELINE DIRECTORY
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
 ################################### 2D Position Histogram ########################
@@ -274,6 +277,7 @@ def readBaseline():
             yPos = np.append(yPos, (posData.loc[:, pos_column_names[yIndex]]).to_list(), axis=0)
             xIndex = xIndex + 2
             yIndex = yIndex + 2
+
 readFitness()
 # print(param_df.iloc[0])
 # print(best_param_df.iloc[0])

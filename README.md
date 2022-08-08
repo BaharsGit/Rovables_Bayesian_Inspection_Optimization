@@ -576,4 +576,18 @@ Everything is now setup to run the parallel containers.
   * Replace the deleted NAT by the newly created one.
   * You can now run the containers again with Internet access.
 
+  ## 11 Changing PSO Launch Parameters
+* Fitness Function
+    * The fitness function is found under evaluateFitness() of the bayes_supervisor.py -- changing the fitness is done by commenting of uncommenting the desired fitness function.
+* Particle Set
+    * The particle sets can be found under PSO_tocluster.py -- setting the PARTICLE_SET variable changes the corresponding particle types used. This variable can be found on line 303
+* Iterations
+    * The number of iterations can be set under PSO_tocluster.py -- this is done by changing the maxiter argument during the PSO object initialization on line 330. 
+* Evaluations
+    * Evaluations are set in the NB_NOISE_RES_EVALS variable under run_experiment_PSO.sh
+* Fill Ratio
+    * The fill rations of each evaluation are set within the fill_array.txt file. The number of lines must correspond to the number of iterations.
+* Plotting 
+    * Plotting is done by the evaluatePSOFit.py file. Changing the rootdir variable sets the filepath of the script to plot. 
+
       
