@@ -588,6 +588,40 @@ Everything is now setup to run the parallel containers.
 * Fill Ratio
     * The fill rations of each evaluation are set within the fill_array.txt file. The number of lines must correspond to the number of iterations.
 * Plotting 
-    * Plotting is done by the evaluatePSOFit.py file. Changing the rootdir variable sets the filepath of the script to plot. 
+    * Plotting is done by the evaluatePSOFit.py file. Changing the rootdir variable sets the filepath of the script to plot.
+
+## 12 Launching PSO
+
+On local directory:
+```sh
+git clone https://github.com/BaharsGit/Rovables_Bayesian_Inspection_Optimization.git
+```
+```sh
+cd Rovables_Bayesian_Inspection_Optimization
+```
+```sh
+git checkout dchiu_v2
+```
+```sh
+git pull
+```
+```sh
+mv run_experiment_PSO.sh run_experiment.sh
+```
+```sh
+scp -r demo <EC2 INSTANCE NAME>:~/
+```
+```sh
+ssh <EC2 INSTANCE NAME>
+```
+
+On remote directory:
+```sh
+sudo mv demo ./efs/
+```
+
+
+
+
 
       
