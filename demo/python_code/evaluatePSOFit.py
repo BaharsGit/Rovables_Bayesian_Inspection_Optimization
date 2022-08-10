@@ -12,12 +12,12 @@ num_particles = 15
 num_noise = 4
 num_gen = 20
 n_robots = 4
-particle_dim = 4
+particle_dim = 5
 probIn = []
 prob_column_names = []
 pos_column_names = []
 best_param = []
-param_max = [3000, 200, 1000, 250]
+param_max = [100, 500, 3000, 90, 250]
 averages = pd.DataFrame()
 fitness_df = pd.DataFrame()
 param_df = pd.DataFrame()
@@ -31,7 +31,7 @@ for i in range(n_robots):
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
 #PSO FITNESS
-rootdir = '/home/darren/Documents/DARS/NoiseResistance/Run_0/'
+rootdir = '/home/darren/Documents/ICRA_LAUNCH/LF1_set100/jobfiles/Run_0/'
 #BASELINE DIRECTORY
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
@@ -142,7 +142,7 @@ def psoFitness():
     # print(generation_std)
     ax.set_xlabel('Iterations')
     ax.set_ylabel('Fitness')
-    ax2 = ax.twinx()
+    #ax2 = ax.twinx()
     #plt.yscale('log')
     param_fade = 0.4
     # ax2.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Tao', alpha=param_fade)
@@ -160,7 +160,7 @@ def psoFitness():
     # ax2.plot(np.arange(num_gen), np.linalg.norm(param_df.iloc[0] -  best_param_df.iloc[2]), color='yellow', label='Forward', alpha=param_fade)
     # ax2.plot(np.arange(num_gen), np.linalg.norm(param_df.iloc[0] - best_param_df.iloc[3]), color='cyan', label='Hysterisis', alpha=param_fade)
     # ------------------------------------------#
-    ax.plot(np.arange(num_gen), generation_best, color='red', label='Best')
+    ax.plot(np.arange(num_gen), generation_best, color='red', label='Best Particle')
     ax.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
     bottom = generation_mean - generation_std
     bottom[bottom<0] = 0
@@ -169,8 +169,8 @@ def psoFitness():
     #plt.ylim([0, 5])
     plt.title('PSO Evaluation')
     ax.legend(fancybox=True, shadow=True)
-    ax2.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-          fancybox=True, shadow=True, ncol=4)
+    #ax2.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+    #      fancybox=True, shadow=True, ncol=4)
     plt.savefig(rootdir + 'figure.png')
     
     plt.show()
@@ -213,7 +213,6 @@ def readFitness():
             #Read in parameters
             with open(prob_path) as f:
                 probIn = f.read().splitlines()
-
             probIn = np.asarray(probIn, dtype=np.float64)
 
             for l in range(particle_dim):
