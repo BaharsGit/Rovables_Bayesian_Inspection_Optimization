@@ -150,7 +150,7 @@ def cleanup(time_arr, fitness):
         np.savetxt(decname, time_arr, delimiter=',')
  
     else:
-        fitOut = sum(fitness)/nRobot
+        fitOut = sum(fitness)
         print("Fitness of particle: ", fitOut)
 
         # USED ONLY FOR PSO LAUNCH
@@ -242,7 +242,7 @@ while supervisor.step(timestep) != -1:
         for k in range(nRobot):
             if dec_time[k] == 0:
                 dec_time[k] = supervisor.getTime()
-                fitness[i] = fitness[i] + evaluateFitness(supervisor.getTime(), float(probability))
+                fitness[i] = fitness[i] + supervisor.getTime()
         print("Decision Times: ", dec_time)
         cleanup(dec_time, fitness)
                 

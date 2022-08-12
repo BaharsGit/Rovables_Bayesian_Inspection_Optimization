@@ -31,7 +31,7 @@ for i in range(n_robots):
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
 #PSO FITNESS
-rootdir = '/home/darren/Documents/ICRA_LAUNCH/LF1_set100/jobfiles/Run_0/'
+rootdir = '/home/darren/Documents/ICRA_LAUNCH/LF1_set0/jobfiles/Run_0/'
 #BASELINE DIRECTORY
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
@@ -162,6 +162,7 @@ def psoFitness():
     # ------------------------------------------#
     ax.plot(np.arange(num_gen), generation_best, color='red', label='Best Particle')
     ax.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
+    #ax.plot(np.arange(num_gen-1), generation_mean[1:] - generation_best[1:], color='green', label='Distance from Best')
     bottom = generation_mean - generation_std
     bottom[bottom<0] = 0
     ax.fill_between(np.arange(num_gen), bottom, generation_mean + generation_std, where=(generation_mean + generation_std)>0, color='lightcoral', alpha=0.3)
@@ -225,10 +226,11 @@ def readFitness():
             #print(text)
                 with open(text) as f:
                     fit = f.read().splitlines()
-                if (float(fit[0]) < crash_fitness):
+                # if (float(fit[0]) < crash_fitness):
+                if (float(fit[0]) < 5400):
                     time_total = float(fit[0]) + time_total
                 else:
-                    print("Particle Crashed: ", text)
+                    time_total = 2700 + time_total
 
             noise_average = float(time_total)/num_noise
             if (noise_average < best_particle):
