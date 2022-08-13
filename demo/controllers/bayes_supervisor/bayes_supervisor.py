@@ -241,6 +241,7 @@ while supervisor.step(timestep) != -1:
         #if the robots have not decided then assigned 15 min to decision times.
         for k in range(nRobot):
             if dec_time[k] == 0:
+                print("Robot did not make decision in time!")
                 dec_time[k] = supervisor.getTime()
                 fitness[i] = fitness[i] + supervisor.getTime()
         print("Decision Times: ", dec_time)

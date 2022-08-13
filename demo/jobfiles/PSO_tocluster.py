@@ -300,7 +300,7 @@ os.mkdir(run_dir)
 # initial=[5,5]               
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
-PARTICLE_SET = 4
+PARTICLE_SET = 1
 bounds = []
 num_dimensions = 0
 x0 = []

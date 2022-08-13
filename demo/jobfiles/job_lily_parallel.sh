@@ -170,7 +170,7 @@ fi
 
 # Remove job base directory, the Webots working directory
 rm -r $JOB_BASE_DIR
-rm $WEBWORLD
+#rm $WEBWORLD
 
 # MODIFIED FOR NOISE RESISTANT PSO
 if [ $INSTANCE_ID -ge 0 ]

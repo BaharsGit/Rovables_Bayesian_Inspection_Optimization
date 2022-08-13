@@ -546,18 +546,35 @@ static void readParameters() {
       if (i == 3) close_distance = z;
       if (i == 4) obs_hysteresis = z;
     }
+    file.close();
+  } else {
+    std::ifstream file("prob.txt");
     
+    double z;
+    std::cout << "Reading in Parameters: " << std::endl;
+    for (int i = 0; i < nParam; i++) {
+      std::string line;
+      std::getline(file, line);
+      const char *cstr = line.c_str();
+      z = std::atof(cstr);
+      std::cout << z << std::endl;
+      if (i == 0) alpha = round(z);
+      if (i == 1) tao = z;
+      if (i == 2) rand_const_forward = z;
+      if (i == 3) close_distance = z;
+      if (i == 4) obs_hysteresis = z;
+    }
     file.close();
   }
-  std::cout << "Tao: " << tao << std::endl;
-  std::cout << "Alpha Prior: " << alpha << std::endl;
-  std::cout << "Random Forward: " << rand_const_forward <<std::endl;  
   
+  std::cout << "Alpha Prior: " << alpha << std::endl;
+  std::cout << "Tao: " << tao << std::endl;
+  std::cout << "Random Forward: " << rand_const_forward <<std::endl;  
+  std::cout << "Collision Avoidance Trigger: " << close_distance <<std::endl;
+  std::cout << "Hysteresis Timer: " << obs_hysteresis << std::endl;
   std::cout << "Positive Feedback: " << u_plus << std::endl;
   std::cout << "Credibility Thresdhold: " << p_c << std::endl;
-  std::cout << "Close Distance: " << close_distance <<std::endl;
   // std::cout << "Random forward: " << rand_const_forward << std::endl;
   std::cout << "Random Turn: " << rand_const_turn << std::endl;
-  std::cout << "Observation Hold: " << obs_hysteresis << std::endl;
   std::cout << "-----------------------------" << std::endl;
 }

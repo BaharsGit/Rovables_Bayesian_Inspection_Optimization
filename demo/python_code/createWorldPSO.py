@@ -189,8 +189,8 @@ Wall {
 }\n""")
 
     def createWorld(self):
-        #file = open(r"../worlds" + self.createTitle() + ".wbt", 'w')
-        file = open(r"/usr/local/efs/demo/worlds" + self.createTitle() + ".wbt", 'w')
+        file = open(r"../worlds" + self.createTitle() + ".wbt", 'w')
+        #file = open(r"/usr/local/efs/demo/worlds" + self.createTitle() + ".wbt", 'w')
         #Start with Header
         self.createHeader(file)
 
