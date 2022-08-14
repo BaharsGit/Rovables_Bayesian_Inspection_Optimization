@@ -1,4 +1,7 @@
 #VRML_SIM R2021b utf8
+
+# Author: Johannes Boghaert, Darren Chiu
+
 WorldInfo {
   CFM 0.1
   ERP 0.1
@@ -11,8 +14,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.5766096779648108 -0.5773542035110449 -0.5780859823291377 2.1071054967028715
-  position 0.5295447827256 2.985793658457412 0.4816061806062561
+  orientation -0.37410009861715926 -0.8017314106520007 -0.4661285888985836 2.0110979679680656
+  position -0.4573118151367981 1.0734694097374347 0.21413139964469322
 }
 TexturedBackground {
 }
@@ -59,20 +62,17 @@ Wall {
 Robot {
   name "Bayes Bot Supervisor"
   controller "bayes_supervisor"
-  controllerArgs [
-    "3"
-  ]
+  controllerArgs "2"
   supervisor TRUE
 }
 DEF rov_0 Rovable {
-  translation 0.46100545033689744 0.023 0.09756042038399763
+  translation 0.8108900523336188 0.023 0.41947537076856967
   rotation 1 0 0 -1.5707953071795862
   name "r0"
   controller "bayes_fsm"
-  controllerArgs [
-    "3"
-  ]
-  customData "0.929087-"
+  controllerArgs "2"
+  supervisor TRUE
+  customData "0.500000-"
   extensionSlot [
     Receiver {
     }
@@ -81,14 +81,13 @@ DEF rov_0 Rovable {
   ]
 }
 DEF rov_1 Rovable {
-  translation 0.4080387383995676 0.023 0.8997220979716862
+  translation 0.060722107236644264 0.023 0.10541636319829177
   rotation 1 0 0 -1.5707953071795862
   name "r1"
   controller "bayes_fsm"
-  controllerArgs [
-    "3"
-  ]
-  customData "0.921709-"
+  controllerArgs "2"
+  supervisor TRUE
+  customData "0.500000-"
   extensionSlot [
     Receiver {
     }
@@ -97,14 +96,13 @@ DEF rov_1 Rovable {
   ]
 }
 DEF rov_2 Rovable {
-  translation 0.7452751952714792 0.023 0.10502654126139419
+  translation 0.06165578392358906 0.023 0.3445818540909972
   rotation 1 0 0 -1.5707953071795862
   name "r2"
   controller "bayes_fsm"
-  controllerArgs [
-    "3"
-  ]
-  customData "0.929678-"
+  controllerArgs "2"
+  supervisor TRUE
+  customData "0.500000-"
   extensionSlot [
     Receiver {
     }
@@ -113,14 +111,13 @@ DEF rov_2 Rovable {
   ]
 }
 DEF rov_3 Rovable {
-  translation 0.3851880835740282 0.023 0.285487674747278
+  translation 0.36011083455238385 0.023 0.1182834768857257
   rotation 1 0 0 -1.5707953071795862
   name "r3"
   controller "bayes_fsm"
-  controllerArgs [
-    "3"
-  ]
-  customData "0.922326-"
+  controllerArgs "2"
+  supervisor TRUE
+  customData "0.500000-"
   extensionSlot [
     Receiver {
     }

@@ -2,14 +2,14 @@
 GEN_ID=0
 INSTANCE_ID=3
 NUM_ROBOTS=4
-PARTICLE_ID=0
+PARTICLE_ID=2
 
 line=$((INSTANCE_ID + 1))
 FILL_RATIO=$(sed -n ${line}p /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/fill_array.txt)
 # FILL_RATIO=$(sed -n ${INSTANCE_ID}p $(pwd)../fill_array.txt)
 echo "Using Fill Ratio " ${FILL_RATIO}
 
-WB_TIMEOUT=30
+WB_TIMEOUT=900
 
 # DEPENDS ON YOUR WORKING MACHINE
 cd /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles

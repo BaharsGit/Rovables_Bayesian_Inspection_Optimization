@@ -64,7 +64,7 @@ static double alpha = 1; //Alpha Prior
 static double beta = 1; //Beta Prior
 static int d_f = -1; //Decision Flag
 static int tao = 100; //Observation interval
-static double p_c = 0.99; //Credibility Threshold 
+static double p_c = 0.95; //Credibility Threshold 
 static bool u_plus = true; //Positive feedback 
 static double close_distance = 15.0; //Used to check collision avoidance
 static int C = 0; //Observed Color
@@ -112,7 +112,8 @@ int main(int argc, char **argv) {
   robotNum = name[1] - '0';
 
   noise_seed = getenv("NOISE_SEED");
-  srand(*argv[1]); //During baseline set based off generated .wbt file
+  std::cout << "Controller Seed: " << *argv[1] << std::endl;
+  srand(*argv[1]); // Seed is set during world fild generation
   
   const char *motors_names[2] = {"left motor", "right motor"};
   const char *distance_sensors_names[4] = {"left distance sensor", "right distance sensor", "angle left distance sensor", "angle right distance sensor"};
@@ -313,7 +314,7 @@ int main(int argc, char **argv) {
         p = incbeta(alpha, beta, 0.5);
         int currentObservationCount = alpha + beta;
         
-        if ((currentObservationCount) > 100) {
+        if ((currentObservationCount) > 0) {
         
           // Logic for first time making decision
           if ((d_f == -1) && u_plus) {
@@ -321,11 +322,12 @@ int main(int argc, char **argv) {
             //Set initial observation hysterisis state 
             if (obs_initial == 0 && (p > p_c || (1 - p) > p_c)) {
               obs_initial = currentObservationCount;
+              // std::cout << obs_initial << std::endl;
               std::cout << robotNum << " Initial Hysteresis Start " << obs_initial << std::endl;
             }
             //Resets hysterisis state 
             else if (obs_initial != 0 && (p < p_c) && ((1-p) < p_c)) {
-              std::cout << robotNum << " Reset Intiial Hysteresis State" << std::endl;
+              //std::cout << robotNum << " Reset Intiial Hysteresis State" << std::endl;
               obs_initial = currentObservationCount;
             } 
             //Hysteresis has been met, decision flag can be set

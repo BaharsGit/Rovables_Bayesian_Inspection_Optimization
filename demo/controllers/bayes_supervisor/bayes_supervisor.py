@@ -1,5 +1,6 @@
 """vibration_controller controller."""
 
+from cgitb import reset
 from controller import Supervisor
 import os
 import platform
@@ -19,7 +20,7 @@ WALL_TIME = 600
 baseline = 0
 run = 0
 n_run = 5
-nRobot = 4
+nRobot = 0 # The number of robots is set later
 boxSize = 8    
 imageDim = 128
 p_high = 0.9
@@ -30,28 +31,10 @@ initialPos = []
 csvProbData = []
 csvPosData = []
 parameters = []
-seedPtr = os.getenv("NOISE_SEED")
-if (seedPtr is not None):
-    #PSO 
-    print("Supervisr seed: " + seedPtr)
-    random.seed(seedPtr)
-else:
-    #BASELINE
-    seedIn = str(sys.argv[1])
-    print("Using Run: ", seedIn)
-    random.seed(seedIn)
 boxData = []
 accuracy = []
-dec_time = np.zeros(nRobot)
-time_track = np.zeros(nRobot)
-dec_hold = np.zeros(nRobot)
-coverage_arr = []
-fitnessData = np.zeros(3) # Decision Time | Coverage | Accuracy
-start_time = time.time()
-sim_time = 0
-control_count = 0
-fitness = np.zeros(nRobot)
-
+reset_flag = 0
+seedPtr = os.getenv("NOISE_SEED")
 
 print(os.name)
 print(platform.system())
@@ -70,7 +53,37 @@ print("Supervisor Fill Ratio: ", fill_ratio)
 # fitnessFile = "local_fitness.txt"
 # inputFile = "prob.txt"
 
-defArray = ["rov_0", "rov_1", "rov_2", "rov_3"]
+# defArray = ["rov_0", "rov_1", "rov_2", "rov_3"]
+defArray = []
+defIndex = 0
+
+
+# create the Robot instance.
+supervisor = Supervisor()
+
+# get the time step of the current world.
+timestep = int(supervisor.getBasicTimeStep())
+
+#Find the number of robots in the simulation
+while(1):
+    robotDef = "rov_{}".format(defIndex)
+    robotObj = supervisor.getFromDef(robotDef)
+    if (robotObj is not None):
+        nRobot = nRobot + 1
+        defArray.append(robotDef)
+        defIndex = defIndex + 1
+    else:
+        print(defArray)
+        break
+
+dec_time = np.zeros(nRobot)
+time_track = np.zeros(nRobot)
+dec_hold = np.zeros(nRobot)
+coverage_arr = []
+start_time = time.time()
+sim_time = 0
+control_count = 0
+fitness = np.zeros(nRobot)
 
 rov_node_array = np.empty(nRobot, dtype=object)
 trans_field_array = np.empty(nRobot, dtype=object)
@@ -80,6 +93,17 @@ trans_value_array = np.empty(nRobot, dtype=object)
 color_array = np.empty(nRobot, dtype=object)
 
 # --------------------------------------------------------------
+def setSeed():
+    if (seedPtr is not None):
+        #PSO 
+        print("Supervisr seed: " + seedPtr)
+        random.seed(seedPtr)
+    else:
+        #BASELINE
+        seedIn = str(sys.argv[1])
+        print("Using Run: ", seedIn)
+        random.seed(seedIn)
+
 def evaluateFitness(dec_time, last_belief):
     # Exp Fitness Function
     # if (float(fill_ratio) > 0.5):
@@ -98,13 +122,13 @@ def evaluateFitness(dec_time, last_belief):
 
     #Linear Fitness Function
     if (float(fill_ratio) > 0.5):
-        if (last_belief < 0.01):
+        if (last_belief < 0.5):
             return dec_time
         else: 
             print("Punished with max time")   
             return dec_time + MAX_TIME
     else:
-        if (last_belief > 0.99):
+        if (last_belief > 0.5):
             return dec_time
         else: 
             print("Punished with max time")   
@@ -175,25 +199,42 @@ def cleanup(time_arr, fitness):
     #supervisor.simulationSetMode(supervisor.SIMULATION_MODE_PAUSE)
     supervisor.simulationQuit(0)
 
-# def get_pos(xPos, yPos):
-#     ix = int(int(xPos*imageDim)/boxSize)
-#     iy = int(int(yPos*imageDim)/boxSize)
-#     grid[ix-1][iy-1] = 1
+def check_robbot_bound(xPos, yPos, me_index):
+    global reset_flag
+    me_pos = [xPos, yPos]
+    for j in range(nRobot):
+        if (me_index != j):
+            other_pos = [trans_value_array[j][2], trans_value_array[j][0]]
+            if (math.dist(me_pos, other_pos) < 0.025):
+            # if (math.dist(me_pos, other_pos) < 0.00006):
+                # print(math.dist(me_pos, other_pos))
+                # print(me_pos, other_pos)
+                # print(me_index, j)
+                print("RESET POSITIONS")
+                reset_flag = 1
+                #randomizePosition()
+            
+            
 
 def randomizePosition():
+    initialX = []
+    initialY = []
     for i in range(nRobot):
-        INITIAL = [random.uniform(0.05,0.95), 0.023, random.uniform(0.05,0.95)]
+            while(1):
+                x = random.uniform(0.05,0.95)
+                y = random.uniform(0.05,0.95)
+                if ((x not in initialX) and (y not in initialY)):
+                    initialX.append(x)
+                    initialY.append(y)
+                    break
+
+    for i in range(nRobot):
+        INITIAL = [initialX[i], 0.025, initialY[i]]
         POSE = [0, 1, 0, random.uniform(0, 2*math.pi)]
         trans_field_array[i].setSFVec3f(INITIAL)
         #rot_field_array[i].setMFVec3f(POSE)
 
 # --------------------------------------------------------------------
-
-# create the Robot instance.
-supervisor = Supervisor()
-
-# get the time step of the current world.
-timestep = int(supervisor.getBasicTimeStep())
 
 for i in range(nRobot):
     rov_node_array[i] = supervisor.getFromDef(defArray[i])
@@ -205,45 +246,51 @@ for i in range(nRobot):
     data_array[i].setSFString(init_data) #Init custom data to required format
 
 sim_time = supervisor.getTime()
+setSeed()
 
 while supervisor.step(timestep) != -1:
-    rowProbData = []
-    rowPosData = []
+    if reset_flag:
+        randomizePosition()
+        supervisor.simulationResetPhysics()
+        supervisor.simulationSetMode(supervisor.SIMULATION_MODE_FAST)
+        reset_flag = 0
+    else:
+        rowProbData = []
+        rowPosData = []
 
-    for i in range(nRobot):
-        trans_value_array[i] = trans_field_array[i].getSFVec3f()
-        # Save position data 
-        rowPosData.append(trans_value_array[i][2])
-        rowPosData.append(trans_value_array[i][0])
-        currentData = data_array[i].getSFString()
-        remaining = currentData[1:]
-        probability = currentData[0:7]
-        rowProbData.append(float(probability))
+        for i in range(nRobot):
+            trans_value_array[i] = trans_field_array[i].getSFVec3f()
+            # Save position data
+            robot_x = trans_value_array[i][2]
+            robot_y = trans_value_array[i][0]
+            rowPosData.append(robot_x)
+            rowPosData.append(robot_y)
+            currentData = data_array[i].getSFString()
+            belief = currentData[0:7]
+            rowProbData.append(float(belief))
+            check_robbot_bound(robot_x, robot_y, i)
 
-        if (currentData[8] != '-'):
-            if (fitness[i] == 0):
-                fitness[i] = fitness[i] + evaluateFitness(float(currentData[8:]), float(probability))
-            dec_time[i] = currentData[8:]
-            if (dec_time[i] != float(currentData[8:])):
-                # print("ADD")
-                # print("Dec Time: ", dec_time[i])
-                # print("Current Data: ", currentData[8:])
-                fitness[i] = fitness[i] + evaluateFitness(float(currentData[8:]), float(probability))
+            if (currentData[8] != '-'):
+                if (fitness[i] == 0):
+                    fitness[i] = fitness[i] + evaluateFitness(float(currentData[8:]), float(belief))
                 dec_time[i] = currentData[8:]
+                if (dec_time[i] != float(currentData[8:])):
+                    fitness[i] = fitness[i] + evaluateFitness(float(currentData[8:]), float(belief))
+                    dec_time[i] = currentData[8:]
 
-    csvProbData.append(rowProbData)
-    csvPosData.append(rowPosData)
-    control_count = control_count + 1
+        csvProbData.append(rowProbData)
+        csvPosData.append(rowPosData)
+        control_count = control_count + 1
 
 
 
-    if (supervisor.getTime() - sim_time > MAX_TIME) or (time.time()-start_time > WALL_TIME):
-        #if the robots have not decided then assigned 15 min to decision times.
-        for k in range(nRobot):
-            if dec_time[k] == 0:
-                print("Robot did not make decision in time!")
-                dec_time[k] = supervisor.getTime()
-                fitness[i] = fitness[i] + supervisor.getTime()
-        print("Decision Times: ", dec_time)
-        cleanup(dec_time, fitness)
+        if (supervisor.getTime() - sim_time > MAX_TIME) or (time.time()-start_time > WALL_TIME):
+            #if the robots have not decided then assigned 15 min to decision times.
+            for k in range(nRobot):
+                if dec_time[k] == 0:
+                    print("Robot did not make decision in time!")
+                    dec_time[k] = supervisor.getTime()
+                    fitness[i] = fitness[i] + supervisor.getTime()
+            print("Decision Times: ", dec_time)
+            cleanup(dec_time, fitness)
                 
