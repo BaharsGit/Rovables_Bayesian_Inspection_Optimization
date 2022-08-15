@@ -59,7 +59,7 @@ char *noise_seed;
 char *pPath = getenv("WB_WORKING_DIR");
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
-static int nParam = 5;
+static int nParam = 6;
 static double alpha = 1; //Alpha Prior
 static double beta = 1; //Beta Prior
 static int d_f = -1; //Decision Flag
@@ -68,7 +68,8 @@ static double p_c = 0.95; //Credibility Threshold
 static bool u_plus = true; //Positive feedback 
 static double close_distance = 15.0; //Used to check collision avoidance
 static int C = 0; //Observed Color
-static int obs_hysteresis = 0; //Hysterisis 
+static int obs_hysteresis = 0; //Hysterisis
+static int obs_wait_time = 0; //Wait time for observation before decision can be made
 
 //Robot Parameters
 static int robotNum;
@@ -86,6 +87,7 @@ static int turn_count;
 static int control_count = 0;
 static double decision_time = 0;
 static int obs_initial = 0;
+static int observationCount = 0;
 
 //Arena Parameters
 int boxSize = 8;
@@ -284,6 +286,7 @@ int main(int argc, char **argv) {
         C = getColor();
         alpha = alpha + C;
         beta = beta + (1 - C);
+        observationCount = observationCount + 1;
         FSM_STATE = FSM_SEND;
         //std::cout <<"Robot " << robotNum << " Index " << control_count + robotNum << std::endl;
         break;
@@ -312,26 +315,25 @@ int main(int argc, char **argv) {
         }
         
         p = incbeta(alpha, beta, 0.5);
-        int currentObservationCount = alpha + beta;
         
-        if ((currentObservationCount) > 0) {
+        if ((observationCount) > obs_wait_time) {
         
           // Logic for first time making decision
           if ((d_f == -1) && u_plus) {
   
             //Set initial observation hysterisis state 
             if (obs_initial == 0 && (p > p_c || (1 - p) > p_c)) {
-              obs_initial = currentObservationCount;
+              obs_initial = observationCount;
               // std::cout << obs_initial << std::endl;
               std::cout << robotNum << " Initial Hysteresis Start " << obs_initial << std::endl;
             }
             //Resets hysterisis state 
             else if (obs_initial != 0 && (p < p_c) && ((1-p) < p_c)) {
               //std::cout << robotNum << " Reset Intiial Hysteresis State" << std::endl;
-              obs_initial = currentObservationCount;
+              obs_initial = observationCount;
             } 
             //Hysteresis has been met, decision flag can be set
-            else if ((p > p_c || (1 - p) > p_c) && (currentObservationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
+            else if ((p > p_c || (1 - p) > p_c) && (observationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
               std::cout << robotNum << " Hysteresis Condition Check" << std::endl;
               if (p > p_c) {
                 std::cout << "Positive Feedback - Black" << std::endl;
@@ -352,10 +354,10 @@ int main(int argc, char **argv) {
             if (((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c))) {
               std::cout << robotNum << " Decision Flipped!" << std::endl;
               //Conditional to start counting 
-              if (obs_initial == 0) obs_initial = currentObservationCount;
+              if (obs_initial == 0) obs_initial = observationCount;
               
               // Once Counting passes hysteresis threshold then change decision
-              if ((currentObservationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
+              if ((observationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
                 decision_time = robot->getTime();
                 std::cout << robotNum << " Reset Decision time: " << decision_time << std::endl;
                 if (p > p_c) {
@@ -565,6 +567,7 @@ static void readParameters() {
       if (i == 2) rand_const_forward = z;
       if (i == 3) close_distance = z;
       if (i == 4) obs_hysteresis = z;
+      if (i == 5) obs_wait_time = z;
     }
     file.close();
   }
@@ -574,6 +577,7 @@ static void readParameters() {
   std::cout << "Random Forward: " << rand_const_forward <<std::endl;  
   std::cout << "Collision Avoidance Trigger: " << close_distance <<std::endl;
   std::cout << "Hysteresis Timer: " << obs_hysteresis << std::endl;
+  std::cout << "Observation Wait Time: " << obs_wait_time << std::endl;
   std::cout << "Positive Feedback: " << u_plus << std::endl;
   std::cout << "Credibility Thresdhold: " << p_c << std::endl;
   // std::cout << "Random forward: " << rand_const_forward << std::endl;
