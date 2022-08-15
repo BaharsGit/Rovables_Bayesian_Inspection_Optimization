@@ -549,6 +549,7 @@ static void readParameters() {
       if (i == 2) rand_const_forward = z;
       if (i == 3) close_distance = z;
       if (i == 4) obs_hysteresis = z;
+      if (i == 5) obs_wait_time = z;
     }
     file.close();
   } else {

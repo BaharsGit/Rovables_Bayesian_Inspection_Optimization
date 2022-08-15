@@ -19,14 +19,12 @@ WALL_TIME = 600
 #2700 45 min good?
 baseline = 0
 run = 0
-n_run = 5
 nRobot = 0 # The number of robots is set later
 boxSize = 8    
 imageDim = 128
 p_high = 0.9
 p_low = 0.1
 minD = 0.15
-settlingTime = 0
 initialPos = []
 csvProbData = []
 csvPosData = []
@@ -34,6 +32,8 @@ parameters = []
 boxData = []
 accuracy = []
 reset_flag = 0
+defArray = []
+defIndex = 0
 seedPtr = os.getenv("NOISE_SEED")
 
 print(os.name)
@@ -44,19 +44,6 @@ fill_ratio = os.getenv("FILL_RATIO")
 if (fill_ratio is None):
     fill_ratio = 0.55
 print("Supervisor Fill Ratio: ", fill_ratio)
-
-# sqArea = boxSize * boxSize
-# possibleX = list(range(0, imageDim, boxSize))
-# possibleY = list(range(0, imageDim, boxSize))
-# grid = np.zeros((len(possibleY), len(possibleX)))
-
-# fitnessFile = "local_fitness.txt"
-# inputFile = "prob.txt"
-
-# defArray = ["rov_0", "rov_1", "rov_2", "rov_3"]
-defArray = []
-defIndex = 0
-
 
 # create the Robot instance.
 supervisor = Supervisor()
