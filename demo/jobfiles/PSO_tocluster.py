@@ -306,10 +306,10 @@ num_dimensions = 6
 x0 = []
 
 if (PARTICLE_SET == 1): # SET ONE 
-    bounds = [0, 150, 10, 350, 20, 3000, 10, 90, 5, 100, 200, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    bounds = [10, 150, 10, 350, 20, 3000, 10, 90, 5, 100, 200, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[0, 200, 200, 30, 60, 15] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 2):
-    bounds = [0, 150, 10, 350, 20, 3000, 10, 90, 0, 0, 200, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    bounds = [10, 150, 10, 350, 20, 3000, 10, 90, 0, 0, 200, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[0, 200, 200, 30, 0, 15] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 3):
     bounds = [0, 0, 10, 350, 20, 3000, 10, 90, 5, 100, 200, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]

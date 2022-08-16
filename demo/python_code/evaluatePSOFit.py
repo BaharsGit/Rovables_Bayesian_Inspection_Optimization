@@ -8,16 +8,16 @@ import pandas as pd
 import os
 import re
 crash_fitness = 100000
-num_particles = 15
-num_noise = 4
+num_particles = 10
+num_noise = 10
 num_gen = 20
 n_robots = 4
-particle_dim = 5
+particle_dim = 6
 probIn = []
 prob_column_names = []
 pos_column_names = []
 best_param = []
-param_max = [100, 500, 3000, 90, 250]
+param_max = [150, 350, 3000, 90, 100, 250]
 averages = pd.DataFrame()
 fitness_df = pd.DataFrame()
 param_df = pd.DataFrame()
@@ -31,7 +31,8 @@ for i in range(n_robots):
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
 #PSO FITNESS
-rootdir = '/home/darren/Documents/ICRA_LAUNCH/LF1_set100/jobfiles/Run_0/'
+#rootdir = '/home/darren/Documents/ICRA_LAUNCH/LF1_set100/jobfiles/Run_0/'
+rootdir = '/home/dchiu/Documents/ICRA_LAUNCHES/demo/jobfiles/Run_0/'
 #BASELINE DIRECTORY
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
@@ -142,13 +143,14 @@ def psoFitness():
     # print(generation_std)
     ax.set_xlabel('Iterations')
     ax.set_ylabel('Fitness')
-    #ax2 = ax.twinx()
+    # ax2 = ax.twinx()
     #plt.yscale('log')
     param_fade = 0.4
-    # ax2.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Tao', alpha=param_fade)
-    # ax2.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Alpha', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Alpha', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Tao', alpha=param_fade)
     # ax2.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward', alpha=param_fade)
-    # ax2.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='Hysterisis', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='CA Trigger', alpha=param_fade)
+    # ax2.plot(np.arange(num_gen), param_df.iloc[4], color='purple', label='Hysterisis', alpha=param_fade)
     # ------------------------------------------#
     # ax2.plot(np.arange(num_gen), best_param_df.iloc[0], color='magenta', linestyle='--')
     # ax2.plot(np.arange(num_gen), best_param_df.iloc[1], color='green', linestyle='--')
@@ -170,8 +172,8 @@ def psoFitness():
     #plt.ylim([0, 5])
     plt.title('PSO Evaluation')
     ax.legend(fancybox=True, shadow=True)
-    #ax2.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-    #      fancybox=True, shadow=True, ncol=4)
+    # ax2.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+        #  fancybox=True, shadow=True, ncol=4)
     plt.savefig(rootdir + 'figure.png')
     
     plt.show()
@@ -199,7 +201,7 @@ def createSTD():
 ################################## READS IN FITNESS FILES ############################################
 def readFitness():
     global best_param
-    best_particle = 100000
+    best_particle = 1000000
     best_path = ''
     text = ''
     for i in range(num_gen):
@@ -227,10 +229,10 @@ def readFitness():
                 with open(text) as f:
                     fit = f.read().splitlines()
                 # if (float(fit[0]) < crash_fitness):
-                if (float(fit[0]) < 5400):
+                if (float(fit[0]) < crash_fitness):
                     time_total = float(fit[0]) + time_total
                 else:
-                    time_total = 2700 + time_total
+                    print(text)
 
             noise_average = float(time_total)/num_noise
             if (noise_average < best_particle):
