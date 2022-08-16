@@ -9,7 +9,7 @@ FILL_RATIO=$(sed -n ${line}p /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesia
 # FILL_RATIO=$(sed -n ${INSTANCE_ID}p $(pwd)../fill_array.txt)
 echo "Using Fill Ratio " ${FILL_RATIO}
 
-WB_TIMEOUT=30
+WB_TIMEOUT=300
 
 # DEPENDS ON YOUR WORKING MACHINE
 cd /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles
