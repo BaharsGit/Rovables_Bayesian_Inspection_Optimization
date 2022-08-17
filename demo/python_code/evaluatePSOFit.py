@@ -136,6 +136,7 @@ def psoFitness():
     best = float('inf')
     for i in range(len(generation_best)):
         if generation_best[i] < best:
+            print(best, i)
             best = generation_best[i]
         else:
             generation_best[i] = best
@@ -212,12 +213,10 @@ def readFitness():
         for j in range(num_particles):
             time_total = 0
             prob_path = gen + "/prob_" + str(j) + ".txt"
-
             #Read in parameters
             with open(prob_path) as f:
                 probIn = f.read().splitlines()
             probIn = np.asarray(probIn, dtype=np.float64)
-
             for l in range(particle_dim):
                 probIn[l] = probIn[l] / param_max[l]
                 

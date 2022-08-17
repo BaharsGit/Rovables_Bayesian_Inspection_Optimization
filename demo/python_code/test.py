@@ -1,13 +1,8 @@
-import os
-import shutil
-folder = "../Log/" + "Run" + "9" + "/"
-tempDir = "../controllers/bayes_supervisor/Data/Temp" + "9" + "/"
-saveDest = "../controllers/bayes_supervisor/Data/Temp"
-for file in os.listdir(tempDir):
-    if file.endswith(".csv"):
-        print("File FOUND")
-        shutil.move(tempDir + file, folder + file)
-    else: 
-        print("NO FILE FOUND")
-
-os.rmdir(tempDir)
+import random
+random.seed(0)
+lb = 10
+sampled_number = random.uniform(0,150)
+if (sampled_number < lb):
+    print(sampled_number + lb)
+else:
+    print(sampled_number)
