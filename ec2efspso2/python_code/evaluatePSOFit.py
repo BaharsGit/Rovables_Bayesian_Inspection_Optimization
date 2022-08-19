@@ -9,8 +9,8 @@ import pandas as pd
 import os
 import re
 crash_fitness = 100000
-num_particles = 3
-num_noise = 3
+num_particles = 10
+num_noise = 10
 num_gen = 3
 n_robots = 4
 particle_dim = 6
@@ -33,7 +33,7 @@ savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
 #PSO FITNESS
 #rootdir = '/home/darren/Documents/ICRA_LAUNCH/LF1_set100/jobfiles/Run_0/'
-rootdir = '/home/dchiu/Documents/ICRA_LAUNCHES/demo/jobfiles/Run_1/'
+rootdir = '/home/dchiu/Documents/ICRA_LAUNCHES/demo/jobfiles/Run_0/'
 #BASELINE DIRECTORY
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 

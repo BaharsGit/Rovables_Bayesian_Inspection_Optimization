@@ -156,8 +156,6 @@ def cleanup(time_arr, fitness):
  
     else:
         fitOut = sum(fitness)
-        if (fitOut > MAX_TIME*nRobot):
-            fitOut = (MAX_TIME*nRobot) + (100 * nRobot)
         print("Fitness of particle: ", fitOut)
 
         # USED ONLY FOR PSO LAUNCH

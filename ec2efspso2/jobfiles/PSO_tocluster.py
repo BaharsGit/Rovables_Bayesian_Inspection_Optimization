@@ -89,7 +89,6 @@ class Particle:
         self.pos_best_i = []  # best position individual
         self.fit_best_i = -1  # best fitness individual
         self.fit_i = -1  # fitness individual
-        self.fit_array_i = []
 
         dim_index = 1
         for i in range(0, num_dimensions):
@@ -109,19 +108,12 @@ class Particle:
             if noise_resistance_evals == 0:
                 self.fit_i = fitness
             else:
-                # self.fit_i += fitness/noise_resistance_evals
-                self.fit_array_i.append(fitness)
-
-                #Find STD and Mean when the array is full
-                if (len(self.fit_array_i) == noise_resistance_evals):
-                    self.fit_i = statistics.pstdev(self.fit_array_i) + statistics.mean(self.fit_array_i)
-
+                self.fit_i += fitness/noise_resistance_evals
             success = 1
             # check to see if the current position is an individual best
-            if (len(self.fit_array_i) == noise_resistance_evals):
-                if (fitness < self.fit_best_i or self.fit_best_i) == -1:
-                    self.pos_best_i = self.position_i
-                    self.fit_best_i = self.fit_i
+            if fitness < self.fit_best_i or self.fit_best_i == -1:
+                self.pos_best_i = self.position_i
+                self.fit_best_i = self.fit_i
         return success
 
     # update new particle velocity
