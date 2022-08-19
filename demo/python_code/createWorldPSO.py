@@ -40,11 +40,10 @@ class WorldGenerator():
       return 1
 
     def createArena(self):
+      
       picDim = 128
 
       print("Generating Arena with Fill Ratio: ", self.fill_ratio)
-
-      random.seed(self.instance_id) 
 
       sqSize = 8
       picArea = picDim * picDim
@@ -189,8 +188,10 @@ Wall {
 }\n""")
 
     def createWorld(self):
-        #file = open(r"../worlds" + self.createTitle() + ".wbt", 'w')
-        file = open(r"/usr/local/efs/demo/worlds" + self.createTitle() + ".wbt", 'w')
+        random.seed(self.instance_id) 
+        
+        file = open(r"../worlds" + self.createTitle() + ".wbt", 'w')
+        #file = open(r"/usr/local/efs/demo/worlds" + self.createTitle() + ".wbt", 'w')
         #Start with Header
         self.createHeader(file)
 

@@ -81,15 +81,9 @@ color_array = np.empty(nRobot, dtype=object)
 
 # --------------------------------------------------------------
 def setSeed():
-    if (seedPtr is not None):
-        #PSO 
-        print("Supervisr seed: " + seedPtr)
-        random.seed(seedPtr)
-    else:
-        #BASELINE
-        seedIn = str(sys.argv[1])
-        print("Using Run: ", seedIn)
-        random.seed(seedIn)
+    seedIn = str(sys.argv[1])
+    print("Using Supervisor Seed: ", seedIn)
+    random.seed(seedIn)
 
 def evaluateFitness(dec_time, last_belief):
     # Exp Fitness Function
