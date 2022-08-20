@@ -9,9 +9,9 @@ import pandas as pd
 import os
 import re
 crash_fitness = 100000
-num_particles = 3
-num_noise = 3
-num_gen = 3
+num_particles = 10
+num_noise = 10
+num_gen = 20
 n_robots = 4
 particle_dim = 6
 probIn = []
@@ -19,6 +19,7 @@ prob_column_names = []
 pos_column_names = []
 best_param = []
 param_max = [150, 350, 3000, 90, 100, 250]
+param_min = [10, 10, 20, 10, 5, 200]
 averages = pd.DataFrame()
 fitness_df = pd.DataFrame()
 param_df = pd.DataFrame()
@@ -145,14 +146,16 @@ def psoFitness():
     # print(generation_std)
     ax.set_xlabel('Iterations')
     ax.set_ylabel('Fitness')
-    # ax2 = ax.twinx()
+    ax2 = ax.twinx()
     #plt.yscale('log')
     param_fade = 0.4
-    # ax2.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Alpha', alpha=param_fade)
-    # ax2.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Tao', alpha=param_fade)
-    # ax2.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward', alpha=param_fade)
-    # ax2.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='CA Trigger', alpha=param_fade)
-    # ax2.plot(np.arange(num_gen), param_df.iloc[4], color='purple', label='Hysterisis', alpha=param_fade)
+    ax2.plot(np.arange(num_gen), param_df.iloc[0], color='magenta', label='Alpha', alpha=param_fade)
+    ax2.plot(np.arange(num_gen), param_df.iloc[1], color='green', label='Tao', alpha=param_fade)
+    ax2.plot(np.arange(num_gen), param_df.iloc[2], color='yellow', label='Forward', alpha=param_fade)
+    ax2.plot(np.arange(num_gen), param_df.iloc[3], color='cyan', label='CA Trigger', alpha=param_fade)
+    ax2.plot(np.arange(num_gen), param_df.iloc[4], color='purple', label='Hysterisis', alpha=param_fade)
+    ax2.plot(np.arange(num_gen), param_df.iloc[5], color='black', label='Wait Time', alpha=param_fade)
+
     # ------------------------------------------#
     # ax2.plot(np.arange(num_gen), best_param_df.iloc[0], color='magenta', linestyle='--')
     # ax2.plot(np.arange(num_gen), best_param_df.iloc[1], color='green', linestyle='--')
@@ -169,15 +172,51 @@ def psoFitness():
     #ax.plot(np.arange(num_gen-1), generation_mean[1:] - generation_best[1:], color='green', label='Distance from Best')
     bottom = generation_mean - generation_std
     bottom[bottom<0] = 0
-    ax.fill_between(np.arange(num_gen), bottom, generation_mean + generation_std, where=(generation_mean + generation_std)>0, color='lightcoral', alpha=0.3)
+    ax.fill_between(np.arange(num_gen), bottom, generation_mean + generation_std, where=(generation_mean + generation_std)>0, color='blue', alpha=0.3)
     #ax2.plot(np.arange(num_gen), generation_std, color='green', label='Standard Deviation')
     #plt.ylim([0, 5])
     plt.title('PSO Evaluation')
     ax.legend(fancybox=True, shadow=True)
-    # ax2.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-        #  fancybox=True, shadow=True, ncol=4)
+    ax2.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+         fancybox=True, shadow=True, ncol=4)
     plt.savefig(rootdir + 'figure.png')
     
+    plt.show()
+
+######################################### SCATTER PLOT VERSION PSO FITNESS ################################
+
+#3CHANGE COLORS
+def psoFitnessScatter():
+    plt.style.use('seaborn-talk')
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax2 = ax.twinx()
+    generation_mean = fitness_df.mean(axis=0)
+    generation_std = fitness_df.std(axis=0, ddof=0)
+    for i in range(len(generation_std)):
+        if generation_std[i] < 0:
+            generation_std[i] = 0
+    #print(generation_std)
+    generation_best = fitness_df.min(axis=0)
+    #print(generation_best)
+    best = float('inf')
+    for i in range(len(generation_best)):
+        if generation_best[i] < best:
+            print(best, i)
+            best = generation_best[i]
+        else:
+            generation_best[i] = best
+    for i in range(num_particles):
+        ax.scatter(np.arange(num_gen), fitness_df.iloc[i], color='red', s=10)
+
+    ax.plot(np.arange(num_gen), generation_best, color='red', label='Best Particle')
+    ax2.plot(np.arange(num_gen), generation_std, label='Standard Deviation')
+    bottom = generation_mean - generation_std
+    bottom[bottom<0] = 0
+    ax.fill_between(np.arange(num_gen), bottom, generation_mean + generation_std, where=(generation_mean + generation_std)>0, color='blue', alpha=0.3)
+    ax.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
+    plt.title('PSO Performance')
+    plt.legend()
     plt.show()
 
 ########################################## CREATES BELIEF STD ###########################################
@@ -220,7 +259,7 @@ def readFitness():
                 probIn = f.read().splitlines()
             probIn = np.asarray(probIn, dtype=np.float64)
             for l in range(particle_dim):
-                probIn[l] = probIn[l] / param_max[l]
+                probIn[l] = (probIn[l] - param_min[l]) / (param_max[l] - param_min[l])
                 
             particle_param_temp = np.add(probIn, particle_param_temp)
 
@@ -287,3 +326,4 @@ readFitness()
 # print(best_param_df.iloc[0])
 # print(np.linalg.norm(param_df.iloc[0] - best_param_df.iloc[0]))
 psoFitness()
+#psoFitnessScatter()

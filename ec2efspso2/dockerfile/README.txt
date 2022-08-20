@@ -1,1 +1,0 @@
-this docker file was compiled and used to create the job definition "pso_vpc_compilation_job_def" on the AWS account associated with "haghighat.bahar@gmail.com"
