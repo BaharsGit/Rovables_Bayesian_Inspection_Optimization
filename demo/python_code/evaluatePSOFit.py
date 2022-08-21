@@ -9,9 +9,10 @@ import pandas as pd
 import os
 import re
 crash_fitness = 100000
+incorrect_fitness = 11200
 num_particles = 10
 num_noise = 10
-num_gen = 20
+num_gen = 30
 n_robots = 4
 particle_dim = 6
 probIn = []
@@ -22,8 +23,12 @@ param_max = [150, 350, 3000, 90, 100, 250]
 param_min = [10, 10, 20, 10, 5, 200]
 averages = pd.DataFrame()
 fitness_df = pd.DataFrame()
+fitness_df_median = pd.DataFrame()
 param_df = pd.DataFrame()
 best_param_df = pd.DataFrame()
+incorrect_list_x = []
+incorrect_list_y = []
+std_gen = []
 
 for i in range(n_robots):
     prob_column_names.append('rov_{}'.format(i))
@@ -33,8 +38,8 @@ for i in range(n_robots):
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
 #PSO FITNESS
-#rootdir = '/home/darren/Documents/ICRA_LAUNCH/LF1_set100/jobfiles/Run_0/'
-rootdir = '/home/dchiu/Documents/ICRA_LAUNCHES/demo/jobfiles/Run_1/'
+rootdir = '/home/darren/Documents/ICRA_LAUNCH/demo/jobfiles/Run_2/'
+#rootdir = '/home/dchiu/Documents/ICRA_LAUNCHES/demo/jobfiles/Run_2/'
 #BASELINE DIRECTORY
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
@@ -207,14 +212,16 @@ def psoFitnessScatter():
         else:
             generation_best[i] = best
     for i in range(num_particles):
-        ax.scatter(np.arange(num_gen), fitness_df.iloc[i], color='red', s=10)
-
+        ax.scatter(np.arange(num_gen), fitness_df.iloc[i], color='green', s=15)
+    for i in range(len(incorrect_list_y)):
+        ax.scatter(incorrect_list_x[i], fitness_df.iloc[incorrect_list_y[i], incorrect_list_x[i]], color='red', s=15)
     ax.plot(np.arange(num_gen), generation_best, color='red', label='Best Particle')
-    ax2.plot(np.arange(num_gen), generation_std, label='Standard Deviation')
-    bottom = generation_mean - generation_std
+    ax2.plot(np.arange(num_gen), std_gen, label='Standard Deviation')
+    bottom = generation_mean - std_gen
     bottom[bottom<0] = 0
-    ax.fill_between(np.arange(num_gen), bottom, generation_mean + generation_std, where=(generation_mean + generation_std)>0, color='blue', alpha=0.3)
+    ax.fill_between(np.arange(num_gen), bottom, generation_mean + std_gen, where=(generation_mean + std_gen)>0, color='blue', alpha=0.3)
     ax.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
+    ax.grid(True, linestyle='--', axis='both', color='black')
     plt.title('PSO Performance')
     plt.legend()
     plt.show()
@@ -242,12 +249,16 @@ def createSTD():
 ################################## READS IN FITNESS FILES ############################################
 def readFitness():
     global best_param
+    global std_gen
+    global incorrect_list
     best_particle = 1000000
     median_average = []
     best_path = ''
     text = ''
     for i in range(num_gen):
         particle_fit_temp = []
+        incorrect_temp = []
+        std_temp = []
         particle_param_temp = np.zeros(particle_dim)
         gen = rootdir + "Generation_" + str(i)
         #print(gen)
@@ -268,8 +279,13 @@ def readFitness():
             #print(text)
                 with open(text) as f:
                     fit = f.read().splitlines()
-                # if (float(fit[0]) < crash_fitness):
+                if (float(fit[0]) < incorrect_fitness):
+                    print(text)
+                if (float(fit[0]) == incorrect_fitness) and (len(incorrect_temp) == 0):
+                    incorrect_list_x.append(i)
+                    incorrect_list_y.append(j)
                 if (float(fit[0]) < crash_fitness):
+                    std_temp.append(float(fit[0]))
                     median_average.append(float(fit[0]))
                     time_total = float(fit[0]) + time_total
                 else:
@@ -279,13 +295,14 @@ def readFitness():
                 best_particle = noise_average
                 best_path = prob_path
                 best_param = probIn
-
             particle_fit_temp.append(statistics.median(median_average))
+            #particle_fit_temp.append(noise_average)
         #print(particle_fit_temp)
 
         best_param_df[str(i)] = best_param
         param_df[str(i)] = np.divide(particle_param_temp, num_particles)
         #print(particle_fit_temp)
+        std_gen.append(statistics.pstdev(std_temp))
         fitness_df[str(i)] = particle_fit_temp
     print("Best Particle: ", best_path)
     fitness_df.to_csv(rootdir + 'means.csv')
@@ -325,5 +342,5 @@ readFitness()
 # print(param_df.iloc[0])
 # print(best_param_df.iloc[0])
 # print(np.linalg.norm(param_df.iloc[0] - best_param_df.iloc[0]))
-psoFitness()
-#psoFitnessScatter()
+# psoFitness()
+psoFitnessScatter()
