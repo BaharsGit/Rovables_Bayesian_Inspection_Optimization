@@ -16,6 +16,7 @@ num_gen = 30
 n_robots = 4
 particle_dim = 6
 probIn = []
+bad_particle_count = []
 prob_column_names = []
 pos_column_names = []
 best_param = []
@@ -28,6 +29,7 @@ param_df = pd.DataFrame()
 best_param_df = pd.DataFrame()
 incorrect_list_x = []
 incorrect_list_y = []
+incorrect_list_z = []
 std_gen = []
 
 for i in range(n_robots):
@@ -38,8 +40,8 @@ for i in range(n_robots):
 savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
 #PSO FITNESS
-rootdir = '/home/darren/Documents/ICRA_LAUNCH/demo/jobfiles/Run_2/'
-#rootdir = '/home/dchiu/Documents/ICRA_LAUNCHES/demo/jobfiles/Run_2/'
+#rootdir = '/home/darren/Documents/ICRA_LAUNCH/demo/jobfiles/Run_2/'
+rootdir = '/home/dchiu/Documents/ICRA_LAUNCHES/demo/jobfiles/Run_1/'
 #BASELINE DIRECTORY
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 
@@ -211,12 +213,17 @@ def psoFitnessScatter():
             best = generation_best[i]
         else:
             generation_best[i] = best
+
+    #Plot the particles where all evaluations made a decision within time
     for i in range(num_particles):
         ax.scatter(np.arange(num_gen), fitness_df.iloc[i], color='green', s=15)
+    
+    #Plot all particles with the large fitness values
     for i in range(len(incorrect_list_y)):
         ax.scatter(incorrect_list_x[i], fitness_df.iloc[incorrect_list_y[i], incorrect_list_x[i]], color='red', s=15)
     ax.plot(np.arange(num_gen), generation_best, color='red', label='Best Particle')
-    ax2.plot(np.arange(num_gen), std_gen, label='Standard Deviation')
+    #ax2.plot(np.arange(num_gen), std_gen, label='Standard Deviation')
+    std_gen = generation_std
     bottom = generation_mean - std_gen
     bottom[bottom<0] = 0
     ax.fill_between(np.arange(num_gen), bottom, generation_mean + std_gen, where=(generation_mean + std_gen)>0, color='blue', alpha=0.3)
@@ -257,12 +264,12 @@ def readFitness():
     text = ''
     for i in range(num_gen):
         particle_fit_temp = []
-        incorrect_temp = []
         std_temp = []
         particle_param_temp = np.zeros(particle_dim)
         gen = rootdir + "Generation_" + str(i)
         #print(gen)
         for j in range(num_particles):
+            bad_count = 0
             time_total = 0
             prob_path = gen + "/prob_" + str(j) + ".txt"
             #Read in parameters
@@ -279,9 +286,9 @@ def readFitness():
             #print(text)
                 with open(text) as f:
                     fit = f.read().splitlines()
-                if (float(fit[0]) < incorrect_fitness):
+                if (float(fit[0]) == incorrect_fitness):
                     print(text)
-                if (float(fit[0]) == incorrect_fitness) and (len(incorrect_temp) == 0):
+                    bad_count = bad_count + 1
                     incorrect_list_x.append(i)
                     incorrect_list_y.append(j)
                 if (float(fit[0]) < crash_fitness):
@@ -290,20 +297,23 @@ def readFitness():
                     time_total = float(fit[0]) + time_total
                 else:
                     print(text)
+            incorrect_list_z.append(bad_count)
             noise_average = float(time_total)/num_noise
             if (noise_average < best_particle):
+                print("Found New Best: ", text)
                 best_particle = noise_average
                 best_path = prob_path
                 best_param = probIn
-            particle_fit_temp.append(statistics.median(median_average))
-            #particle_fit_temp.append(noise_average)
+            #particle_fit_temp.append(statistics.median(median_average))
+            particle_fit_temp.append(noise_average)
         #print(particle_fit_temp)
-
+        print(incorrect_list_x, incorrect_list_y, incorrect_list_z)
         best_param_df[str(i)] = best_param
         param_df[str(i)] = np.divide(particle_param_temp, num_particles)
         #print(particle_fit_temp)
         std_gen.append(statistics.pstdev(std_temp))
         fitness_df[str(i)] = particle_fit_temp
+    print(bad_particle_count)
     print("Best Particle: ", best_path)
     fitness_df.to_csv(rootdir + 'means.csv')
     #print(fitness_df)

@@ -117,19 +117,6 @@ def evaluateFitness(dec_time, last_belief):
             print("Punished with max time")   
             return dec_time + MAX_TIME
 
-# def checkDecision(data):
-#     pSum = 0
-#     for p in data:
-#         if (p > p_low and p < p_high):
-#             return 0
-#         else:
-#             pSum = pSum + p
-    
-#     if (pSum <= 4*0.1 or pSum >= 4*0.9):
-#         return 1
-#     else:
-#         return 0
-
 # Writes to the fitness file for the current iteration of particle
 def cleanup(time_arr, fitness):
     global seedIn
