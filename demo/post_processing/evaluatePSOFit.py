@@ -16,7 +16,6 @@ num_gen = 30
 n_robots = 4
 particle_dim = 6
 probIn = []
-bad_particle_count = []
 prob_column_names = []
 pos_column_names = []
 best_param = []
@@ -196,8 +195,8 @@ def psoFitness():
 def psoFitnessScatter():
     plt.style.use('seaborn-talk')
     fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax2 = ax.twinx()
+    # ax = fig.add_subplot(111)
+    # ax2 = ax.twinx()
     generation_mean = fitness_df.mean(axis=0)
     generation_std = fitness_df.std(axis=0, ddof=0)
     for i in range(len(generation_std)):
@@ -216,19 +215,21 @@ def psoFitnessScatter():
 
     #Plot the particles where all evaluations made a decision within time
     for i in range(num_particles):
-        ax.scatter(np.arange(num_gen), fitness_df.iloc[i], color='green', s=15)
+        plt.scatter(np.arange(num_gen), fitness_df.iloc[i], color='green', s=25)
     
     #Plot all particles with the large fitness values
-    for i in range(len(incorrect_list_y)):
-        ax.scatter(incorrect_list_x[i], fitness_df.iloc[incorrect_list_y[i], incorrect_list_x[i]], color='red', s=15)
-    ax.plot(np.arange(num_gen), generation_best, color='red', label='Best Particle')
+    plt.scatter(incorrect_list_x, np.diag(fitness_df.iloc[incorrect_list_y, incorrect_list_x]), c=incorrect_list_z, s=25, cmap='Reds')
+
+    #Plot Best Particle
+    plt.plot(np.arange(num_gen), generation_best, color='red', label='Best Particle')
     #ax2.plot(np.arange(num_gen), std_gen, label='Standard Deviation')
     std_gen = generation_std
     bottom = generation_mean - std_gen
     bottom[bottom<0] = 0
-    ax.fill_between(np.arange(num_gen), bottom, generation_mean + std_gen, where=(generation_mean + std_gen)>0, color='blue', alpha=0.3)
-    ax.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
-    ax.grid(True, linestyle='--', axis='both', color='black')
+    plt.fill_between(np.arange(num_gen), bottom, generation_mean + std_gen, where=(generation_mean + std_gen)>0, color='blue', alpha=0.3)
+    plt.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
+    plt.grid(True, linestyle='--', axis='both', color='black')
+    plt.colorbar(label="Bad Fitness Count", orientation="vertical")
     plt.title('PSO Performance')
     plt.legend()
     plt.show()
@@ -269,6 +270,7 @@ def readFitness():
         gen = rootdir + "Generation_" + str(i)
         #print(gen)
         for j in range(num_particles):
+            duplicate_list = []
             bad_count = 0
             time_total = 0
             prob_path = gen + "/prob_" + str(j) + ".txt"
@@ -287,17 +289,21 @@ def readFitness():
                 with open(text) as f:
                     fit = f.read().splitlines()
                 if (float(fit[0]) == incorrect_fitness):
-                    print(text)
+                    #print(text)
                     bad_count = bad_count + 1
-                    incorrect_list_x.append(i)
-                    incorrect_list_y.append(j)
+                    if (j not in duplicate_list):
+                        incorrect_list_x.append(i)
+                        incorrect_list_y.append(j)
+                        duplicate_list.append(j)
                 if (float(fit[0]) < crash_fitness):
                     std_temp.append(float(fit[0]))
                     median_average.append(float(fit[0]))
                     time_total = float(fit[0]) + time_total
                 else:
-                    print(text)
-            incorrect_list_z.append(bad_count)
+                    #print(text)
+                    pass
+            if (bad_count > 0):
+                incorrect_list_z.append(bad_count)
             noise_average = float(time_total)/num_noise
             if (noise_average < best_particle):
                 print("Found New Best: ", text)
@@ -306,20 +312,12 @@ def readFitness():
                 best_param = probIn
             #particle_fit_temp.append(statistics.median(median_average))
             particle_fit_temp.append(noise_average)
-        #print(particle_fit_temp)
-        print(incorrect_list_x, incorrect_list_y, incorrect_list_z)
         best_param_df[str(i)] = best_param
         param_df[str(i)] = np.divide(particle_param_temp, num_particles)
-        #print(particle_fit_temp)
         std_gen.append(statistics.pstdev(std_temp))
         fitness_df[str(i)] = particle_fit_temp
-    print(bad_particle_count)
     print("Best Particle: ", best_path)
     fitness_df.to_csv(rootdir + 'means.csv')
-    #print(fitness_df)
-    # print(param_df)
-    # print(best_particle)
-    # print(best_path)
 
 ############################### READS IN BASELINE FILES #####################################################
 def readBaseline():
