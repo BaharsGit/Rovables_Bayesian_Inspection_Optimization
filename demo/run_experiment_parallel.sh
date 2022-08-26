@@ -10,10 +10,6 @@
 
 # Ensure the path is exactly the same as model code. Within the Webots and external scripts. 
 
-fill="0.55"
-square_size="3"
-mapSeed="16"
-
 # MODIFIED FOR AWS LAUNCH, LINES 16-20, DEFINE PY_PATH
 py_path="/usr/local/efs/demo/python_code"
 
@@ -37,6 +33,7 @@ echo Starting script. . . ${BASH_VERSION}
 # Get the current AWS job index
 line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
 seed=$(sed -n ${line}p /usr/local/efs/demo/seed_array.txt)
+fill=$(sed -n ${line}p /usr/local/efs/demo/fill_array.txt)
 
 #python3 -u imCreateRect.py -fr $fill -ss $square_size  -sd $mapSeed -rs $seed 
 
@@ -47,4 +44,4 @@ seed=$(sed -n ${line}p /usr/local/efs/demo/seed_array.txt)
 # Run experiment according to the seed and simulation parameters
 echo "Running experiment version $seed"
 # MODIFIED FOR AWS LAUNCH, LINES 48, USING PY_PATH
-python3 -u simSetupParallel.py -s $seed #Setup directories and run the simulation
+python3 -u simSetupParallel.py -s $seed -f $fill #Setup directories and run the simulation

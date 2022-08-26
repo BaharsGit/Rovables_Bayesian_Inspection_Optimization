@@ -4,7 +4,7 @@ import time
 import os
 import shutil
 from datetime import datetime
-from createWorld import WorldGenerator
+from createWorldParallel import WorldGenerator
 
 from subprocess import Popen, PIPE
 
@@ -13,7 +13,8 @@ from numpy import save
 # Arguments
 parser = argparse.ArgumentParser(description="Setup and run Bayesian Inspection Simulation")
 
-parser.add_argument("-s", "--seed", required=False, type=int, default="0")
+parser.add_argument("-s", "--seed", required=True, type=int, default="0")
+parser.add_argument("-fr", "--fill_ratio", required=True, type=int, default="0.52")
 
 args = parser.parse_args()
 
@@ -22,17 +23,18 @@ folder = "../Log/" + "Run" + str(args.seed) + "/"
 tempDir = "../controllers/bayes_supervisor/Data/Temp" + str(args.seed) + "/"
 if not os.path.exists(folder):
     os.makedirs(folder)
+
 if not os.path.exists(tempDir):
     os.makedirs(tempDir)
 
 # #Create World file with randomized positions and walks based on robot seed
 # # world_seed not used in this case as the texture is fixed. 
-WG = WorldGenerator(world_seed=16, robot_seed=args.seed, robot_number=4)
+WG = WorldGenerator(particle_id=args.seed, instance_id=args.seed, fill_ratio=args.fill_ratio, robot_number=4, path=None)
 WG.createWorld()
 
 # #Run the Webots simulation
-dir = "../worlds/bayesian_rovables_sim" + "_" + str(args.seed) + ".wbt"
-subprocess.call(["webots --mode=fast --minimize --no-rendering --stdout --batch", dir], shell=True)
+dir = "../worlds/bayes_pso" + "_" + str(args.seed) + ".wbt"
+# subprocess.call(["webots --mode=fast --minimize --no-rendering --stdout --batch", dir], shell=True)
 # #time.sleep(30)
 
 # # MODIFIED FOR AWS LAUNCH, LINES 32-42
@@ -47,7 +49,6 @@ except subprocess.TimeoutExpired:
 
 # time.sleep(5)
 
-saveDest = "../controllers/bayes_supervisor/Data/Temp"
 for file in os.listdir(tempDir):
     if file.endswith(".txt"):
         print("Decision time file found")

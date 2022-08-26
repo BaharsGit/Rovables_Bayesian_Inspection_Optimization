@@ -6,23 +6,24 @@ import math
 import shutil
 import numpy as np
 import random 
-from PIL import Image, ImageDraw
+import os
 
 class WorldGenerator():
     """
     Generates the .wbt folder based an input seed.
 
     Inputs:
-        - world_seed 
-        - robot_seed
+        - particle_id
+        - instance_id
         - robot_number
     Output:
         - A single .wbt file that is specific to the given seed.
     """
 
-    def __init__(self, world_seed=16, robot_seed=0, robot_number=4, path=None):
-        self.world_seed = world_seed
-        self.robot_seed = robot_seed
+    def __init__(self, particle_id=0, instance_id=0, fill_ratio= 0.52, robot_number=4, path=None):
+        self.particle_id = particle_id
+        self.instance_id = instance_id
+        self.fill_ratio = fill_ratio
         self.robot_number = robot_number
         self.path = path
 
@@ -30,31 +31,24 @@ class WorldGenerator():
         self.initialX = [] 
         self.initialY = []
 
-        random.seed(self.robot_seed)
-
-    def checkCoord(x, y, array):
-      #Iterates through 
+    def checkCoord(self, x, y, array):
+    #Iterates through 
       for coord in array:
-          if ((coord[0] == x) & (coord[1] == y)):
-              return 0
-      
+        if ((coord[0] == x) & (coord[1] == y)):
+            return 0
+    
       return 1
 
-    def createTexture(self):
-
-      saveFile = 1
+    def createArena(self):
+      
       picDim = 128
-      fillRatio = 0.55
-      a = 0
-      b = 25
 
-      random.seed(self.world_seed) 
+      print("Generating Arena with Fill Ratio: ", self.fill_ratio)
 
-      img = Image.new('1', (picDim, picDim))
-      sqSize = 3
+      sqSize = 8
       picArea = picDim * picDim
       sqArea = sqSize * sqSize
-      fillCount = math.ceil((fillRatio * picArea) / sqArea)
+      fillCount = math.ceil((self.fill_ratio * picArea) / sqArea)
       startArray = np.zeros((fillCount,2)) #Defines bottom left of white square
       possibleX = list(range(0, picDim, sqSize))
       possibleY = list(range(0, picDim, sqSize))
@@ -69,16 +63,9 @@ class WorldGenerator():
               startArray[i][1] = possibleY[rY]
               i = i + 1
 
-      draw = ImageDraw.Draw(img)
+      #Save arena file to instance id specific path
+      np.savetxt(self.path + '/arena.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
 
-      for coord in startArray:
-          draw.rectangle((coord[0], coord[1] + (sqSize - 1), coord[0] + (sqSize - 1), coord[1]), fill=1, outline=1)
-
-      img = img.transpose(method=Image.FLIP_TOP_BOTTOM) #Flip to account for axis change in Webots
-
-      #img.show()
-      img.save('../worlds/textures/textrect.png', quality=100)
-      np.savetxt('../controllers/bayes_supervisor/boxrect.csv', startArray.astype(int), delimiter=',', fmt='%d')
 
 
     def createPos(self):
@@ -91,9 +78,17 @@ class WorldGenerator():
                     self.initialY.append(y)
                     break
 
+    def generateRot(self):
+      # angle
+      rot = str(round(random.uniform(0.0, 2*math.pi), 2))
+
+      return rot
+
     def createTitle(self):
-        title = "bayesian_rovables_sim_"
-        title += str(self.robot_seed)
+        title = "/bayes_pso_"
+        title += str(self.particle_id)
+        title += "_"
+        title += str(self.instance_id)
 
         return title
 
@@ -164,7 +159,7 @@ Wall {
 }\n""")
     
     def createRobots(self, file):
-        arg = "\"" + str(self.robot_seed) + "\""
+        arg = "\"" + str(self.instance_id) + "\""
         file.write(
         """Robot {
   name "Bayes Bot Supervisor"
@@ -183,14 +178,20 @@ Wall {
   controller "bayes_fsm"
   controllerArgs """ + arg + """
   supervisor TRUE
-  customData "0001.000000"
+  customData "0.500000-"
+  extensionSlot [
+    Receiver {
+    }
+    Emitter {
+    }
+  ]
 }\n""")
 
     def createWorld(self):
-        if (self.path is None):
-          file = open(r"../worlds/" + self.createTitle() + ".wbt", 'w')
-        else:
-          file = open(self.path + self.createTitle() + ".wbt", 'w')
+        random.seed(self.instance_id) 
+
+        #file = open(r"../worlds" + self.createTitle() + ".wbt", 'w')
+        file = open(r"/usr/local/efs/demo/worlds" + self.createTitle() + ".wbt", 'w')
         #Start with Header
         self.createHeader(file)
 
@@ -202,6 +203,8 @@ Wall {
         #Creates the number of Rovables in a randomized position
         self.createRobots(file)
 
-        print("World Written with Seed: " + str(self.robot_seed))
+        print("World Written with Seed: " + str(self.instance_id))
 
         file.close()
+
+        self.createArena()

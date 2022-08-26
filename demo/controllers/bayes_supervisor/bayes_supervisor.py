@@ -17,6 +17,7 @@ import sys
 MAX_TIME = 2700 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
 WALL_TIME = 600
 #2700 45 min good?
+seedIn = 0
 baseline = 0
 run = 0
 nRobot = 0 # The number of robots is set later
@@ -81,6 +82,7 @@ color_array = np.empty(nRobot, dtype=object)
 
 # --------------------------------------------------------------
 def setSeed():
+    global seedIn
     seedIn = str(sys.argv[1])
     print("Using Supervisor Seed: ", seedIn)
     random.seed(seedIn)
@@ -130,6 +132,7 @@ def evaluateFitness(dec_time, last_belief):
 
 # Writes to the fitness file for the current iteration of particle
 def cleanup(time_arr, fitness):
+    global seedIn
 
     #Used for baseline 
     if (baseline):
