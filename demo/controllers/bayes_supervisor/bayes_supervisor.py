@@ -35,15 +35,13 @@ accuracy = []
 reset_flag = 0
 defArray = []
 defIndex = 0
-seedPtr = os.getenv("NOISE_SEED")
 
 print(os.name)
 print(platform.system())
 
-value = os.getenv("WB_WORKING_DIR")
 fill_ratio = os.getenv("FILL_RATIO")
 if (fill_ratio is None):
-    fill_ratio = 0.55
+    fill_ratio = 0.70
 print("Supervisor Fill Ratio: ", fill_ratio)
 
 # create the Robot instance.
@@ -151,6 +149,8 @@ def cleanup(time_arr, fitness):
         print("Fitness of particle: ", fitOut)
 
         # USED ONLY FOR PSO LAUNCH
+
+        value = os.getenv("WB_WORKING_DIR")
         if (value is not None):
             os.chdir(value)
             with open(value + "/local_fitness.txt", 'w') as f:
