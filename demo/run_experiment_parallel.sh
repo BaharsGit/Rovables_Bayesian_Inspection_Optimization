@@ -18,6 +18,14 @@ cd $py_path
 
 # Fix Parameters and world -> variations in algorithm runs
 echo Starting script. . . ${BASH_VERSION}
+
+cd /usr/local/efs/demo/controllers/bayes_fsm
+export WEBOTS_HOME=/usr/local/webots
+make clean
+make
+cd
+cd /usr/local/efs/demo/jobfiles
+
 # Get the current AWS job index
 line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
 seed=$(sed -n ${line}p /usr/local/efs/demo/seed_array.txt)
