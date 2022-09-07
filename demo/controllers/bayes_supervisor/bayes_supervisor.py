@@ -18,7 +18,7 @@ MAX_TIME = 2700 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
 WALL_TIME = 600
 #2700 45 min good?
 seedIn = 0
-baseline = 0
+baseline = 1
 run = 0
 nRobot = 0 # The number of robots is set later
 boxSize = 8    
