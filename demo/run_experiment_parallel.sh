@@ -19,17 +19,17 @@ cd $py_path
 # Fix Parameters and world -> variations in algorithm runs
 echo Starting script. . . ${BASH_VERSION}
 
-cd /usr/local/efs/demo/controllers/bayes_fsm
-export WEBOTS_HOME=/usr/local/webots
-make clean
-make
-cd
-cd /usr/local/efs/demo/jobfiles
+# cd /usr/local/efs/demo/controllers/bayes_fsm
+# export WEBOTS_HOME=/usr/local/webots
+# make clean
+# make
+# cd
+# cd /usr/local/efs/demo/jobfiles
 
 # Get the current AWS job index
-line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
-seed=$(sed -n ${line}p /usr/local/efs/demo/seed_array.txt)
-fill=$(sed -n ${line}p /usr/local/efs/demo/fill_array.txt)
+# line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
+# seed=$(sed -n ${line}p /usr/local/efs/demo/seed_array.txt)
+# fill=$(sed -n ${line}p /usr/local/efs/demo/fill_array.txt)
 
 JOB_BASE_DIR=$(pwd)/tmp/job_${line}
 if [ ! -d $JOB_BASE_DIR ]
@@ -49,6 +49,9 @@ export FILL_RATIO=$fill
 #No longer using as seed data is "pipelined" into map generation script
 #echo $seed > /usr/local/efs/demo/controllers/bayes_bot_controller/seed.txt
 #echo $seed > /usr/local/efs/demo/controllers/bayes_supervisor/seed.txt
+
+seed=1
+fill=0.55
 
 # Run experiment according to the seed and simulation parameters
 echo "Running experiment version $seed"

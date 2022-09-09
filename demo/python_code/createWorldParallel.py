@@ -87,8 +87,6 @@ class WorldGenerator():
     def createTitle(self):
         title = "/bayes_pso_"
         title += str(self.particle_id)
-        title += "_"
-        title += str(self.instance_id)
 
         return title
 

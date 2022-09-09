@@ -56,7 +56,8 @@ for file in os.listdir(tempDir):
     if file.endswith(".csv"):
         print("FILE FOUND")
         shutil.move(tempDir + file, folder + file)
-    else: 
+    else:
+        print(file)
         print("NO FILE FOUND")
 
 os.rmdir(tempDir)
