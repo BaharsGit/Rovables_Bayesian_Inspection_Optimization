@@ -4,7 +4,7 @@ import time
 import os
 import shutil
 from datetime import datetime
-from createWorldPSO import WorldGenerator
+from createWorld import WorldGenerator
 
 from subprocess import Popen, PIPE
 
