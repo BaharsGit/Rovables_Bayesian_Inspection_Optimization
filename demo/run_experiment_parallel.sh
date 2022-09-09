@@ -18,28 +18,40 @@ cd $py_path
 
 # Fix Parameters and world -> variations in algorithm runs
 echo Starting script. . . ${BASH_VERSION}
- 
-# MODIFIED FOR AWS LAUNCH, LINES 27, USING PY_PATH
-# MODIFIED FOR AWS LAUNCH, LINES 29-48, GET SEEDS FROM A TEXT FILE RATHER THAN A FOR LOOP
-# for seed in {0..15..1} #Seed for both random walk and initalization.
-#     do
-#         echo Running Simulation . . . $seed
-#         #seed = $(AWS_BATCH_JOB_ARRAY_INDEX)
-#         echo $seed > controllers/bayes_bot_controller/seed.txt
-#         echo $seed > controllers/bayes_supervisor/seed.txt
-#         python3 -u scripts/simSetup.py -s $seed #Setup directories and run the simulation
-#     done
+
+# cd /usr/local/efs/demo/controllers/bayes_fsm
+# export WEBOTS_HOME=/usr/local/webots
+# make clean
+# make
+# cd
+# cd /usr/local/efs/demo/jobfiles
 
 # Get the current AWS job index
-line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
-seed=$(sed -n ${line}p /usr/local/efs/demo/seed_array.txt)
-fill=$(sed -n ${line}p /usr/local/efs/demo/fill_array.txt)
+# line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
+# seed=$(sed -n ${line}p /usr/local/efs/demo/seed_array.txt)
+# fill=$(sed -n ${line}p /usr/local/efs/demo/fill_array.txt)
+
+JOB_BASE_DIR=$(pwd)/tmp/job_${line}
+if [ ! -d $JOB_BASE_DIR ]
+
+then
+
+   echo "(`date`) Create job base directory for the Webots instance of this job_lily_parallel.sh script as $JOB_BASE_DIR"
+   mkdir -p $JOB_BASE_DIR
+
+fi
+
+export WB_WORKING_DIR=$JOB_BASE_DIR
+export FILL_RATIO=$fill
 
 #python3 -u imCreateRect.py -fr $fill -ss $square_size  -sd $mapSeed -rs $seed 
 
 #No longer using as seed data is "pipelined" into map generation script
 #echo $seed > /usr/local/efs/demo/controllers/bayes_bot_controller/seed.txt
 #echo $seed > /usr/local/efs/demo/controllers/bayes_supervisor/seed.txt
+
+seed=1
+fill=0.55
 
 # Run experiment according to the seed and simulation parameters
 echo "Running experiment version $seed"

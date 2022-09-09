@@ -12,7 +12,7 @@ crash_fitness = 100000
 incorrect_fitness = 11200
 num_particles = 10
 num_noise = 10
-num_gen = 30
+num_gen = 20
 n_robots = 4
 particle_dim = 6
 probIn = []
@@ -40,7 +40,7 @@ savePlots = 0
 #rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
 #PSO FITNESS
 #rootdir = '/home/darren/Documents/ICRA_LAUNCH/demo/jobfiles/Run_2/'
-rootdir = '/home/dchiu/Documents/ICRA_LAUNCHES/demo/jobfiles/Run_1/'
+rootdir = '/home/dchiu/Documents/ICRA_LAUNCHES/alpha_fix_low_bounded_wait_time/jobfiles/Run_0/'
 #BASELINE DIRECTORY
 baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
 

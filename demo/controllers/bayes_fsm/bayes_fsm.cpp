@@ -55,7 +55,6 @@ static Emitter* emitter;
 static Receiver* receiver;
 static int nRobot = 4;
 static const std::string rovDef[4] = {"rov_0", "rov_1", "rov_2", "rov_3"};
-char *noise_seed; 
 char *pPath = getenv("WB_WORKING_DIR");
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
@@ -113,7 +112,6 @@ int main(int argc, char **argv) {
   
   robotNum = name[1] - '0';
 
-  noise_seed = getenv("NOISE_SEED");
   std::cout << "Controller Seed: " << *argv[1] << std::endl;
   srand(*argv[1]); // Seed is set during world fild generation
   
