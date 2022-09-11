@@ -328,17 +328,19 @@ def readFitness():
                 
             particle_param_temp = np.add(probIn, particle_param_temp)
 
-            if (noise_average < best_particle):
-                print("Found New Best: ", text)
-                best_particle = noise_average
-                best_path = prob_path
-                best_param = probIn
-
             #Get L2 Norm from current parameters and best parameters
             L2_val = norm(probIn-best_param)  
             #particle_fit_temp.append(statistics.median(median_average))
             particle_fit_temp.append(noise_average)
             L2_temp.append(L2_val)
+            
+        for l in range(len(particle_fit_temp)):
+            if (noise_average < best_particle):
+                print("Found New Best: ", text)
+                best_particle = noise_average
+                best_path = prob_path
+                best_param = particle_param_temp[l]
+        
         best_param_df[str(i)] = best_param
         param_df[str(i)] = np.divide(particle_param_temp, num_particles)
         L2_df[str(i)] = L2_temp
