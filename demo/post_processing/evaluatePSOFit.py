@@ -283,19 +283,23 @@ def readFitness():
     median_average = []
     best_path = ''
     text = ''
+
+    #Iterate through iterations
     for i in range(num_gen):
         particle_fit_temp = []
         std_temp = []
         L2_temp = []
         particle_param_temp = np.zeros(particle_dim)
         gen = rootdir + "Generation_" + str(i)
-        #print(gen)
+        
+        #Iterate through particles
         for j in range(num_particles):
             duplicate_list = []
             bad_count = 0
             time_total = 0
             prob_path = gen + "/prob_" + str(j) + ".txt"
-    
+
+            #Iterate through noise runs
             for k in range(num_noise):
                 text = gen + "/local_fitness_" + str(j) + "_" + str(k) + ".txt"
             #print(text)

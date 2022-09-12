@@ -15,17 +15,15 @@ py_path="/usr/local/efs/demo/python_code"
 # UNCOMMENT BELOW TO TEST ON LOCAL MACHINE
 #py_path="/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/python_code"
 
-# Move to path
-cd $py_path
-
 echo Compiling Code. . .
 
 cd /usr/local/efs/demo/controllers/bayes_fsm
 export WEBOTS_HOME=/usr/local/webots
 make clean
 make
-cd
-cd /usr/local/efs/demo/jobfiles
+
+# Move to path
+cd $py_path
 
 # Get the current AWS job index
 line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
