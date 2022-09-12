@@ -14,7 +14,7 @@ crash_fitness = 100000
 incorrect_fitness = 11200
 num_particles = 10
 num_noise = 10
-num_gen = 30
+num_gen = 20
 n_robots = 4
 particle_dim = 6
 probIn = []
@@ -40,12 +40,13 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_y'.format(i))
     
 savePlots = 0
-#rootdir = '/Users/darrenchiu/Documents/DARS/Linear_Fitness/'
-#PSO FITNESS
+
+#PSO FITNESS DIRECTORY
 #rootdir = '/home/darren/Documents/ICRA_LAUNCH/demo/jobfiles/Run_2/'
-rootdir = '/home/dchiu/Documents/ICRA_LAUNCHES/62_fill_check/jobfiles/Run_0/'
+psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/spike_fix/jobfiles/Run_1/'
+
 #BASELINE DIRECTORY
-baselinedir = '/home/darren/Documents/DARS/NoiseResistance/Linear_pso_halfma'
+baselinedir = '/home/dchiu/Documents/ICRA_LAUNCHES/demo/Log'
 
 ################################### 2D Position Histogram ########################
 def create2dHist(run):
@@ -64,7 +65,7 @@ def create2dHist(run):
 
 #################################### CDF Line Graph ############################
 # The changes of values would not line not with eachother since the random walk takes precedence -- number of steps in random walk differs per robot.
-def createCDF(run):
+def createCDF(run, probData):
     plt.figure(2)
     for i in range(n_robots):
         plt.plot((probData.loc[:, prob_column_names[i]]).to_list(), label = 'r{} CDF'.format(i))
@@ -188,13 +189,11 @@ def psoFitness():
     ax.legend(fancybox=True, shadow=True)
     ax2.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
          fancybox=True, shadow=True, ncol=4)
-    plt.savefig(rootdir + 'figure.png')
+    plt.savefig(psodir + 'figure.png')
     
     plt.show()
-
 ######################################### SCATTER PLOT VERSION PSO FITNESS ################################
 
-#3CHANGE COLORS
 def psoFitnessScatter():
     plt.style.use('seaborn-talk')
     fig = plt.figure()
@@ -237,16 +236,8 @@ def psoFitnessScatter():
     std_gen = generation_std
     bottom = generation_mean - std_gen
     bottom[bottom<0] = 0
-    ax.fill_between(np.arange(num_gen), bottom, generation_mean + std_gen, where=(generation_mean + std_gen)>0, color='blue', alpha=0.3)
+    ax.fill_between(np.arange(num_gen), bottom, generation_mean + std_gen, where=(generation_mean + std_gen)>0, color='blue', alpha=0.2)
     ax.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
-
-    #SECTION FOR MEAN AND STD OF PARTICLE L2 NORM
-    std_gen = L2_std
-    bottom = L2_std - std_gen
-    bottom[bottom<0] = 0
-    ax2.fill_between(np.arange(num_gen), bottom, L2_mean + std_gen, where=(L2_mean + std_gen)>0, color='green', alpha=0.1)
-    ax2.plot(np.arange(num_gen), L2_mean, color='green', label='Average L2 from best particle')
-
     ax.grid(True, linestyle='--', axis='both', color='black', alpha=0.3)
     #plt.colorbar(label="Bad Fitness Count", orientation="vertical")
     plt.title('PSO Performance')
@@ -255,7 +246,7 @@ def psoFitnessScatter():
     plt.show()
 
 ########################################## CREATES BELIEF STD ###########################################
-def createSTD():
+def createSTD(averages):
     averages['mean'] = averages.mean(axis=1)
     averages['std'] = averages.std(axis=1, ddof=0)
     averages.to_csv(baselinedir + '/means.csv')
@@ -263,13 +254,13 @@ def createSTD():
     plt.fill_between(np.arange(averages.shape[0]),
     (averages.loc[:, 'mean']) - (averages.loc[:, 'std']), 
     (averages.loc[:, 'mean']) + (averages.loc[:, 'std']), color='lightskyblue', alpha=0.3, label='One Standard Deviation')
-    #plt.axhline(y=0.5, color='r', linestyle='--')
+    plt.axhline(y=0.5, color='r', linestyle='--')
 
     plt.xlabel('Simulation Time')
     plt.ylabel('Robot Belief')
     plt.title('Linear Fitness Baseline')
     plt.savefig(baselinedir + '/FB_95.png')
-    plt.ylim([0, 0.05])
+    plt.ylim([0, 1])
     plt.legend()
     plt.show()
 
@@ -290,7 +281,7 @@ def readFitness():
         std_temp = []
         L2_temp = []
         particle_param_temp = np.zeros(particle_dim)
-        gen = rootdir + "Generation_" + str(i)
+        gen = psodir + "Generation_" + str(i)
         
         #Iterate through particles
         for j in range(num_particles):
@@ -351,25 +342,26 @@ def readFitness():
         std_gen.append(statistics.pstdev(std_temp))
         fitness_df[str(i)] = particle_fit_temp
     print("Best Particle: ", best_path)
-    print(L2_df)
-    fitness_df.to_csv(rootdir + 'means.csv')
+    fitness_df.to_csv(psodir + 'means.csv')
 
 ############################### READS IN BASELINE FILES #####################################################
-def readBaseline():
+def readBaseline(averages):
+
     for run in range(100):
         posData = []
         probData = []
         posFile = baselinedir + '/Run' + str(run) + '/runPos.csv'
         posData = pd.read_csv(posFile, names=pos_column_names)
-
         probFile = baselinedir + '/Run' + str(run) + '/runProb.csv'
         probData = pd.read_csv(probFile, names=prob_column_names)
+
         probData['mean'] = probData.mean(axis=1)
         currentAvgRun = (pd.DataFrame({str(run): (probData.loc[:, 'mean']).to_list()}))
+        print(currentAvgRun)
         #print(currentAvgRun.reset_index)
+
         averages = pd.concat([averages, currentAvgRun], axis=1)
         averages.fillna(method='ffill', inplace=True)
-
 
         xPos = []
         yPos = []
@@ -380,10 +372,13 @@ def readBaseline():
             yPos = np.append(yPos, (posData.loc[:, pos_column_names[yIndex]]).to_list(), axis=0)
             xIndex = xIndex + 2
             yIndex = yIndex + 2
-# readBaseline()
+        
+        return averages
+
+#Evaluate parameters from baseline
+# averages = readBaseline(averages)
+# createSTD(averages)
+
+#Evaluate PSO Fitness Values
 readFitness()
-# print(param_df.iloc[0])
-# print(best_param_df.iloc[0])
-# print(np.linalg.norm(param_df.iloc[0] - best_param_df.iloc[0]))
-# psoFitness()
 psoFitnessScatter()
