@@ -12,10 +12,11 @@ from numpy.linalg import norm
 
 crash_fitness = 100000
 incorrect_fitness = 11200
+num_baseline = 100
 num_particles = 10
 num_noise = 10
-num_gen = 20
-n_robots = 4
+num_gen = 30
+num_robots = 4
 particle_dim = 6
 probIn = []
 prob_column_names = []
@@ -23,7 +24,8 @@ pos_column_names = []
 best_param = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
 param_max = [150, 350, 3000, 90, 100, 250]
 param_min = [10, 10, 20, 10, 5, 200]
-averages = pd.DataFrame()
+belief_averages = pd.DataFrame()
+time_averages = np.zeros(num_baseline)
 fitness_df = pd.DataFrame()
 fitness_df_median = pd.DataFrame()
 param_df = pd.DataFrame()
@@ -34,7 +36,7 @@ incorrect_list_y = []
 incorrect_list_z = []
 std_gen = []
 
-for i in range(n_robots):
+for i in range(num_robots):
     prob_column_names.append('rov_{}'.format(i))
     pos_column_names.append('rov_{}_x'.format(i))
     pos_column_names.append('rov_{}_y'.format(i))
@@ -43,10 +45,13 @@ savePlots = 0
 
 #PSO FITNESS DIRECTORY
 #rootdir = '/home/darren/Documents/ICRA_LAUNCH/demo/jobfiles/Run_2/'
-psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/spike_fix/jobfiles/Run_1/'
+# DIRECTOR FOR ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/spike_fix/jobfiles/Run_1/'
+# DIRECTORY FOR NO ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/no_alpha_particle/jobfiles/Run_1/'
+
+psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/alpha_preset/jobfiles/Run_0/'
 
 #BASELINE DIRECTORY
-baselinedir = '/home/dchiu/Documents/ICRA_LAUNCHES/demo/Log'
+baselinedir = '/home/dchiu/Documents/ICRA_LAUNCHES/alpha_baseline/Log'
 
 ################################### 2D Position Histogram ########################
 def create2dHist(run):
@@ -67,7 +72,7 @@ def create2dHist(run):
 # The changes of values would not line not with eachother since the random walk takes precedence -- number of steps in random walk differs per robot.
 def createCDF(run, probData):
     plt.figure(2)
-    for i in range(n_robots):
+    for i in range(num_robots):
         plt.plot((probData.loc[:, prob_column_names[i]]).to_list(), label = 'r{} CDF'.format(i))
 
     plt.legend()
@@ -85,7 +90,7 @@ def createLine(run):
     yIndex = 1
     markers = ['-bo', '-go', '-ro', '-yo']
     
-    for i in range(n_robots):
+    for i in range(num_robots):
         plt.plot(posData.loc[:,pos_column_names[xIndex]].to_list(), posData.loc[:,pos_column_names[yIndex]].to_list(), markers[i] , markevery=[0],label = 'r{} path'.format(i))        
         xIndex = xIndex + 2
         yIndex = yIndex + 2
@@ -108,7 +113,7 @@ def createGauss(run):
         cmap = plt.cm.get_cmap('coolwarm')
         xIndex = 0
         yIndex = 1
-        for i in range(n_robots):
+        for i in range(num_robots):
             heatmap = sns.kdeplot(x=posData.loc[:,pos_column_names[xIndex]].to_list(), y=posData.loc[:,pos_column_names[yIndex]].to_list(), label='r{} path'.format(i), alpha=0.75, fill=True, zorder = 1)
             xIndex = xIndex + 2
             yIndex = yIndex + 2
@@ -230,14 +235,22 @@ def psoFitnessScatter():
 
     #Plot Best Particle
     ax.plot(np.arange(num_gen), generation_best, color='red', label='Best Particle')
-    #ax2.plot(np.arange(num_gen), std_gen, label='Standard Deviation')
+
 
     #SECTION FOR MEAN AND STD OF PARTICLE FITNESS
     std_gen = generation_std
     bottom = generation_mean - std_gen
     bottom[bottom<0] = 0
-    ax.fill_between(np.arange(num_gen), bottom, generation_mean + std_gen, where=(generation_mean + std_gen)>0, color='blue', alpha=0.2)
+    ax.fill_between(np.arange(num_gen), bottom, generation_mean + std_gen, where=(generation_mean + std_gen)>0, color='blue', alpha=0.3)
     ax.plot(np.arange(num_gen), generation_mean, color='blue', label='PSO Average')
+
+    
+    std_gen = L2_std
+    bottom = L2_mean - std_gen
+    bottom[bottom<0] = 0
+    ax2.fill_between(np.arange(num_gen), bottom, L2_mean + std_gen, where=(L2_mean + std_gen)>0, color='green', alpha=0.3)
+    ax2.plot(np.arange(num_gen), L2_mean, color='green', label='L2 Norm')
+
     ax.grid(True, linestyle='--', axis='both', color='black', alpha=0.3)
     #plt.colorbar(label="Bad Fitness Count", orientation="vertical")
     plt.title('PSO Performance')
@@ -254,16 +267,20 @@ def createSTD(averages):
     plt.fill_between(np.arange(averages.shape[0]),
     (averages.loc[:, 'mean']) - (averages.loc[:, 'std']), 
     (averages.loc[:, 'mean']) + (averages.loc[:, 'std']), color='lightskyblue', alpha=0.3, label='One Standard Deviation')
-    plt.axhline(y=0.5, color='r', linestyle='--')
+    # plt.axhline(y=0.5, color='r', linestyle='--')
 
     plt.xlabel('Simulation Time')
     plt.ylabel('Robot Belief')
     plt.title('Linear Fitness Baseline')
     plt.savefig(baselinedir + '/FB_95.png')
-    plt.ylim([0, 1])
+    # plt.ylim([0, 1])
     plt.legend()
     plt.show()
 
+################################## BINNING FOR DECISION TIMES ########################################
+def decTimeBins(time_averages):
+    plt.hist(time_averages, bins='auto')
+    plt.show()
 
 ################################## READS IN FITNESS FILES ############################################
 def readFitness():
@@ -356,11 +373,15 @@ def readFitness():
     fitness_df.to_csv(psodir + 'means.csv')
 
 ############################### READS IN BASELINE FILES #####################################################
-def readBaseline(averages):
+def readBaseline(belief_averages, time_averages):
 
-    for run in range(100):
+    for run in range(num_baseline):
         posData = []
         probData = []
+        decTime = np.zeros(num_robots)
+        with open(baselinedir + '/Run' + str(run) + '/decTime.txt') as f:
+            decTime = np.asarray(f.read().splitlines(), dtype=np.float32)
+        time_averages[run] = np.average(decTime)
         posFile = baselinedir + '/Run' + str(run) + '/runPos.csv'
         posData = pd.read_csv(posFile, names=pos_column_names)
         probFile = baselinedir + '/Run' + str(run) + '/runProb.csv'
@@ -368,28 +389,29 @@ def readBaseline(averages):
 
         probData['mean'] = probData.mean(axis=1)
         currentAvgRun = (pd.DataFrame({str(run): (probData.loc[:, 'mean']).to_list()}))
-        print(currentAvgRun)
         #print(currentAvgRun.reset_index)
 
-        averages = pd.concat([averages, currentAvgRun], axis=1)
-        averages.fillna(method='ffill', inplace=True)
+        belief_averages = pd.concat([belief_averages, currentAvgRun], axis=1)
+        belief_averages.fillna(method='ffill', inplace=True)
 
         xPos = []
         yPos = []
         xIndex = 0
         yIndex = 1
-        for i in range(n_robots):
+        for i in range(num_robots):
             xPos = np.append(xPos, (posData.loc[:, pos_column_names[xIndex]]).to_list(), axis=0)
             yPos = np.append(yPos, (posData.loc[:, pos_column_names[yIndex]]).to_list(), axis=0)
             xIndex = xIndex + 2
             yIndex = yIndex + 2
         
-        return averages
-
+    
+    return belief_averages, time_averages
 #Evaluate parameters from baseline
-# averages = readBaseline(averages)
-# createSTD(averages)
+# belief_averages, time_averages = readBaseline(belief_averages, time_averages)
+# createSTD(belief_averages)
+# decTimeBins(time_averages)
 
+# ADD PLOT TITLES
 #Evaluate PSO Fitness Values
 readFitness()
 psoFitnessScatter()
