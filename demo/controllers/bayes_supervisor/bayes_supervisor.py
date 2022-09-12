@@ -14,7 +14,7 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 600 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
+MAX_TIME = 2700 #unit is in seconds, corresponds to 2 mintues -- 7200 seconds
 WALL_TIME = 600
 #2700 45 min good?
 seedIn = 0
