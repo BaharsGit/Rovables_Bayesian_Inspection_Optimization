@@ -12,6 +12,7 @@ echo Starting script. . . ${BASH_VERSION}
 
 # MODIFIED FOR AWS LAUNCH, LINES 16-20, DEFINE PY_PATH
 py_path="/usr/local/efs/demo/python_code"
+
 # UNCOMMENT BELOW TO TEST ON LOCAL MACHINE
 #py_path="/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/python_code"
 

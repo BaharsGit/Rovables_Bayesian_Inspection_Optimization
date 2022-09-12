@@ -277,10 +277,11 @@ def readFitness():
 
     #Iterate through iterations
     for i in range(num_gen):
-        particle_fit_temp = []
+        fitness_temp = []
         std_temp = []
         L2_temp = []
-        particle_param_temp = np.zeros(particle_dim)
+        param_temp = []
+        param_avg_temp = np.zeros(particle_dim)
         gen = psodir + "Generation_" + str(i)
         
         #Iterate through particles
@@ -293,11 +294,12 @@ def readFitness():
             #Iterate through noise runs
             for k in range(num_noise):
                 text = gen + "/local_fitness_" + str(j) + "_" + str(k) + ".txt"
-            #print(text)
+
                 with open(text) as f:
                     fit = f.read().splitlines()
+
                 if (float(fit[0]) == incorrect_fitness):
-                    #print(text)
+
                     bad_count = bad_count + 1
                     if (j not in duplicate_list):
                         incorrect_list_x.append(i)
@@ -318,29 +320,38 @@ def readFitness():
                 probIn = f.read().splitlines()
             probIn = np.asarray(probIn, dtype=np.float64)
 
+            #Normalize Particle
             for l in range(particle_dim):
                 probIn[l] = (probIn[l] - param_min[l]) / (param_max[l] - param_min[l])
-                
-            particle_param_temp = np.add(probIn, particle_param_temp)
 
-            #Get L2 Norm from current parameters and best parameters
-            L2_val = norm(probIn-best_param)  
-            #particle_fit_temp.append(statistics.median(median_average))
-            particle_fit_temp.append(noise_average)
-            L2_temp.append(L2_val)
-            
-        for l in range(len(particle_fit_temp)):
+            #Find if the normalized particle is the best
             if (noise_average < best_particle):
                 print("Found New Best: ", text)
                 best_particle = noise_average
                 best_path = prob_path
-                best_param = particle_param_temp[l]
+                best_param = probIn
+
+            param_temp.append(probIn)
+            param_avg_temp = np.add(probIn, param_avg_temp)
+
+            #particle_fit_temp.append(statistics.median(median_average))
+            fitness_temp.append(noise_average)
         
+        for l in range(num_particles):
+            #Get L2 Norm from current parameters and best parameters
+            L2_val = norm(param_temp[l] -best_param)  
+            L2_temp.append(L2_val)
+        
+        #Dataframe that tracks the best parameter
         best_param_df[str(i)] = best_param
-        param_df[str(i)] = np.divide(particle_param_temp, num_particles)
+
+        #Dataframe that tracks the average particle parameters
+        param_df[str(i)] = np.divide(param_avg_temp, num_particles)
+
+        #Dataframe that tracks the L2 norm from the best particle
         L2_df[str(i)] = L2_temp
         std_gen.append(statistics.pstdev(std_temp))
-        fitness_df[str(i)] = particle_fit_temp
+        fitness_df[str(i)] = fitness_temp
     print("Best Particle: ", best_path)
     fitness_df.to_csv(psodir + 'means.csv')
 
