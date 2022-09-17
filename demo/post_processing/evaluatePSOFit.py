@@ -2,7 +2,8 @@ import csv
 import statistics
 import numpy as np
 #import seaborn as sns
-from scipy import stats, integrate
+import scipy
+import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib import image
 import pandas as pd
@@ -15,7 +16,7 @@ incorrect_fitness = 11200
 num_baseline = 100
 num_particles = 10
 num_noise = 10
-num_gen = 30
+num_gen = 20
 num_robots = 4
 particle_dim = 6
 probIn = []
@@ -24,8 +25,6 @@ pos_column_names = []
 best_param = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
 param_max = [150, 350, 3000, 90, 100, 250]
 param_min = [10, 10, 20, 10, 5, 200]
-belief_averages = pd.DataFrame()
-time_averages = np.zeros(num_baseline)
 fitness_df = pd.DataFrame()
 fitness_df_median = pd.DataFrame()
 param_df = pd.DataFrame()
@@ -48,10 +47,13 @@ savePlots = 0
 # DIRECTOR FOR ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/spike_fix/jobfiles/Run_1/'
 # DIRECTORY FOR NO ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/no_alpha_particle/jobfiles/Run_1/'
 
-psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/alpha_preset/jobfiles/Run_0/'
+psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/no_alpha_particle/jobfiles/Run_1/'
 
 #BASELINE DIRECTORY
-baselinedir = '/home/dchiu/Documents/ICRA_LAUNCHES/alpha_baseline/Log'
+baselinedir_median = '/home/dchiu/Documents/ICRA_LAUNCHES/full_particle_median_baseline/Log'
+baselinedir_best = '/home/dchiu/Documents/ICRA_LAUNCHES/full_particle_best_baseline/Log'
+
+desc = 'Full Particle Parameters'
 
 ################################### 2D Position Histogram ########################
 def create2dHist(run):
@@ -253,7 +255,7 @@ def psoFitnessScatter():
 
     ax.grid(True, linestyle='--', axis='both', color='black', alpha=0.3)
     #plt.colorbar(label="Bad Fitness Count", orientation="vertical")
-    plt.title('PSO Performance')
+    plt.title(desc)
     ax.legend(loc='upper left')
     ax2.legend()
     plt.show()
@@ -272,15 +274,38 @@ def createSTD(averages):
     plt.xlabel('Simulation Time')
     plt.ylabel('Robot Belief')
     plt.title('Linear Fitness Baseline')
-    plt.savefig(baselinedir + '/FB_95.png')
+    plt.savefig(baselinedir + '/' + desc + '_belief' + '.png')
     # plt.ylim([0, 1])
     plt.legend()
     plt.show()
 
 ################################## BINNING FOR DECISION TIMES ########################################
-def decTimeBins(time_averages):
-    plt.hist(time_averages, bins='auto')
+def decTimeBins(time_averages_best, time_averages_median):
+    bestcolor = 'royalblue'
+    mediancolor = 'lightcoral'
+    bin_num = 200
+    mu_best = np.average(time_averages_best)
+    mu_median = np.average(time_averages_median)
+    #plt.hist(time_averages, bins=25, density=True, alpha=0.6, color='g')
+    # Plot the PDF.
+    # xmin, xmax = plt.xlim()
+    # x = np.linspace(xmin, xmax, 100)
+    # p = scipy.stats.norm.pdf(x, mu, std)
+    # plt.plot(x, p, 'k', linewidth=2)
+    plt.grid(True, linestyle='--', axis='both', color='black', alpha=0.3)
+    title = "Best Particle Average: %.2f, Median Particle Average: %.2f" % (mu_best, mu_median)
+    plt.hist(time_averages_best, bins=bin_num, density='True', label='Best Particle', color=bestcolor)
+    plt.hist(time_averages_median, bins=bin_num, density='True', label='Median Particle', color=mediancolor)
+    plt.title(title)
+    plt.xlabel('Average Swarm Decision Times')
+    plt.ylabel('Density')
+    sns.kdeplot(time_averages_best, bw_method=0.1, color=bestcolor)
+    sns.kdeplot(time_averages_median, bw_method=0.1, color=mediancolor)
+    plt.legend()
+    plt.savefig(baselinedir_best + '/' + desc + '_time'+ '.png')
+    plt.savefig(baselinedir_median + '/' + desc + '_time'+ '.png')
     plt.show()
+    # plt.show()
 
 ################################## READS IN FITNESS FILES ############################################
 def readFitness():
@@ -351,12 +376,13 @@ def readFitness():
             param_temp.append(probIn)
             param_avg_temp = np.add(probIn, param_avg_temp)
 
-            #particle_fit_temp.append(statistics.median(median_average))
-            fitness_temp.append(noise_average)
-        
+            #Use median or standard deviation
+            fitness_temp.append(statistics.median(median_average))
+            #fitness_temp.append(noise_average)
+
         for l in range(num_particles):
             #Get L2 Norm from current parameters and best parameters
-            L2_val = norm(param_temp[l] -best_param)  
+            L2_val = norm(param_temp[l] - best_param)  
             L2_temp.append(L2_val)
         
         #Dataframe that tracks the best parameter
@@ -369,22 +395,27 @@ def readFitness():
         L2_df[str(i)] = L2_temp
         std_gen.append(statistics.pstdev(std_temp))
         fitness_df[str(i)] = fitness_temp
+
     print("Best Particle: ", best_path)
     fitness_df.to_csv(psodir + 'means.csv')
 
+    print("Median particle: ", statistics.median(fitness_temp))
+
 ############################### READS IN BASELINE FILES #####################################################
-def readBaseline(belief_averages, time_averages):
+def readBaseline(baseline_path):
+    belief_averages = pd.DataFrame()
+    time_averages = np.zeros(num_baseline)
 
     for run in range(num_baseline):
         posData = []
         probData = []
         decTime = np.zeros(num_robots)
-        with open(baselinedir + '/Run' + str(run) + '/decTime.txt') as f:
+        with open(baseline_path + '/Run' + str(run) + '/decTime.txt') as f:
             decTime = np.asarray(f.read().splitlines(), dtype=np.float32)
         time_averages[run] = np.average(decTime)
-        posFile = baselinedir + '/Run' + str(run) + '/runPos.csv'
+        posFile = baseline_path + '/Run' + str(run) + '/runPos.csv'
         posData = pd.read_csv(posFile, names=pos_column_names)
-        probFile = baselinedir + '/Run' + str(run) + '/runProb.csv'
+        probFile = baseline_path + '/Run' + str(run) + '/runProb.csv'
         probData = pd.read_csv(probFile, names=prob_column_names)
 
         probData['mean'] = probData.mean(axis=1)
@@ -406,12 +437,16 @@ def readBaseline(belief_averages, time_averages):
         
     
     return belief_averages, time_averages
+
+plt.style.use('seaborn-talk')
+
 #Evaluate parameters from baseline
-# belief_averages, time_averages = readBaseline(belief_averages, time_averages)
-# createSTD(belief_averages)
-# decTimeBins(time_averages)
+belief_averages_best, time_averages_best = readBaseline(baselinedir_best)
+belief_averages, time_averages_median = readBaseline(baselinedir_median)
+#createSTD(belief_averages)
+decTimeBins(time_averages_best, time_averages_median)
 
 # ADD PLOT TITLES
 #Evaluate PSO Fitness Values
-readFitness()
-psoFitnessScatter()
+# readFitness()
+# psoFitnessScatter()
