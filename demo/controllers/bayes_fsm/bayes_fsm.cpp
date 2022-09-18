@@ -561,7 +561,7 @@ static void readParameters() {
       const char *cstr = line.c_str();
       z = std::atof(cstr);
       std::cout << z << std::endl;
-      if (i == 0) alpha = 89; //Hard coded from previous PSO launch
+      if (i == 0) alpha = round(z); 
       if (i == 1) tao = z;
       if (i == 2) rand_const_forward = z;
       if (i == 3) close_distance = z;
