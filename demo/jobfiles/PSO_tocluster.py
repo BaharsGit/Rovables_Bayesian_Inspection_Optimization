@@ -119,7 +119,8 @@ class Particle:
             success = 1
             # check to see if the current position is an individual best
             if (len(self.fit_array_i) == noise_resistance_evals):
-                if (fitness < self.fit_best_i or self.fit_best_i) == -1:
+                # if (fitness < self.fit_best_i or self.fit_best_i) == -1:
+                if ((fitness < self.fit_best_i) or (self.fit_best_i == -1)):
                     self.pos_best_i = self.position_i
                     self.fit_best_i = self.fit_i
         return success

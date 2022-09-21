@@ -14,9 +14,9 @@ from numpy.linalg import norm
 crash_fitness = 100000
 incorrect_fitness = 11200
 num_baseline = 100
-num_particles = 10
+num_particles = 15
 num_noise = 10
-num_gen = 20
+num_gen = 100
 num_robots = 4
 particle_dim = 6
 probIn = []
@@ -47,13 +47,13 @@ savePlots = 0
 # DIRECTOR FOR ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/spike_fix/jobfiles/Run_1/'
 # DIRECTORY FOR NO ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/no_alpha_particle/jobfiles/Run_1/'
 
-psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/no_alpha_particle/jobfiles/Run_1/'
+psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/expensive_data/demo/jobfiles/Run_1/'
 
 #BASELINE DIRECTORY
-baselinedir_median = '/home/dchiu/Documents/ICRA_LAUNCHES/full_particle_median_baseline/Log'
-baselinedir_best = '/home/dchiu/Documents/ICRA_LAUNCHES/full_particle_best_baseline/Log'
+baselinedir_median = '/home/dchiu/Documents/ICRA_LAUNCHES/full_particle_best_baseline/Log'
+baselinedir_best = '/home/dchiu/Documents/ICRA_LAUNCHES/expensive_data/demo/Log'
 
-desc = 'Full Particle Parameters'
+desc = 'Full Particle Parameters Average'
 
 ################################### 2D Position Histogram ########################
 def create2dHist(run):
@@ -258,6 +258,8 @@ def psoFitnessScatter():
     plt.title(desc)
     ax.legend(loc='upper left')
     ax2.legend()
+    plt.savefig(psodir + desc + '.png')
+    
     plt.show()
 
 ########################################## CREATES BELIEF STD ###########################################
@@ -377,8 +379,8 @@ def readFitness():
             param_avg_temp = np.add(probIn, param_avg_temp)
 
             #Use median or standard deviation
-            fitness_temp.append(statistics.median(median_average))
-            #fitness_temp.append(noise_average)
+            #fitness_temp.append(statistics.median(median_average))
+            fitness_temp.append(noise_average)
 
         for l in range(num_particles):
             #Get L2 Norm from current parameters and best parameters
@@ -441,12 +443,12 @@ def readBaseline(baseline_path):
 plt.style.use('seaborn-talk')
 
 #Evaluate parameters from baseline
-belief_averages_best, time_averages_best = readBaseline(baselinedir_best)
-belief_averages, time_averages_median = readBaseline(baselinedir_median)
-#createSTD(belief_averages)
-decTimeBins(time_averages_best, time_averages_median)
+# belief_averages_best, time_averages_best = readBaseline(baselinedir_best)
+# belief_averages, time_averages_median = readBaseline(baselinedir_median)
+# #createSTD(belief_averages)
+# decTimeBins(time_averages_best, time_averages_median)
 
 # ADD PLOT TITLES
 #Evaluate PSO Fitness Values
-# readFitness()
-# psoFitnessScatter()
+readFitness()
+psoFitnessScatter()
