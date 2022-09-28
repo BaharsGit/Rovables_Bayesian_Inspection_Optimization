@@ -230,6 +230,9 @@ class PSO():
 
                 # MODIFIED FOR NOISE RESISTANT PSO
                 else:
+                    #Start webots
+                    os.system('cd $(ls -td */ | head -1)')
+                    subprocess.check_call(['job_lily_parallel.sh', str(iteration), str(particle), str(instance), '4'])
                     file_path = run_dir + "Generation_%d/local_fitness_%d_%d.txt" % (iteration, particle, instance)
                     if os.path.exists(file_path):
                         success = swarm[particle].evaluate(costFunc, iteration, particle, instance, noise_resistance_evals)

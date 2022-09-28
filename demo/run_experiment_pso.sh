@@ -47,6 +47,7 @@ else
   # MODIFIED FOR NOISE RESISTANT PSO
   PARTICLE_ID=$((($MY_ID-1)%$NB_PARTICLES))
 
+  # Pipe ls command into head and print first line
   RUN_DIR=$(ls -td */| head -1)
   cd $RUN_DIR
   

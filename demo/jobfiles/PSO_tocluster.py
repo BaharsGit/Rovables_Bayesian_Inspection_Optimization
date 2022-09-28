@@ -74,10 +74,9 @@ def fitness_evaluation(iteration, particle, instance = -1):
     # Complex Fitness Function
     # 150*(average accuracy) + 100*(average coverage) - (average decision time)
     #fitness_res = (175*fitness[2] + 100*fitness[1] - fitness[0])
-    fitness_res = float(fitness)
     print("Fitness evaluation for particle " + str(particle) + " in iteration " + str(iteration) + ": \n")
-    print("Fitness value read from the file is: ", fitness_res)
-    return fitness_res
+    print("Fitness value read from the file is: ", fitness)
+    return fitness
 
 
 # --- MAIN ---------------------------------------------------------------------+
@@ -115,13 +114,14 @@ class Particle:
                 #Find STD and Mean when the array is full
                 if (len(self.fit_array_i) == noise_resistance_evals):
                     self.fit_i = statistics.pstdev(self.fit_array_i) + statistics.mean(self.fit_array_i)
-
+                    
+                    # check to see if the current position is an individual best
+                    if ((self.fit_i < self.fit_best_i) or (self.fit_best_i == -1)):
+                        self.pos_best_i = self.position_i
+                        self.fit_best_i = self.fit_i
             success = 1
-            # check to see if the current position is an individual best
-            if (len(self.fit_array_i) == noise_resistance_evals):
-                if ((fitness < self.fit_best_i) or (self.fit_best_i == -1)):
-                    self.pos_best_i = self.position_i
-                    self.fit_best_i = self.fit_i
+            
+
         return success
 
     # update new particle velocity
@@ -181,6 +181,7 @@ class PSO():
                 #x.append(random.uniform(bounds[0],bounds[1])) MODIFIED FOR BAYES BOT
                 if (j == 0):
                     sampled_number = random.uniform(0,bounds[rand_init_count + 1])
+
                     if (sampled_number < bounds[rand_init_count]):
                         x.append(sampled_number + bounds[rand_init_count])
                     else:
@@ -249,7 +250,7 @@ class PSO():
             # read the local fitnesss of each individual particle
             # determine if current particle is the best (globally)
             for particle in range(0, num_particles):
-                if swarm[particle].fit_i < fit_best_g or fit_best_g == -1:
+                if (swarm[particle].fit_i < fit_best_g) or (fit_best_g == -1):
                     pos_best_g = list(swarm[particle].position_i)
                     fit_best_g = float(swarm[particle].fit_i)
 
@@ -259,7 +260,7 @@ class PSO():
                 swarm[particle].update_position(bounds)
 
 
-            results = run_dir + "Generation_%d/Parameters.txt" %(iteration)
+            results = run_dir + "Generation_%d/Parameters.txt" % (iteration)
             os.makedirs(os.path.dirname(results), exist_ok=True)
             with open(results, mode='w') as myfile2:
                 for particle in range(0, num_particles):
