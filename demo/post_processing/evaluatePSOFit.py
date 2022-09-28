@@ -47,7 +47,7 @@ savePlots = 0
 # DIRECTOR FOR ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/spike_fix/jobfiles/Run_1/'
 # DIRECTORY FOR NO ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/no_alpha_particle/jobfiles/Run_1/'
 
-psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/expensive_data/demo/jobfiles/Run_1/'
+psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/expensive_data/demo/jobfiles/Run_0/'
 
 #BASELINE DIRECTORY
 baselinedir_median = '/home/dchiu/Documents/ICRA_LAUNCHES/full_particle_best_baseline/Log'

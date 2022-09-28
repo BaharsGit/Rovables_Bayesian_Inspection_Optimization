@@ -13,13 +13,11 @@ WB_TIMEOUT=3
 
 # DEPENDS ON YOUR WORKING MACHINE
 cd /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles
-# RUN_DIR=$(ls -td */| head -1)
-# cd $RUN_DIR
 
 pwd
-echo "Running PSO script"
+echo "Running PSO Test script"
 
-#python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS
+python3 -u PSO_test.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS
 
 # job_lily_parallel.sh
 INPUT_DIR=Generation_${GEN_ID}
