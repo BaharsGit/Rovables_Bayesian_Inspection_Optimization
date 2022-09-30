@@ -231,7 +231,20 @@ class PSO():
 
                 # MODIFIED FOR NOISE RESISTANT PSO
                 else:
+                    if (args.test_pso):
+                        #Start webots
+                        os.system('echo RUNNING TEST')
+                        print(os.getcwd())
+                        # os.chdir("/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0")
+                        os.chdir(run_dir)
+                        print(iteration, particle, instance)
+                        print(os.getcwd())
+                        subprocess.check_call(['.././job_lily_parallel.sh', str(iteration), str(particle), str(instance), '4'])
+                        os.chdir("../")
+                    
                     file_path = run_dir + "Generation_%d/local_fitness_%d_%d.txt" % (iteration, particle, instance)
+                    print(file_path)
+                    print(os.getcwd())
                     if os.path.exists(file_path):
                         success = swarm[particle].evaluate(costFunc, iteration, particle, instance, noise_resistance_evals)
                         print("PSO_tocluster.py: evaluating Generation_" + str(iteration) + "/local_fitness_" + str(particle) + "_" + str(instance) + ".txt \n")
@@ -245,7 +258,6 @@ class PSO():
                                 pending_particles.remove(particle)
                                 num_evaluated_particles += 1
                                 instance = noise_resistance_evals -1
-
 
             # read the local fitnesss of each individual particle
             # determine if current particle is the best (globally)
@@ -298,6 +310,8 @@ parser = argparse.ArgumentParser(description='Run PSO to optimize parameters in 
 # MODIFIED FOR NOISE RESISTANT PSO
 parser.add_argument("-n", "--nb_particles", required=False, type=int, default="15", help="number of particles for PSO")
 parser.add_argument("-e", "--nb_noise_res_evals", required=False, type=int, default="0", help="number of noise resistance evaluations for PSO")
+parser.add_argument("-t", "--test_pso", required=False, type=int, default="0", help="Boolean to run PSO in series or parallel")
+
 args = parser.parse_args()
 if args.nb_particles < 2:
     parser.error("Minimum number of particles is 2")

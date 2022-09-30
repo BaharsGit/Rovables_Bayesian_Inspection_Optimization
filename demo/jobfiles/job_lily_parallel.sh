@@ -18,8 +18,9 @@ NUM_ROBOTS=$4
 
 line=$((INSTANCE_ID + 1))
 
-FILL_RATIO=$(sed -n ${line}p /usr/local/efs/demo/fill_array.txt)
-# FILL_RATIO=$(sed -n ${line}p $(pwd)../fill_array.txt)
+
+#FILL_RATIO=$(sed -n ${line}p /usr/local/efs/demo/fill_array.txt)
+FILL_RATIO=$(sed -n ${line}p $(pwd)/../../fill_array.txt)
 echo "Using Fill Ratio " ${FILL_RATIO}
 
 
