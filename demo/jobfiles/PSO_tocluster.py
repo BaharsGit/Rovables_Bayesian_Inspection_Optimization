@@ -120,7 +120,10 @@ class Particle:
                         print("Particle: " + str(particle) + " found new personal best: " + str(self.fit_i) + " against: " + str(self.fit_best_i))
                         self.pos_best_i = self.position_i
                         self.fit_best_i = self.fit_i
-                    print("Particle: " + str(particle) + " Evaluated to be fitness: " + str(self.fit_i)) 
+                    print("Particle: " + str(particle) + " Evaluated to be fitness: " + str(self.fit_i))
+                    
+                    # Must reset array after each iteration.
+                    self.fit_array_i = []
             success = 1
             
 
@@ -271,7 +274,7 @@ class PSO():
                     fit_best_g = float(swarm[particle].fit_i)
                 else:
                     print("Did not find best particle at: " + str(particle) + " With fitness: " + str(swarm[particle].fit_i) + " against best fitness: " + str(fit_best_g))
-
+                
             # cycle through swarm and update velocities and position
             for particle in range(0,num_particles):
                 swarm[particle].update_velocity(pos_best_g)
