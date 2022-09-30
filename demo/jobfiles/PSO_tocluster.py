@@ -239,7 +239,7 @@ class PSO():
                         os.chdir(run_dir)
                         print(iteration, particle, instance)
                         print(os.getcwd())
-                        subprocess.check_call(['.././job_lily_parallel.sh', str(iteration), str(particle), str(instance), '4'])
+                        subprocess.check_call(['.././job_lily_parallel.sh > /dev/null', str(iteration), str(particle), str(instance), '4'])
                         os.chdir("../")
                     
                     file_path = run_dir + "Generation_%d/local_fitness_%d_%d.txt" % (iteration, particle, instance)
@@ -265,6 +265,9 @@ class PSO():
                 if (swarm[particle].fit_i < fit_best_g) or (fit_best_g == -1):
                     pos_best_g = list(swarm[particle].position_i)
                     fit_best_g = float(swarm[particle].fit_i)
+                    print("Found best particle at: " + str(particle) + " With fitness: " + str(swarm[particle].fit_i) + " against best fitness: " + str(fit_best_g))
+                else:
+                    print("Did not find best particle at: " + str(particle) + " With fitness: " + str(swarm[particle].fit_i) + " against best fitness: " + str(fit_best_g))
 
             # cycle through swarm and update velocities and position
             for particle in range(0,num_particles):
@@ -353,7 +356,7 @@ WORST_FITNESS=100000
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
 # MODIFIED FOR NOISE RESISTANT PSO
-PSO(x0, fitness_evaluation, bounds, maxiter=3, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
+PSO(x0, fitness_evaluation, bounds, maxiter=5, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)

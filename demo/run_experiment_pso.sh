@@ -39,8 +39,8 @@ then
   INSTANCE_ID=3
   NUM_ROBOTS=4
   PARTICLE_ID=2
-  NB_NOISE_RES_EVALS=3
-  NB_PARTICLES=3
+  NB_NOISE_RES_EVALS=2
+  NB_PARTICLES=2
   cd /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles
   pwd
   # MODIFIED FOR NOISE RESISTANT PSO
