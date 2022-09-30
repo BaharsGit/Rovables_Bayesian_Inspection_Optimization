@@ -1,0 +1,196 @@
+Using Fill Ratio  0.52
+job_lily_parallel.sh input directory is  Generation_9
+job_lily_parallel.sh output directory is  Generation_9
+(Fri 30 Sep 2022 03:22:33 AM PDT) Create job base directory for the Webots instance of this job_lily_parallel.sh script as /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_1/tmp/job9_4_0
+Generating world and arena files...
+World Written with Seed: 0
+Generating Arena with Fill Ratio:  0.52
+(Fri 30 Sep 2022 03:22:33 AM PDT) Performing a total of 1 runs for particle 4
+Running file /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_1/../../worlds/bayes_pso_4_0.wbt
+Warning: QApplication: invalid style override 'adwaita' passed, ignoring it.
+	Available styles: Windows, Fusion
+INFO: bayes_supervisor: Starting controller: python3 -u bayes_supervisor.py 0
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 0
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 0
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 0
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 0
+posix
+Linux
+Supervisor Fill Ratio:  0.52
+['rov_0', 'rov_1', 'rov_2', 'rov_3']
+Using Supervisor Seed:  0
+Controller Seed: 0
+Reading in Parameters: 
+117.61
+112.539
+1486.73
+56.6164
+93.9078
+225.262
+Alpha Prior: 118
+Tao: 112
+Random Forward: 1486
+Collision Avoidance Trigger: 56.6164
+Hysteresis Timer: 93
+Observation Wait Time: 225
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 0
+Reading in Parameters: 
+117.61
+112.539
+1486.73
+56.6164
+93.9078
+225.262
+Alpha Prior: 118
+Tao: 112
+Random Forward: 1486
+Collision Avoidance Trigger: 56.6164
+Hysteresis Timer: 93
+Observation Wait Time: 225
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 0
+Reading in Parameters: 
+117.61
+112.539
+1486.73
+56.6164
+93.9078
+225.262
+Alpha Prior: 118
+Tao: 112
+Random Forward: 1486
+Collision Avoidance Trigger: 56.6164
+Hysteresis Timer: 93
+Observation Wait Time: 225
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 0
+Reading in Parameters: 
+117.61
+112.539
+1486.73
+56.6164
+93.9078
+225.262
+Alpha Prior: 118
+Tao: 112
+Random Forward: 1486
+Collision Avoidance Trigger: 56.6164
+Hysteresis Timer: 93
+Observation Wait Time: 225
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+FSM State: 0 Robot 0 Belief: 3.00927e-36 -> 118, 1
+FSM State: 0 Robot 1 Belief: 3.00927e-36 -> 118, 1
+FSM State: 0 Robot 2 Belief: 3.00927e-36 -> 118, 1
+FSM State: 0 Robot 3 Belief: 3.00927e-36 -> 118, 1
+FSM State: 2 Robot 0 Belief: 5.75838e-15 -> 313, 149
+FSM State: 2 Robot 1 Belief: 3.67577e-15 -> 313, 148
+FSM State: 2 Robot 2 Belief: 5.01588e-15 -> 312, 148
+FSM State: 2 Robot 3 Belief: 6.83773e-15 -> 311, 148
+FSM State: 2 Robot 0 Belief: 0.051151 -> 420, 374
+FSM State: 2 Robot 1 Belief: 0.0474214 -> 420, 373
+FSM State: 2 Robot 2 Belief: 0.0439085 -> 420, 372
+FSM State: 2 Robot 3 Belief: 0.0472127 -> 419, 372
+FSM State: 2 Robot 0 Belief: 0.368575 -> 543, 532
+FSM State: 1 Robot 1 Belief: 0.216976 -> 444, 421
+FSM State: 2 Robot 2 Belief: 0.380084 -> 542, 532
+FSM State: 2 Robot 3 Belief: 0.368457 -> 542, 531
+3 Initial Hysteresis Start 315
+2 Initial Hysteresis Start 318
+0 Initial Hysteresis Start 307
+FSM State: 2 Robot 0 Belief: 0.131702 -> 693, 652
+FSM State: 1 Robot 1 Belief: 0.216976 -> 444, 421
+FSM State: 2 Robot 2 Belief: 0.125878 -> 693, 651
+FSM State: 2 Robot 3 Belief: 0.120233 -> 693, 650
+FSM State: 2 Robot 0 Belief: 0.906874 -> 778, 831
+FSM State: 1 Robot 1 Belief: 0.216976 -> 444, 421
+FSM State: 2 Robot 2 Belief: 0.911028 -> 777, 831
+FSM State: 2 Robot 3 Belief: 0.907011 -> 777, 830
+FSM State: 2 Robot 0 Belief: 0.297512 -> 948, 925
+FSM State: 1 Robot 1 Belief: 0.216976 -> 444, 421
+FSM State: 2 Robot 2 Belief: 0.305518 -> 947, 925
+FSM State: 2 Robot 3 Belief: 0.297413 -> 947, 924
+FSM State: 0 Robot 0 Belief: 0.00149208 -> 1134, 997
+FSM State: 1 Robot 1 Belief: 0.216976 -> 444, 421
+FSM State: 2 Robot 2 Belief: 0.00138688 -> 1134, 996
+FSM State: 2 Robot 3 Belief: 0.00148531 -> 1133, 996
+2 Hysteresis Condition Check
+2 Positive Feedback - White
+2 Decision time: 618.168
+0 Hysteresis Condition Check
+0 Positive Feedback - White
+0 Decision time: 619.08
+3 Hysteresis Condition Check
+3 Positive Feedback - White
+3 Decision time: 621.744
+FSM State: 2 Robot 0 Belief: 1.94713e-07 -> 1321, 1073
+FSM State: 1 Robot 1 Belief: 0.216976 -> 444, 421
+FSM State: 2 Robot 2 Belief: 5.76926e-08 -> 1326, 1067
+FSM State: 2 Robot 3 Belief: 4.07481e-06 -> 1305, 1087
+FSM State: 2 Robot 0 Belief: 7.51537e-17 -> 1557, 1130
+FSM State: 2 Robot 1 Belief: 5.86059e-22 -> 1590, 1096
+FSM State: 2 Robot 2 Belief: 3.30434e-19 -> 1572, 1113
+FSM State: 2 Robot 3 Belief: 1.69659e-12 -> 1522, 1162
+1 Initial Hysteresis Start 226
+FSM State: 2 Robot 0 Belief: 6.08375e-29 -> 1825, 1215
+FSM State: 2 Robot 1 Belief: 5.70902e-40 -> 1881, 1158
+FSM State: 2 Robot 2 Belief: 2.56118e-29 -> 1826, 1212
+FSM State: 2 Robot 3 Belief: 6.3679e-22 -> 1781, 1256
+1 Hysteresis Condition Check
+1 Positive Feedback - White
+1 Decision time: 812.608
+FSM State: 2 Robot 0 Belief: 6.02879e-52 -> 2136, 1260
+FSM State: 2 Robot 1 Belief: 9.16067e-69 -> 2203, 1192
+FSM State: 2 Robot 2 Belief: 8.05057e-47 -> 2112, 1282
+FSM State: 2 Robot 3 Belief: 3.0119e-41 -> 2085, 1308
+FSM State: 2 Robot 0 Belief: 1.40346e-91 -> 2489, 1260
+FSM State: 2 Robot 1 Belief: 9.4212e-92 -> 2489, 1259
+FSM State: 2 Robot 2 Belief: 9.16768e-68 -> 2401, 1346
+FSM State: 2 Robot 3 Belief: 3.53966e-69 -> 2406, 1340
+FSM State: 2 Robot 0 Belief: 6.82846e-120 -> 2789, 1316
+FSM State: 1 Robot 1 Belief: 7.16187e-133 -> 2827, 1277
+FSM State: 2 Robot 2 Belief: 2.69485e-103 -> 2735, 1368
+FSM State: 2 Robot 3 Belief: 1.37592e-99 -> 2722, 1380
+FSM State: 0 Robot 0 Belief: 2.48146e-133 -> 3017, 1404
+FSM State: 1 Robot 1 Belief: 3.46345e-160 -> 3017, 1277
+FSM State: 2 Robot 2 Belief: 3.38786e-134 -> 3019, 1401
+FSM State: 2 Robot 3 Belief: 9.94469e-133 -> 3014, 1405
+FSM State: 2 Robot 0 Belief: 5.80145e-155 -> 3237, 1447
+FSM State: 1 Robot 1 Belief: 3.46345e-160 -> 3017, 1277
+FSM State: 2 Robot 2 Belief: 1.63298e-144 -> 3206, 1477
+FSM State: 2 Robot 3 Belief: 9.07606e-148 -> 3215, 1467
+FSM State: 2 Robot 0 Belief: 3.82661e-172 -> 3443, 1504
+FSM State: 1 Robot 1 Belief: 3.46345e-160 -> 3017, 1277
+FSM State: 2 Robot 2 Belief: 8.89859e-163 -> 3416, 1530
+FSM State: 2 Robot 3 Belief: 1.91758e-165 -> 3423, 1522
+FSM State: 2 Robot 0 Belief: 1.53114e-211 -> 3736, 1522
+FSM State: 2 Robot 1 Belief: 1.6861e-319 -> 3980, 1277
+FSM State: 2 Robot 2 Belief: 1.32252e-201 -> 3709, 1547
+FSM State: 2 Robot 3 Belief: 4.74578e-198 -> 3699, 1556
+FSM State: 1 Robot 0 Belief: 3.00771e-230 -> 3992, 1608
+FSM State: 2 Robot 1 Belief: 0 -> 4321, 1278
+FSM State: 2 Robot 2 Belief: 1.51884e-229 -> 3989, 1609
+FSM State: 2 Robot 3 Belief: 4.9872e-243 -> 4022, 1575
+INFO: bayes_supervisor: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+Decision Times:  [619.08  812.608 618.168 621.744]
+Fitness of particle:  2671.6000000000004
+Wrote file: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_1/tmp/job9_4_0/local_fitness
+Ceaning up simulation
+(Fri 30 Sep 2022 03:24:08 AM PDT) Run successfully completed, local_fitness.txt was created under /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_1/tmp/job9_4_0/ \n
+(Fri 30 Sep 2022 03:24:09 AM PDT) Job 9_4 completed by instance 0 of particle 4
