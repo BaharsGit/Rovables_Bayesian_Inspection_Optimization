@@ -40,7 +40,7 @@ then
   NUM_ROBOTS=4
   PARTICLE_ID=2
   NB_NOISE_RES_EVALS=5
-  NB_PARTICLES=10
+  NB_PARTICLES=5
   echo "Number of particles =" $NB_PARTICLES
   echo "Number of noise resistant evaluations =" $NB_NOISE_RES_EVALS
   echo "Number of nodes running Webots instances =" $NB_NODES
