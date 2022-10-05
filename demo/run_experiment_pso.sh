@@ -31,7 +31,9 @@ cd /usr/local/efs/demo/jobfiles
 if [ $TEST_PSO -eq 1 ]
 then 
   echo "Running PSO Test"
-  cd /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm
+  pwd
+  #cd /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm
+  cd /root/Rovables/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm
   export WEBOTS_HOME=/usr/local/webots
   make clean
   make
@@ -39,12 +41,13 @@ then
   INSTANCE_ID=3
   NUM_ROBOTS=4
   PARTICLE_ID=2
-  NB_NOISE_RES_EVALS=5
-  NB_PARTICLES=5
+  NB_NOISE_RES_EVALS=15
+  NB_PARTICLES=20
   echo "Number of particles =" $NB_PARTICLES
   echo "Number of noise resistant evaluations =" $NB_NOISE_RES_EVALS
   echo "Number of nodes running Webots instances =" $NB_NODES
-  cd /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles
+  #cd /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles
+  cd /root/Rovables/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles
   pwd
   # MODIFIED FOR NOISE RESISTANT PSO
   python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO

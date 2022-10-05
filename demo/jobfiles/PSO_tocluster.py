@@ -20,6 +20,8 @@ import os.path
 from datetime import datetime
 import statistics
 import argparse
+import numpy as np
+import math
 #import sys
 #import fileinput
 
@@ -78,6 +80,11 @@ def fitness_evaluation(iteration, particle, instance = -1):
     print("Fitness value read from the file is: ", fitness)
     return fitness
 
+def test_optimization_space(position):
+    print("Test Particle has position: ", position)
+    test_fitness = (1/math.pow(position[0],4) + math.pow(position[1],2) + position[3] + 1/math.pow(position[4],2) + 3034) + np.random.normal(0, 750, 1)
+    print(test_fitness[0])
+    return test_fitness[0]
 
 # --- MAIN ---------------------------------------------------------------------+
 
@@ -245,7 +252,10 @@ class PSO():
                         os.chdir(run_dir)
                         print(iteration, particle, instance)
                         print(os.getcwd())
-                        subprocess.check_call(['.././job_lily_parallel.sh', str(iteration), str(particle), str(instance), '4'], stdout=f)
+                        # with open('/tmp/job' + str(iteration) + '_' + str(particle) + '_' + str(instance) + 'local_fitness.txt', 'w') as f:
+                        #     f.write(str(test_optimization_space(swarm[particle].position_i)))
+                        subprocess.check_call(['.././job_lily_parallel.sh', str(iteration), str(particle), str(instance), '4', str(test_optimization_space(swarm[particle].position_i))], stdout=f)
+                        
                         os.chdir("../")
                     
                     file_path = run_dir + "Generation_%d/local_fitness_%d_%d.txt" % (iteration, particle, instance)
