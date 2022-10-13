@@ -14,9 +14,9 @@ from numpy.linalg import norm
 crash_fitness = 100000
 incorrect_fitness = 11200
 num_baseline = 100
-num_particles = 5
-num_noise = 5
-num_gen = 35                                                                                                                                          
+num_particles = 25
+num_noise = 15
+num_gen = 50                                                                                                                                          
 num_robots = 4
 particle_dim = 6
 probIn = []
@@ -48,8 +48,8 @@ savePlots = 0
 # DIRECTORY FOR NO ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/no_alpha_particle/jobfiles/Run_1/'
 
 psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/expensive_data/demo/jobfiles/Run_0/'
-psodir = '/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_5/'
-psodir = '/Users/darrenchiu/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_6/'
+psodir = '/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/'
+#psodir = '/Users/darrenchiu/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_6/'
 
 #BASELINE DIRECTORY
 baselinedir_median = '/home/dchiu/Documents/ICRA_LAUNCHES/full_particle_best_baseline/Log'
@@ -352,10 +352,10 @@ def readFitness():
                         incorrect_list_y.append(j)
                         duplicate_list.append(j)
 
-                if (float(fit[0]) < crash_fitness):
-                    std_temp.append(float(fit[0]))
-                    median_average.append(float(fit[0]))
-                    time_total = float(fit[0]) + time_total
+                #if (float(fit[0]) < crash_fitness):
+                std_temp.append(float(fit[0]))
+                median_average.append(float(fit[0]))
+                time_total = float(fit[0]) + time_total
 
             if (bad_count > 0):
                 incorrect_list_z.append(bad_count)
