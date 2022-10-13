@@ -49,7 +49,7 @@ savePlots = 0
 
 psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/expensive_data/demo/jobfiles/Run_0/'
 psodir = '/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_5/'
-psodir = '\\wsl$\Ubuntu\root\Rovables\Rovables_Bayesian_Inspection_Optimization'
+psodir = '/Users/darrenchiu/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_6/'
 
 #BASELINE DIRECTORY
 baselinedir_median = '/home/dchiu/Documents/ICRA_LAUNCHES/full_particle_best_baseline/Log'

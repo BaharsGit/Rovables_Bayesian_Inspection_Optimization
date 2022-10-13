@@ -82,7 +82,10 @@ def fitness_evaluation(iteration, particle, instance = -1):
 
 def test_optimization_space(position):
     print("Test Particle has position: ", position)
-    test_fitness = (1/math.pow(position[0],4) + math.pow(position[1],2) + position[3] + 1/math.pow(position[4],2) + 3034) + np.random.normal(0, 750, 1)
+    #test_fitness = (1/math.pow(position[0],4) + math.pow(position[1],2) + position[3] + 1/math.pow(position[4],2) + 3034) + np.random.normal(0, 750, 1)
+    test_fitness = 0
+    for i in range(num_dimensions-1):
+        test_fitness = test_fitness + 100*math.pow((position[i+1] - math.pow(position[i], 2)), 2) + math.pow((1-position[0]), 2)
     print(test_fitness[0])
     return test_fitness[0]
 
