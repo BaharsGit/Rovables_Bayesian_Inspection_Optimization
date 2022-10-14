@@ -24,29 +24,28 @@ echo "Number of particles =" $NB_PARTICLES
 echo "Number of noise resistant evaluations =" $NB_NOISE_RES_EVALS
 echo "Number of nodes running Webots instances =" $NB_NODES
 
-cd /usr/local/efs/demo/jobfiles
-#cd /usr/local/efs/pso_self-assembly_aws/jobfiles
+#cd /usr/local/efs/demo/jobfiles
+cd $(pwd)/jobfiles
 
 # RUN IN SERIES
 if [ $TEST_PSO -eq 1 ]
 then 
   echo "Running PSO Test"
+  cd $(pwd)/controllers/bayes_fsm
   pwd
-  cd /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm
   #cd /root/Rovables/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm
   export WEBOTS_HOME=/usr/local/webots
   make clean
   make
-  GEN_ID=0
-  INSTANCE_ID=3
+
+  # DEFINE FOR THE TEST RUN
   NUM_ROBOTS=4
-  PARTICLE_ID=2
   NB_NOISE_RES_EVALS=15
   NB_PARTICLES=25
   echo "Number of particles =" $NB_PARTICLES
   echo "Number of noise resistant evaluations =" $NB_NOISE_RES_EVALS
   echo "Number of nodes running Webots instances =" $NB_NODES
-  cd /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles
+  cd $(pwd)/../../jobfiles
   #cd /root/Rovables/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles
   pwd
   # MODIFIED FOR NOISE RESISTANT PSO
@@ -58,12 +57,12 @@ else
     echo "Running PSO script"
     
     # MODIFIED FOR COMPILATION ON AWS INSTANCES TO AVOID NON-COMPATIBLE BINARY WARNING
-    cd /usr/local/efs/demo/controllers/bayes_fsm
+    cd $(pwd)/controllers/bayes_fsm
     export WEBOTS_HOME=/usr/local/webots
     make clean
     make
     cd
-    cd /usr/local/efs/demo/jobfiles
+    cd cd $(pwd)/../../jobfiles
 
     # MODIFIED FOR NOISE RESISTANT PSO
     python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS
