@@ -7,6 +7,9 @@ NUM_ROBOTS=4
 #FLIP TO TEST PSO IN SERIES ON LOCAL
 TEST_PSO=1
 
+#RUN WEBOTS OR TEST OPTIMIZATION FUNCTION, USED ONLY IF TEST_PSO=1
+RUN_WEBOTS=1
+
 # Get the current AWS job indexes
 MY_ID=$((AWS_BATCH_JOB_NODE_INDEX))
 MAIN_ID=$((AWS_BATCH_JOB_MAIN_NODE_INDEX))
@@ -49,7 +52,7 @@ then
   #cd /root/Rovables/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles
   pwd
   # MODIFIED FOR NOISE RESISTANT PSO
-  python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO
+  python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO -w $RUN_WEBOTS
 # RUN PARALLEL
 else 
   if [ $MY_ID -eq $MAIN_ID ]; then

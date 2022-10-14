@@ -248,6 +248,7 @@ class PSO():
 
                 # MODIFIED FOR NOISE RESISTANT PSO
                 else:
+                    #RUN IN SERIES
                     if (args.test_pso):
                         f = open("outputFile","wb")
                         #Start webots
@@ -259,7 +260,7 @@ class PSO():
                         print(os.getcwd())
                         # with open('/tmp/job' + str(iteration) + '_' + str(particle) + '_' + str(instance) + 'local_fitness.txt', 'w') as f:
                         #     f.write(str(test_optimization_space(swarm[particle].position_i)))
-                        subprocess.check_call(['.././job_lily_parallel.sh', str(iteration), str(particle), str(instance), '4', str(test_optimization_space(swarm[particle].position_i))], stdout=f)
+                        subprocess.check_call(['.././job_lily_parallel.sh', str(iteration), str(particle), str(instance), '4', str(test_optimization_space(swarm[particle].position_i)), str(args.run_webots)], stdout=f)
                         
                         os.chdir("../")
                     
@@ -335,6 +336,7 @@ parser = argparse.ArgumentParser(description='Run PSO to optimize parameters in 
 parser.add_argument("-n", "--nb_particles", required=False, type=int, default="15", help="number of particles for PSO")
 parser.add_argument("-e", "--nb_noise_res_evals", required=False, type=int, default="0", help="number of noise resistance evaluations for PSO")
 parser.add_argument("-t", "--test_pso", required=False, type=int, default="0", help="Boolean to run PSO in series or parallel")
+parser.add_argument("-w", "--run_webots", required=False, type=int, default="0", help="Boolean to run Webots or Test Function")
 
 args = parser.parse_args()
 if args.nb_particles < 2:
