@@ -98,11 +98,11 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
       
       # launch webots
       # logs are redirected to webots_log.txt file
-      # timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt 
+      time timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt 
       echo "Running file $WEBWORLD"
-      #time timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD
-      echo $5
-      echo $5 > $JOB_BASE_DIR/local_fitness.txt
+      #time timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt 
+      # echo $5
+      # echo $5 > $JOB_BASE_DIR/local_fitness.txt
 
 
       # waiting just a while before copying the output

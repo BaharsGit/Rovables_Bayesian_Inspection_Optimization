@@ -14,9 +14,9 @@ from numpy.linalg import norm
 crash_fitness = 100000
 incorrect_fitness = 11200
 num_baseline = 100
-num_particles = 25
-num_noise = 15
-num_gen = 50                                                                                                                                          
+num_particles = 10
+num_noise = 5
+num_gen = 16                                                                                                                                          
 num_robots = 4
 particle_dim = 6
 probIn = []
@@ -48,7 +48,7 @@ savePlots = 0
 # DIRECTORY FOR NO ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/no_alpha_particle/jobfiles/Run_1/'
 
 psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/expensive_data/demo/jobfiles/Run_0/'
-psodir = '/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/'
+psodir = '/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/'
 #psodir = '/Users/darrenchiu/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_6/'
 
 #BASELINE DIRECTORY

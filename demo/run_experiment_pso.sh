@@ -40,12 +40,12 @@ then
 
   # DEFINE FOR THE TEST RUN
   NUM_ROBOTS=4
-  NB_NOISE_RES_EVALS=15
-  NB_PARTICLES=25
+  NB_NOISE_RES_EVALS=5
+  NB_PARTICLES=10
   echo "Number of particles =" $NB_PARTICLES
   echo "Number of noise resistant evaluations =" $NB_NOISE_RES_EVALS
   echo "Number of nodes running Webots instances =" $NB_NODES
-  cd $(pwd)/../../jobfiles
+  # cd $(pwd)/../../jobfiles
   #cd /root/Rovables/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles
   pwd
   # MODIFIED FOR NOISE RESISTANT PSO
