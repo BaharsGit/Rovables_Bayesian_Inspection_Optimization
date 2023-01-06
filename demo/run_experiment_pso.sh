@@ -45,8 +45,6 @@ then
   echo "Number of particles =" $NB_PARTICLES
   echo "Number of noise resistant evaluations =" $NB_NOISE_RES_EVALS
   echo "Number of nodes running Webots instances =" $NB_NODES
-  # cd $(pwd)/../../jobfiles
-  #cd /root/Rovables/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles
   pwd
   # MODIFIED FOR NOISE RESISTANT PSO
   python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO
