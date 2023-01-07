@@ -15,7 +15,7 @@ PARTICLE_ID=$2
 # MODIFIED FOR NOISE RESISTANT PSO
 INSTANCE_ID=$3
 NUM_ROBOTS=$4
-RUN_TEST_FUNC=1
+RUN_TEST_FUNC=false
 
 line=$((INSTANCE_ID + 1))
 
@@ -76,10 +76,10 @@ export WB_WORKING_DIR=$JOB_BASE_DIR
 export NOISE_SEED=$INSTANCE_ID
 export FILL_RATIO=$FILL_RATIO
 
-echo "Generating world and arena files..."
 
-if RUN_TEST_FUNC
+if [ "$RUN_TEST_FUNC" = false ] ;
 then
+   echo "Generating world and arena files..."
    python3 -u $(pwd)/../../python_code/simSetupPSO.py -pid $PARTICLE_ID -iid $INSTANCE_ID -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS
 fi
 echo "(`date`) Performing a total of $N_RUNS runs for particle $PARTICLE_ID"
@@ -101,15 +101,16 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
       
       # launch webots
       # logs are redirected to webots_log.txt file
-      if RUN_TEST_FUNC
+      if $RUN_TEST_FUNC
       then
-         #time timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt 
-         time timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt 
-         echo "Running file $WEBWORLD"
-      else
          echo "Running Test Function"
          echo $5
          echo $5 > $JOB_BASE_DIR/local_fitness.txt
+         
+      else
+         echo "Running file $WEBWORLD"
+         #time timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt 
+         time timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt 
       fi
 
       # waiting just a while before copying the output

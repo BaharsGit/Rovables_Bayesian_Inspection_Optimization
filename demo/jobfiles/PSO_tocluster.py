@@ -87,7 +87,7 @@ def test_optimization_space(position):
     #Using the Rosenbrock function, where the minimum is X_n = 1
     for i in range(num_dimensions-1):
         test_fitness = test_fitness + 100*math.pow((position[i+1] - math.pow(position[i], 2)), 2) + math.pow((1-position[0]), 2)
-    test_fitness = np.random.normal(test_fitness, test_fitness*0.0001, 1)
+    test_fitness = np.random.normal(test_fitness, test_fitness*0.001, 1)
     return test_fitness[0]
 
 # --- MAIN ---------------------------------------------------------------------+
@@ -353,7 +353,7 @@ os.mkdir(run_dir)
 # initial=[5,5]               
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
-PARTICLE_SET = 5
+PARTICLE_SET = 1
 bounds = []
 num_dimensions = 6
 x0 = []
