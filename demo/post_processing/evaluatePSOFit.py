@@ -46,9 +46,11 @@ savePlots = 0
 #rootdir = '/home/darren/Documents/ICRA_LAUNCH/demo/jobfiles/Run_2/'
 # DIRECTOR FOR ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/spike_fix/jobfiles/Run_1/'
 # DIRECTORY FOR NO ALPHA: '/home/dchiu/Documents/ICRA_LAUNCHES/no_alpha_particle/jobfiles/Run_1/'
-
-psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/expensive_data/demo/jobfiles/Run_0/'
-psodir = '/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/'
+print(os.getcwd())
+run_num = "2"
+# psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/expensive_data/demo/jobfiles/Run_0/'
+# psodir = '/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/'
+psodir = str(os.getcwd()) + "../jobfiles/Run_" + run_num
 #psodir = '/Users/darrenchiu/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_6/'
 
 #BASELINE DIRECTORY
