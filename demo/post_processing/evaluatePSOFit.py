@@ -16,7 +16,7 @@ incorrect_fitness = 11200
 num_baseline = 100
 num_particles = 10
 num_noise = 5
-num_gen = 8                                                                                                                                   
+num_gen = 15                                                                                                                                   
 num_robots = 4
 particle_dim = 6
 probIn = []
@@ -50,7 +50,8 @@ print(os.getcwd())
 run_num = "2"
 # psodir = '/home/dchiu/Documents/ICRA_LAUNCHES/expensive_data/demo/jobfiles/Run_0/'
 # psodir = '/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/'
-psodir = str(os.getcwd()) + "../jobfiles/Run_" + run_num
+psodir = str(os.getcwd()) + "/demo/jobfiles/Run_" + run_num + "/"
+psodir = (str(os.getcwd())) + "/Series_webots_test/"
 #psodir = '/Users/darrenchiu/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_6/'
 
 #BASELINE DIRECTORY

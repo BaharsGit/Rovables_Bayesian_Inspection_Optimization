@@ -172,7 +172,7 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
 if [ $INSTANCE_ID -ge 0 ]
 then
    mv $WB_WORKING_DIR/local_fitness.txt ${OUTPUT_DIR}/local_fitness_${PARTICLE_ID}_${INSTANCE_ID}.txt
-
+   mv $WB_WORKING_DIR/webots_log.txt ${OUTPUT_DIR}/webots_log_${PARTICLE_ID}_${INSTANCE_ID}.txt
 else 
    mv $WB_WORKING_DIR/local_fitness.txt ${OUTPUT_DIR}/local_fitness_${PARTICLE_ID}.txt
 

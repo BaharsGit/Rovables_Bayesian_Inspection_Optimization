@@ -77,7 +77,7 @@ static std::string name;
 static double speed = 10.0;
 static int rand_const_forward = 750; //Range for random value to go forward 
 static int rand_const_turn = 50; //Range for random value to turn
-static int pause_time = 100;
+static int pause_time = 5;
 static double p;
 static int direction = LEFT;
 static int forward_count;

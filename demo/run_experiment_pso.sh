@@ -31,23 +31,25 @@ cd $(pwd)/jobfiles
 if [ $TEST_PSO -eq 1 ]
 then 
   echo "Running PSO Test"
-  cd $(pwd)/controllers/bayes_fsm
+  cd $(pwd)/../controllers/bayes_fsm
   pwd
   #cd /root/Rovables/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm
   export WEBOTS_HOME=/usr/local/webots
   make clean
   make
 
+  cd $(pwd)/../../jobfiles
   # DEFINE FOR THE TEST RUN
   NUM_ROBOTS=4
-  NB_NOISE_RES_EVALS=10
-  NB_PARTICLES=10
+  NB_NOISE_RES_EVALS=5
+  NB_PARTICLES=5
   echo "Number of particles =" $NB_PARTICLES
   echo "Number of noise resistant evaluations =" $NB_NOISE_RES_EVALS
   echo "Number of nodes running Webots instances =" $NB_NODES
   pwd
   # MODIFIED FOR NOISE RESISTANT PSO
   python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO
+  
 # RUN PARALLEL
 else 
   if [ $MY_ID -eq $MAIN_ID ]; then
@@ -55,7 +57,7 @@ else
     echo "Running PSO script"
     
     # MODIFIED FOR COMPILATION ON AWS INSTANCES TO AVOID NON-COMPATIBLE BINARY WARNING
-    cd $(pwd)/controllers/bayes_fsm
+    cd $(pwd)/../controllers/bayes_fsm
     export WEBOTS_HOME=/usr/local/webots
     make clean
     make

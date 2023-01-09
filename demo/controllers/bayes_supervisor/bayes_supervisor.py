@@ -35,6 +35,7 @@ accuracy = []
 reset_flag = 0
 defArray = []
 defIndex = 0
+decision_switch_count = 1
 
 print(os.name)
 print(platform.system())
@@ -248,7 +249,8 @@ while supervisor.step(timestep) != -1:
                     fitness[i] = fitness[i] + evaluateFitness(float(currentData[8:]), float(belief))
                 dec_time[i] = currentData[8:]
                 if (dec_time[i] != float(currentData[8:])):
-                    fitness[i] = fitness[i] + evaluateFitness(float(currentData[8:]), float(belief))
+                    decision_switch_count = decision_switch_count + 1
+                    fitness[i] = (fitness[i] + evaluateFitness(float(currentData[8:]), float(belief))) / decision_switch_count
                     dec_time[i] = currentData[8:]
 
         csvProbData.append(rowProbData)
