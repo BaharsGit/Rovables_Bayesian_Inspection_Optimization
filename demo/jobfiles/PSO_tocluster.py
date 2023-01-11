@@ -358,14 +358,25 @@ bounds = []
 num_dimensions = 6
 x0 = []
 
+#TAO NEEDS TO INCLUDE CROSSING ONE SQUARE BOTH UNDER AND OVER 
+#TIME STEPS TO CROSS ONE SQUARE
+#LB = TIME / NUM
+#UB = TIME * NUM
+# SET ALPHA TO ZERO, DO NOT INCLUDE 
+# SET PAUSE TO ZERO
+# RANDOM 
+# TAO SHOULD BE EQUAL OR LARGER THAN THE LB OF RANDOM FORWARD, UB SHOULD BE THE SIZE OF THE WHOLE ARENA
+# (UB RANDOM FORWARD / LB TAO) * NUM
+# RUN PARTICLE 1 AND PARTICLE 3 SET WITH THE PROPER BOUNDS
+
 if (PARTICLE_SET == 1): # SET ONE 
-    bounds = [10, 500, 10, 350, 20, 3000, 10, 90, 5, 100, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    bounds = [10, 500, 10, 350, 20, 3000, 5, 95, 0, 100, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 60, 200] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 2):
     bounds = [10, 500, 10, 350, 20, 3000, 10, 90, 0, 0, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 0, 15] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 3):
-    bounds = [0, 0, 10, 350, 20, 3000, 10, 90, 5, 100, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    bounds = [0, 0, 10, 350, 20, 3000, 10, 90, 5, 100, 0, 2500]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 60, 15]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 4):
     bounds = [0, 0, 10, 350, 20, 3000, 10, 90, 0, 0, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
