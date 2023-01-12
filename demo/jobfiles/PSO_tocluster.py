@@ -357,7 +357,7 @@ PARTICLE_SET = 1
 bounds = []
 num_dimensions = 6
 x0 = []
-
+# One Square = 0.0625 m. Rovable travels 0.0276816 m/s. Rovable travels one square in 2.257817 s
 #TAO NEEDS TO INCLUDE CROSSING ONE SQUARE BOTH UNDER AND OVER 
 #TIME STEPS TO CROSS ONE SQUARE
 #LB = TIME / NUM
@@ -368,9 +368,14 @@ x0 = []
 # TAO SHOULD BE EQUAL OR LARGER THAN THE LB OF RANDOM FORWARD, UB SHOULD BE THE SIZE OF THE WHOLE ARENA
 # (UB RANDOM FORWARD / LB TAO) * NUM
 # RUN PARTICLE 1 AND PARTICLE 3 SET WITH THE PROPER BOUNDS
+square_time = 2257.817 #this is in ms
+time_step = 8 # this is in ms 
+tao_square = square_time / time_step 
+time_to_cross_arena = 36125.079475174839899 #ms
+step_to_cross_arena = time_to_cross_arena / time_step
 
 if (PARTICLE_SET == 1): # SET ONE 
-    bounds = [10, 500, 10, 350, 20, 3000, 5, 95, 0, 100, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    bounds = [0, 500, tao_square/3, tao_square*3, tao_square/3, step_to_cross_arena, 5, 95, 0, 100, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 60, 200] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 2):
     bounds = [10, 500, 10, 350, 20, 3000, 10, 90, 0, 0, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
@@ -390,7 +395,7 @@ WORST_FITNESS=100000
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
 # MODIFIED FOR NOISE RESISTANT PSO
-PSO(x0, fitness_evaluation, bounds, maxiter=100, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
+PSO(x0, fitness_evaluation, bounds, maxiter=1000, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)

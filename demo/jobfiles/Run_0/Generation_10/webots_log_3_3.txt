@@ -1,0 +1,326 @@
+Warning: QApplication: invalid style override 'adwaita' passed, ignoring it.
+	Available styles: Windows, Fusion
+INFO: bayes_supervisor: Starting controller: python3 -u bayes_supervisor.py 3
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 3
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 3
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 3
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 3
+posix
+Linux
+Supervisor Fill Ratio:  0.52
+['rov_0', 'rov_1', 'rov_2', 'rov_3']
+Using Supervisor Seed:  3
+Controller Seed: 3
+Reading in Parameters: 
+58.6782
+94.0757
+4234.69
+7.54907
+1.52529
+10.8094
+Alpha Prior: 59
+Tao: 94
+Random Forward: 4234
+Collision Avoidance Trigger: 7.54907
+Hysteresis Timer: 1
+Observation Wait Time: 10
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 3
+Reading in Parameters: 
+58.6782
+94.0757
+4234.69
+7.54907
+1.52529
+10.8094
+Alpha Prior: 59
+Tao: 94
+Random Forward: 4234
+Collision Avoidance Trigger: 7.54907
+Hysteresis Timer: 1
+Observation Wait Time: 10
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 3
+Reading in Parameters: 
+58.6782
+94.0757
+4234.69
+7.54907
+1.52529
+10.8094
+Alpha Prior: 59
+Tao: 94
+Random Forward: 4234
+Collision Avoidance Trigger: 7.54907
+Hysteresis Timer: 1
+Observation Wait Time: 10
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 3
+Reading in Parameters: 
+58.6782
+94.0757
+4234.69
+7.54907
+1.52529
+10.8094
+Alpha Prior: 59
+Tao: 94
+Random Forward: 4234
+Collision Avoidance Trigger: 7.54907
+Hysteresis Timer: 1
+Observation Wait Time: 10
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+FSM State: 0 Robot 0 Belief: 1.73472e-18 -> 59, 1
+FSM State: 0 Robot 1 Belief: 1.73472e-18 -> 59, 1
+FSM State: 0 Robot 2 Belief: 1.73472e-18 -> 59, 1
+FSM State: 0 Robot 3 Belief: 1.73472e-18 -> 59, 1
+0 Initial Hysteresis Start 11
+3 Initial Hysteresis Start 11
+1 Initial Hysteresis Start 11
+0 Hysteresis Condition Check
+0 Positive Feedback - White
+0 Decision time: 8.352
+3 Hysteresis Condition Check
+3 Positive Feedback - White
+3 Decision time: 9.08
+1 Hysteresis Condition Check
+1 Positive Feedback - White
+1 Decision time: 9.096
+2 Initial Hysteresis Start 11
+2 Hysteresis Condition Check
+2 Positive Feedback - White
+2 Decision time: 11.344
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 1.07064e-48 -> 309, 48
+FSM State: 0 Robot 1 Belief: 1.15188e-52 -> 313, 43
+FSM State: 0 Robot 2 Belief: 4.90554e-49 -> 308, 47
+FSM State: 1 Robot 3 Belief: 4.9206e-33 -> 188, 25
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 2.82724e-88 -> 563, 85
+FSM State: 1 Robot 1 Belief: 2.61673e-84 -> 556, 89
+FSM State: 0 Robot 2 Belief: 4.28947e-82 -> 549, 90
+FSM State: 0 Robot 3 Belief: 1.01075e-127 -> 603, 44
+FSM State: 0 Robot 0 Belief: 6.63642e-134 -> 869, 133
+FSM State: 0 Robot 1 Belief: 1.7479e-134 -> 869, 132
+FSM State: 0 Robot 2 Belief: 1.15354e-124 -> 856, 144
+FSM State: 0 Robot 3 Belief: 3.09992e-176 -> 913, 86
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 1.68785e-174 -> 1154, 181
+FSM State: 0 Robot 1 Belief: 3.87896e-184 -> 1165, 169
+FSM State: 1 Robot 2 Belief: 2.23511e-156 -> 1123, 201
+FSM State: 0 Robot 3 Belief: 5.86945e-224 -> 1208, 125
+FSM State: 1 Robot 0 Belief: 8.98166e-186 -> 1218, 188
+FSM State: 1 Robot 1 Belief: 4.99293e-188 -> 1289, 214
+FSM State: 1 Robot 2 Belief: 5.30415e-160 -> 1141, 202
+FSM State: 0 Robot 3 Belief: 1.31388e-222 -> 1342, 177
+FSM State: 1 Robot 0 Belief: 8.98166e-186 -> 1218, 188
+FSM State: 1 Robot 1 Belief: 4.99293e-188 -> 1289, 214
+FSM State: 1 Robot 2 Belief: 6.23559e-203 -> 1333, 206
+FSM State: 0 Robot 3 Belief: 3.72621e-210 -> 1392, 218
+FSM State: 1 Robot 0 Belief: 1.05367e-248 -> 1478, 189
+FSM State: 1 Robot 1 Belief: 4.99293e-188 -> 1289, 214
+FSM State: 1 Robot 2 Belief: 6.23559e-203 -> 1333, 206
+FSM State: 0 Robot 3 Belief: 1.13877e-194 -> 1436, 266
+FSM State: 1 Robot 0 Belief: 1.05367e-248 -> 1478, 189
+FSM State: 1 Robot 1 Belief: 4.99293e-188 -> 1289, 214
+FSM State: 4 Robot 2 Belief: 1.04356e-261 -> 1587, 211
+FSM State: 5 Robot 3 Belief: 6.82979e-189 -> 1493, 304
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 2.69984e-306 -> 1717, 193
+FSM State: 0 Robot 1 Belief: 3.8371e-282 -> 1690, 219
+FSM State: 1 Robot 2 Belief: 4.47292e-283 -> 1686, 216
+FSM State: 0 Robot 3 Belief: 1.01872e-188 -> 1568, 340
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 2006, 238
+FSM State: 0 Robot 1 Belief: 0 -> 1986, 257
+FSM State: 0 Robot 2 Belief: 0 -> 1993, 249
+FSM State: 0 Robot 3 Belief: 7.59985e-229 -> 1853, 388
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 2302, 281
+FSM State: 0 Robot 1 Belief: 0 -> 2276, 306
+FSM State: 0 Robot 2 Belief: 0 -> 2289, 292
+FSM State: 0 Robot 3 Belief: 2.69112e-275 -> 2151, 429
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 2617, 305
+FSM State: 1 Robot 1 Belief: 0 -> 2562, 355
+FSM State: 0 Robot 2 Belief: 0 -> 2572, 349
+FSM State: 0 Robot 3 Belief: 0 -> 2453, 467
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0 -> 2911, 350
+FSM State: 1 Robot 1 Belief: 0 -> 2865, 393
+FSM State: 1 Robot 2 Belief: 0 -> 2876, 384
+FSM State: 1 Robot 3 Belief: 0 -> 2752, 501
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 3194, 381
+FSM State: 0 Robot 1 Belief: 0 -> 3151, 423
+FSM State: 1 Robot 2 Belief: 0 -> 3145, 423
+FSM State: 0 Robot 3 Belief: 0 -> 3029, 544
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 3486, 425
+FSM State: 0 Robot 1 Belief: 0 -> 3448, 462
+FSM State: 0 Robot 2 Belief: 0 -> 3454, 455
+FSM State: 0 Robot 3 Belief: 0 -> 3327, 581
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 3769, 469
+FSM State: 0 Robot 1 Belief: 0 -> 3733, 504
+FSM State: 1 Robot 2 Belief: 0 -> 3741, 486
+FSM State: 0 Robot 3 Belief: 0 -> 3608, 628
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0 -> 4001, 505
+FSM State: 0 Robot 1 Belief: 0 -> 4002, 544
+FSM State: 0 Robot 2 Belief: 0 -> 4029, 516
+FSM State: 0 Robot 3 Belief: 0 -> 3874, 670
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 4287, 530
+FSM State: 0 Robot 1 Belief: 0 -> 4236, 580
+FSM State: 0 Robot 2 Belief: 0 -> 4247, 568
+FSM State: 0 Robot 3 Belief: 0 -> 4133, 681
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 4557, 577
+FSM State: 0 Robot 1 Belief: 0 -> 4511, 622
+FSM State: 0 Robot 2 Belief: 0 -> 4539, 593
+FSM State: 1 Robot 3 Belief: 0 -> 4408, 720
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 4819, 623
+FSM State: 0 Robot 1 Belief: 0 -> 4783, 668
+FSM State: 0 Robot 2 Belief: 0 -> 4824, 626
+FSM State: 0 Robot 3 Belief: 0 -> 4688, 761
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 2 Robot 0 Belief: 0 -> 5106, 649
+FSM State: 2 Robot 1 Belief: 0 -> 5039, 715
+FSM State: 2 Robot 2 Belief: 0 -> 5086, 667
+FSM State: 3 Robot 3 Belief: 0 -> 4945, 807
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 5404, 695
+FSM State: 0 Robot 1 Belief: 0 -> 5342, 756
+FSM State: 0 Robot 2 Belief: 0 -> 5387, 710
+FSM State: 0 Robot 3 Belief: 0 -> 5244, 852
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0 -> 5690, 735
+FSM State: 0 Robot 1 Belief: 0 -> 5618, 809
+FSM State: 0 Robot 2 Belief: 0 -> 5680, 746
+FSM State: 1 Robot 3 Belief: 0 -> 5528, 888
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 5951, 781
+FSM State: 0 Robot 1 Belief: 0 -> 5890, 841
+FSM State: 0 Robot 2 Belief: 0 -> 5933, 797
+FSM State: 0 Robot 3 Belief: 0 -> 5824, 905
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 6227, 825
+FSM State: 1 Robot 1 Belief: 0 -> 6164, 883
+FSM State: 0 Robot 2 Belief: 0 -> 6223, 827
+FSM State: 0 Robot 3 Belief: 0 -> 6088, 956
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 6498, 876
+FSM State: 0 Robot 1 Belief: 0 -> 6452, 930
+FSM State: 0 Robot 2 Belief: 0 -> 6520, 861
+FSM State: 0 Robot 3 Belief: 0 -> 6379, 1001
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 6798, 912
+FSM State: 0 Robot 1 Belief: 0 -> 6740, 969
+FSM State: 0 Robot 2 Belief: 0 -> 6820, 888
+FSM State: 0 Robot 3 Belief: 0 -> 6667, 1040
+FSM State: 0 Robot 0 Belief: 0 -> 7065, 939
+FSM State: 0 Robot 1 Belief: 0 -> 6990, 1013
+FSM State: 0 Robot 2 Belief: 0 -> 7069, 933
+FSM State: 1 Robot 3 Belief: 0 -> 6923, 1078
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 7359, 979
+FSM State: 1 Robot 1 Belief: 0 -> 7287, 1048
+FSM State: 1 Robot 2 Belief: 0 -> 7355, 976
+FSM State: 0 Robot 3 Belief: 0 -> 7214, 1123
+FSM State: 0 Robot 0 Belief: 0 -> 7642, 1019
+FSM State: 1 Robot 1 Belief: 0 -> 7580, 1078
+FSM State: 0 Robot 2 Belief: 0 -> 7637, 1023
+FSM State: 1 Robot 3 Belief: 0 -> 7485, 1168
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 7915, 1069
+FSM State: 0 Robot 1 Belief: 0 -> 7884, 1105
+FSM State: 0 Robot 2 Belief: 0 -> 7902, 1077
+FSM State: 1 Robot 3 Belief: 0 -> 7776, 1211
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0 -> 8190, 1114
+FSM State: 0 Robot 1 Belief: 0 -> 8170, 1140
+FSM State: 0 Robot 2 Belief: 0 -> 8190, 1119
+FSM State: 0 Robot 3 Belief: 0 -> 8047, 1261
+FSM State: 0 Robot 0 Belief: 0 -> 8481, 1163
+FSM State: 1 Robot 1 Belief: 0 -> 8444, 1173
+FSM State: 0 Robot 2 Belief: 0 -> 8494, 1149
+FSM State: 1 Robot 3 Belief: 0 -> 8339, 1301
+RESET POSITIONS
+INFO: bayes_supervisor: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+Decision Times:  [ 8.352  9.096 11.344  9.08 ]
+Fitness of particle:  37.872
+Wrote file: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job10_3_3/local_fitness
+Ceaning up simulation

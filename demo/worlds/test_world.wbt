@@ -1,0 +1,40 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  CFM 0.1
+  ERP 0.1
+  basicTimeStep 8
+  coordinateSystem "NUE"
+  contactProperties [
+    ContactProperties {
+      material2 "WheelMat"
+    }
+  ]
+}
+Viewpoint {
+  orientation -0.32230027724791865 0.9238211087423074 0.2065843419237013 1.2131368900987562
+  position 2.39465747542791 0.9324174976743704 1.4007958808161018
+}
+TexturedBackgroundLight {
+}
+DEF surface Solid {
+  translation 0.5 0 0.5
+  rotation 0 -0.9999999999999999 0 1.5707953071795862
+  children [
+    Shape {
+      appearance Appearance {
+        texture ImageTexture {
+        }
+      }
+      geometry Plane {
+      }
+    }
+  ]
+  contactMaterial "Metal"
+  boundingObject Plane {
+  }
+}
+Rovable {
+  translation 0.33 0.011 0.25
+  rotation 1 0 0 -1.5707953071795862
+  controller "bayes_fsm"
+}

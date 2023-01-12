@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D 
 from matplotlib.animation import FuncAnimation
 
-psodir = (str(os.getcwd())) + "/../jobfiles/Run_3"
+psodir = (str(os.getcwd())) + "/demo/jobfiles/Run_0"
 param_min = [10, 10, 20, 10, 5, 10]
 param_max = [500, 350, 3000, 90, 100, 250]
 worst_case_fitess = 11200
@@ -86,6 +86,7 @@ def psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen):
     bottom = avg_gen - std_gen
     bottom[bottom<0] = 0
     plt.fill_between(np.arange(num_gen), bottom, avg_gen + std_gen, where=(avg_gen + std_gen)>0, color='blue', alpha=0.3)
+    plt.show()
 
 
 def animateParameter(l, param_gen, avg_gen, best_gen):
@@ -132,13 +133,13 @@ def animateParameter(l, param_gen, avg_gen, best_gen):
     # run the animation
     ani = FuncAnimation(fig, animate, frames=num_gen, interval=1000, repeat=True)
 
-    # plt.show()
-    ani.save('animation.gif', writer='imagemagick', fps=1)
+    plt.show()
+    #ani.save('animation.gif', writer='imagemagick', fps=1)
 
 
 avg_gen, std_gen, fit_gen, best_gen, best_id_gen, param_gen = read_data(std_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen)
-#psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen, num_gen)
-animateParameter(0, param_gen, avg_gen, best_gen)
+psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen)
+#animateParameter(0, param_gen, avg_gen, best_gen)
 
 # Add live view of robot decisions side by side.
 # Set pause time to zero and check values 
