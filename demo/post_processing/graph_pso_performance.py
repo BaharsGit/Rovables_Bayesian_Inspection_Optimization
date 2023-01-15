@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D 
 from matplotlib.animation import FuncAnimation
 
-psodir = (str(os.getcwd())) + "/demo/jobfiles/Run_0"
+psodir = (str(os.getcwd())) + "/../../series_test_webots_fix_bounds"
 param_min = [10, 10, 20, 10, 5, 10]
 param_max = [500, 350, 3000, 90, 100, 250]
 worst_case_fitess = 11200
-num_particles = 5
+num_particles = 10
 num_noise = 5
 num_gen = 15
 num_robots = 4
@@ -18,11 +18,12 @@ particle_dim = 6
 std_gen = np.empty(num_gen) #tracks std deviation of particles per generation
 avg_gen = np.empty(num_gen) #tracks average of particles per generation
 fit_gen = np.empty([num_gen, num_particles]) #tracks fitness of all particles per generation
-param_gen = np.empty([num_gen, num_particles, particle_dim]) #tracks the parameters of each particle per generation
+param_gen = np.empty([num_gen, num_particles, particle_dim]) #tracks the normalized parameters of each particle per generation
+best_param_gen = np.empty([num_gen, particle_dim]) #tracks the global best particle parameter per generation
 best_gen = np.empty(num_gen) #tracks the fitness of the best particle per generation
 best_id_gen = np.empty(num_gen) #tracks the index of the best overeal particle per generation
 
-def read_data(std_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen):
+def read_data(std_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, best_param_gen):
     """
     This function reads in fitness files from the chosen directory and generates standard deviation and average fitness performance
     to be plotted
@@ -75,7 +76,7 @@ def read_data(std_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen):
         avg_gen[i] = statistics.mean(fit_gen[i])
         std_gen[i] = statistics.stdev(fit_gen[i])
 
-    return avg_gen, std_gen, fit_gen, best_gen, best_id_gen, param_gen
+    return avg_gen, std_gen, fit_gen, best_gen, best_id_gen, param_gen, best_param_gen
 
 def psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen):
     plt.plot(avg_gen)
@@ -116,8 +117,9 @@ def animateParameter(l, param_gen, avg_gen, best_gen):
         axFitness.yaxis.set_label_position("right")
 
         for j in range(num_particles):
-            axProjection.scatter(param_gen[:frame, j, 0], param_gen[:frame, j, 1], param_gen[:frame, j, 5], s=(param_gen[:frame, j,4]*100), color='black', alpha=0.3, label='Previous Particle Location' if j == 0 else "")           
-            axProjection.scatter(param_gen[frame, j, 0], param_gen[frame, j, 1], param_gen[frame, j, 5], s=(param_gen[frame, j,4]*100), color='green', label='Current Particle Location' if j == 0 else "")  
+            #s=(param_gen[:frame, j,4]*100)
+            axProjection.scatter(param_gen[:frame, j, 0], param_gen[:frame, j, 1], param_gen[:frame, j, 5], s=25, color='black', alpha=0.3, label='Previous Particle Location' if j == 0 else "")           
+            axProjection.scatter(param_gen[frame, j, 0], param_gen[frame, j, 1], param_gen[frame, j, 5], s=25, color='green', label='Current Particle Location' if j == 0 else "")  
             axFitness.plot(avg_gen[:frame], color='blue', label="Average Fitness" if j == 0 else "")
             axFitness.plot(best_gen[:frame], color='red', label='Best Fitness' if j == 0 else "")
             axFitness.plot(std_gen[:frame], linestyle='dashed', label='Standard Dev.' if j == 0 else "", color='purple' )
@@ -138,8 +140,8 @@ def animateParameter(l, param_gen, avg_gen, best_gen):
 
 
 avg_gen, std_gen, fit_gen, best_gen, best_id_gen, param_gen = read_data(std_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen)
-psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen)
-#animateParameter(0, param_gen, avg_gen, best_gen)
+#psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen)
+animateParameter(0, param_gen, avg_gen, best_gen)
 
 # Add live view of robot decisions side by side.
 # Set pause time to zero and check values 
