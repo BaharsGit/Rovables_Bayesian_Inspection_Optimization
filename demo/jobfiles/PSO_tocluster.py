@@ -353,7 +353,7 @@ os.mkdir(run_dir)
 # initial=[5,5]               
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
-PARTICLE_SET = 1
+PARTICLE_SET = 3
 bounds = []
 num_dimensions = 6
 x0 = []
@@ -381,8 +381,8 @@ if (PARTICLE_SET == 2):
     bounds = [10, 500, 10, 350, 20, 3000, 10, 90, 0, 0, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 0, 15] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 3):
-    bounds = [0, 0, 10, 350, 20, 3000, 10, 90, 5, 100, 0, 2500]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-    x0=[10, 200, 200, 30, 60, 15]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
+    bounds = [0, 0, tao_square/3, tao_square*3, tao_square/3, step_to_cross_arena, 5, 95, 0, 100, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    x0=[0, 200, 200, 30, 60, 200]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 4):
     bounds = [0, 0, 10, 350, 20, 3000, 10, 90, 0, 0, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 0, 15]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]

@@ -5,25 +5,41 @@ import os
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D 
 from matplotlib.animation import FuncAnimation
+from numpy.linalg import norm
 
-psodir = (str(os.getcwd())) + "/../../series_test_webots_fix_bounds"
-param_min = [10, 10, 20, 10, 5, 10]
-param_max = [500, 350, 3000, 90, 100, 250]
+"""
+TODO: 
+1. Add a standard deviation on location of current generation
+2. Reimplement normalized L2 distance 
+"""
+square_time = 2257.817 #this is in ms
+time_step = 8 # this is in ms 
+tao_square = square_time / time_step 
+time_to_cross_arena = 36125.079475174839899 #ms
+step_to_cross_arena = time_to_cross_arena / time_step
+###########################################################
+
+psodir = (str(os.getcwd())) + "/demo/jobfiles/Run_0"
+param_min = [0, tao_square/3, tao_square/3, 10, 5, 10]
+param_max = [500, tao_square*3, step_to_cross_arena, 90, 100, 250]
 worst_case_fitess = 11200
 num_particles = 10
 num_noise = 5
-num_gen = 15
+num_gen = 19
 num_robots = 4
 particle_dim = 6
 std_gen = np.empty(num_gen) #tracks std deviation of particles per generation
+std_param_gen = np.empty(num_gen) #tracks the std deviation of normalized paramters per generation
 avg_gen = np.empty(num_gen) #tracks average of particles per generation
 fit_gen = np.empty([num_gen, num_particles]) #tracks fitness of all particles per generation
 param_gen = np.empty([num_gen, num_particles, particle_dim]) #tracks the normalized parameters of each particle per generation
 best_param_gen = np.empty([num_gen, particle_dim]) #tracks the global best particle parameter per generation
+param_avg_gen = np.empty([num_gen, particle_dim]) #tracks the average normalized parameters of each particle per generation
+l2_gen = np.empty(num_gen) #tracks the l2 norm from the average swarm and the best particle
 best_gen = np.empty(num_gen) #tracks the fitness of the best particle per generation
 best_id_gen = np.empty(num_gen) #tracks the index of the best overeal particle per generation
 
-def read_data(std_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, best_param_gen):
+def read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, param_avg_gen, best_param_gen, l2_gen):
     """
     This function reads in fitness files from the chosen directory and generates standard deviation and average fitness performance
     to be plotted
@@ -36,6 +52,7 @@ def read_data(std_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, best_
     #ITERATIONS
     for i in range(num_gen):
         fitness_temp = np.empty(num_particles)
+        param_avg_temp = np.zeros(particle_dim)
         gen = psodir + "/Generation_" + str(i)
         
         #PARTICLES
@@ -66,27 +83,41 @@ def read_data(std_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, best_
                 probIn = f.read().splitlines()
             probIn = np.asarray(probIn, dtype=np.float64)
             for l in range(particle_dim):
-                probIn[l] = (probIn[l] - param_min[l]) / (param_max[l] - param_min[l])
+                if param_max[0] == 0:
+                    if (l > 0):
+                        probIn[l] = (probIn[l] - param_min[l]) / (param_max[l] - param_min[l])
+                else: 
+                    probIn[l] = (probIn[l] - param_min[l]) / (param_max[l] - param_min[l])
+            param_avg_temp = np.add(probIn, param_avg_temp)
             param_gen[i, j] = probIn
 
+
+
         best_id_gen[i] = best_id
+        best_param_gen[i] = param_gen[i, best_id]
         best_gen[i] = best_fitness
-                
+        param_avg_gen[i] = np.divide(param_avg_temp, num_particles)
+        l2_gen[i] = norm(best_param_gen[i] - param_avg_gen[i])
         fit_gen[i] = fitness_temp
         avg_gen[i] = statistics.mean(fit_gen[i])
         std_gen[i] = statistics.stdev(fit_gen[i])
 
-    return avg_gen, std_gen, fit_gen, best_gen, best_id_gen, param_gen, best_param_gen
+    return std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, param_avg_gen, best_param_gen, l2_gen
 
 def psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen):
-    plt.plot(avg_gen)
-    plt.plot(best_gen, color='red')
+    plt.plot(avg_gen, color='blue', label='Average Fitness')
+    plt.plot(best_gen, color='red', label='Best Fitness')
     for i in range(num_gen):
         x = [i]*num_particles
         plt.scatter(x, fit_gen[i], color='green', s=25)
+        if (i > 0):
+            if (best_gen[i] < best_gen[i-1]):
+                plt.axvline(x = i, linestyle='--', linewidth=0.5, color = 'k', label = 'Best Particle Found' if i == 0 else "")  
     bottom = avg_gen - std_gen
     bottom[bottom<0] = 0
     plt.fill_between(np.arange(num_gen), bottom, avg_gen + std_gen, where=(avg_gen + std_gen)>0, color='blue', alpha=0.3)
+    plt.twinx()
+    plt.plot(l2_gen, color='darkorange', label='L2 Norm')
     plt.show()
 
 
@@ -139,9 +170,9 @@ def animateParameter(l, param_gen, avg_gen, best_gen):
     #ani.save('animation.gif', writer='imagemagick', fps=1)
 
 
-avg_gen, std_gen, fit_gen, best_gen, best_id_gen, param_gen = read_data(std_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen)
-#psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen)
-animateParameter(0, param_gen, avg_gen, best_gen)
+std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, param_avg_gen, best_param_gen, l2_gen = read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, param_avg_gen, best_param_gen, l2_gen)
+psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen)
+#animateParameter(0, param_gen, avg_gen, best_gen)
 
 # Add live view of robot decisions side by side.
 # Set pause time to zero and check values 
