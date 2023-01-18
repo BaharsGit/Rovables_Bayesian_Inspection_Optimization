@@ -19,13 +19,13 @@ time_to_cross_arena = 36125.079475174839899 #ms
 step_to_cross_arena = time_to_cross_arena / time_step
 ###########################################################
 
-psodir = (str(os.getcwd())) + "/demo/jobfiles/Run_0"
+psodir = (str(os.getcwd())) + "/../../series_test_webots_fix_bounds"
 param_min = [0, tao_square/3, tao_square/3, 10, 5, 10]
 param_max = [500, tao_square*3, step_to_cross_arena, 90, 100, 250]
 worst_case_fitess = 11200
 num_particles = 10
 num_noise = 5
-num_gen = 19
+num_gen = 14
 num_robots = 4
 particle_dim = 6
 std_gen = np.empty(num_gen) #tracks std deviation of particles per generation
@@ -171,6 +171,7 @@ def animateParameter(l, param_gen, avg_gen, best_gen):
 
 
 std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, param_avg_gen, best_param_gen, l2_gen = read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, param_avg_gen, best_param_gen, l2_gen)
+print(best_gen)
 psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen)
 #animateParameter(0, param_gen, avg_gen, best_gen)
 

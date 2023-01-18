@@ -282,7 +282,7 @@ class PSO():
             # read the local fitnesss of each individual particle
             # determine if current particle is the best (globally)
             for particle in range(0, num_particles):
-                if (swarm[particle].fit_i < fit_best_g) or (fit_best_g == -1):
+                if (swarm[particle].fit_i < (fit_best_g*0.99)) or (fit_best_g == -1):
                     print("Found best particle at: " + str(particle) + " With fitness: " + str(swarm[particle].fit_i) + " against best fitness: " + str(fit_best_g))
                     pos_best_g = list(swarm[particle].position_i)
                     fit_best_g = float(swarm[particle].fit_i)
@@ -368,21 +368,30 @@ x0 = []
 # TAO SHOULD BE EQUAL OR LARGER THAN THE LB OF RANDOM FORWARD, UB SHOULD BE THE SIZE OF THE WHOLE ARENA
 # (UB RANDOM FORWARD / LB TAO) * NUM
 # RUN PARTICLE 1 AND PARTICLE 3 SET WITH THE PROPER BOUNDS
-square_time = 2257.817 #this is in ms
+# FIX ALPHA TO A NON-ZERO NUMBER
+# PORTION NEEDED TO TRAVEL IN UPPER BOUND OF RANDOM WALK : CA Trigger
+# BOUNDING OBSERVATION WAIT TIME TO ZERO
+# Hysterisis min number of samples we need to take before a new decision is made. 
+# CHECK CRASH FITNESS WHEN PLOTTING 
+# Filter best fitness by 1% increase\
+robot_speed = 0.0276816 # m/s
+square_size = 0.0625 # m
+square_time = (square_size/robot_speed)*1000 #this is in ms
 time_step = 8 # this is in ms 
 tao_square = square_time / time_step 
 time_to_cross_arena = 36125.079475174839899 #ms
-step_to_cross_arena = time_to_cross_arena / time_step
-
+step_to_cross_arena = time_to_cross_arena / time_step #time steps 
+# F(R_FWD, TAO, Velicty) - Max samples taken when crossing arena
+# CHECK INITIAL VALUES
 if (PARTICLE_SET == 1): # SET ONE 
-    bounds = [0, 500, tao_square/3, tao_square*3, tao_square/3, step_to_cross_arena, 5, 95, 0, 100, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-    x0=[10, 200, 200, 30, 60, 200] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
+    bounds = [0, 500, tao_square/3, tao_square*3, tao_square/3, step_to_cross_arena, 5, 95, 0, step_to_cross_arena, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    x0=[10, 200, 200, 50, step_to_cross_arena/2, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
 if (PARTICLE_SET == 2):
     bounds = [10, 500, 10, 350, 20, 3000, 10, 90, 0, 0, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 0, 15] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 3):
-    bounds = [0, 0, tao_square/3, tao_square*3, tao_square/3, step_to_cross_arena, 5, 95, 0, 100, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-    x0=[0, 200, 200, 30, 60, 200]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
+    bounds = [20, 20, tao_square/3, tao_square*3, tao_square/3, step_to_cross_arena, 5, 95, 0, step_to_cross_arena, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    x0=[20, 200, 200, 50, step_to_cross_arena/2, 0]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 4):
     bounds = [0, 0, 10, 350, 20, 3000, 10, 90, 0, 0, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 0, 15]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
