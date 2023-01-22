@@ -124,7 +124,7 @@ class Particle:
 
                 #Find STD and Mean when the array is full
                 if (len(self.fit_array_i) == noise_resistance_evals):
-                    self.fit_i = statistics.stdev(self.fit_array_i) + statistics.mean(self.fit_array_i)
+                    self.fit_i = 1.1*statistics.stdev(self.fit_array_i) + statistics.mean(self.fit_array_i)
                     
                     # check to see if the current position is an individual best
                     if ((self.fit_i < self.fit_best_i) or (self.fit_best_i == -1)):
@@ -400,6 +400,7 @@ if (PARTICLE_SET == 5):
     bounds = [0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 0, 15] 
 random.seed(0)
+print("Using Particle Set: ", bounds)
 WORST_FITNESS=100000 
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
