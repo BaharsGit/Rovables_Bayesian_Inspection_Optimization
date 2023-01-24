@@ -390,7 +390,7 @@ if (PARTICLE_SET == 2):
     bounds = [10, 500, 10, 350, 20, 3000, 10, 90, 0, 0, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 0, 15] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 3):
-    bounds = [20, 20, tao_square/3, tao_square*3, tao_square/3, step_to_cross_arena, 5, 95, 0, step_to_cross_arena, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    bounds = [10, 10, tao_square/3, tao_square*3, tao_square/3, step_to_cross_arena, 5, 95, 0, step_to_cross_arena, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[20, 200, 200, 50, step_to_cross_arena/2, 0]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 4):
     bounds = [0, 0, 10, 350, 20, 3000, 10, 90, 0, 0, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
