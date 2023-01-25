@@ -41,7 +41,7 @@ then
   cd $(pwd)/../../jobfiles
   # DEFINE FOR THE TEST RUN
   NUM_ROBOTS=4
-  NB_NOISE_RES_EVALS=5
+  NB_NOISE_RES_EVALS=10
   NB_PARTICLES=10
   echo "Number of particles =" $NB_PARTICLES
   echo "Number of noise resistant evaluations =" $NB_NOISE_RES_EVALS
