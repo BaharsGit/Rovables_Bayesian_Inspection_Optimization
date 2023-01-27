@@ -19,13 +19,13 @@ time_to_cross_arena = 36125.079475174839899 #ms
 step_to_cross_arena = time_to_cross_arena / time_step
 ###########################################################
 
-psodir = (str(os.getcwd())) + "/demo/jobfiles/Run_0"
+psodir = (str(os.getcwd())) + "/demo/jobfiles/Run_1"
 param_min = [0, tao_square/3, tao_square/3, 10, 5, 10]
 param_max = [500, tao_square*3, step_to_cross_arena, 90, 100, 250]
 worst_case_fitess = 11200
 num_particles = 10
 num_noise = 5
-num_gen = 18
+num_gen = 14
 num_robots = 4
 particle_dim = 6
 std_gen = np.empty(num_gen) #tracks std deviation of particles per generation
@@ -68,6 +68,8 @@ def read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, p
                 with open(text) as f:
                     fit = f.read().splitlines()
 
+                if float(fit[0]) == 11200:
+                    print(i, j, k)
                 noise_list[k] = float(fit[0])
 
             #Holds the particle fitness for this iteration
