@@ -10,7 +10,7 @@ from numpy.linalg import norm
 """
 TODO: 
 1. Add a standard deviation on location of current generation
-2. Reimplement normalized L2 distance 
+3. Add live view of robot decisions side by side.
 """
 square_time = 2257.817 #this is in ms
 time_step = 8 # this is in ms 
@@ -19,19 +19,21 @@ time_to_cross_arena = 36125.079475174839899 #ms
 step_to_cross_arena = time_to_cross_arena / time_step
 ###########################################################
 
-psodir = (str(os.getcwd())) + "/demo/jobfiles/Run_1"
-param_min = [0, tao_square/3, tao_square/3, 10, 5, 10]
-param_max = [500, tao_square*3, step_to_cross_arena, 90, 100, 250]
+psodir = (str(os.getcwd())) + "/../jobfiles/Run_1"
+param_min = [19, tao_square/3, tao_square/3, 5, 0, 10]
+param_max = [21, tao_square*3, step_to_cross_arena, 95, step_to_cross_arena, 250]
 worst_case_fitess = 11200
 num_particles = 10
 num_noise = 5
-num_gen = 14
+num_gen = 15
 num_robots = 4
 particle_dim = 6
+param_names = ["Alpha", "Tao", "Random Forward", "CA Trigger", "Hysterisis", "Observation Wait Time"]
 std_gen = np.empty(num_gen) #tracks std deviation of particles per generation
 std_param_gen = np.empty(num_gen) #tracks the std deviation of normalized paramters per generation
 avg_gen = np.empty(num_gen) #tracks average of particles per generation
 fit_gen = np.empty([num_gen, num_particles]) #tracks fitness of all particles per generation
+raw_param_gen = np.empty([num_gen, num_particles, particle_dim]) #tracks the raw parameters of each particle per generation
 param_gen = np.empty([num_gen, num_particles, particle_dim]) #tracks the normalized parameters of each particle per generation
 best_param_gen = np.empty([num_gen, particle_dim]) #tracks the global best particle parameter per generation
 param_avg_gen = np.empty([num_gen, particle_dim]) #tracks the average normalized parameters of each particle per generation
@@ -39,7 +41,7 @@ l2_gen = np.empty(num_gen) #tracks the l2 norm from the average swarm and the be
 best_gen = np.empty(num_gen) #tracks the fitness of the best particle per generation
 best_id_gen = np.empty(num_gen) #tracks the index of the best overeal particle per generation
 
-def read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, param_avg_gen, best_param_gen, l2_gen):
+def read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, raw_param_gen, param_gen, param_avg_gen, best_param_gen, l2_gen):
     """
     This function reads in fitness files from the chosen directory and generates standard deviation and average fitness performance
     to be plotted
@@ -68,8 +70,6 @@ def read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, p
                 with open(text) as f:
                     fit = f.read().splitlines()
 
-                if float(fit[0]) == 11200:
-                    print(i, j, k)
                 noise_list[k] = float(fit[0])
 
             #Holds the particle fitness for this iteration
@@ -84,6 +84,7 @@ def read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, p
             with open(prob_path) as f:
                 probIn = f.read().splitlines()
             probIn = np.asarray(probIn, dtype=np.float64)
+            raw_param_gen[i, j] = probIn
             for l in range(particle_dim):
                 if param_max[0] == 0:
                     if (l > 0):
@@ -104,7 +105,7 @@ def read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, p
         avg_gen[i] = statistics.mean(fit_gen[i])
         std_gen[i] = statistics.stdev(fit_gen[i])
 
-    return std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, param_avg_gen, best_param_gen, l2_gen
+    return std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, raw_param_gen, param_gen, param_avg_gen, best_param_gen, l2_gen
 
 def psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen):
     plt.plot(avg_gen, color='blue', label='Average Fitness')
@@ -170,12 +171,11 @@ def animateParameter(l, param_gen, avg_gen, best_gen):
 
     plt.show()
     #ani.save('animation.gif', writer='imagemagick', fps=1)
-
-
-std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, param_avg_gen, best_param_gen, l2_gen = read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, param_gen, param_avg_gen, best_param_gen, l2_gen)
-print(best_gen)
+np.set_printoptions(suppress=True)
+std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, raw_param_gen, param_gen, param_avg_gen, best_param_gen, l2_gen = read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, raw_param_gen, param_gen, param_avg_gen, best_param_gen, l2_gen)
+print("Best Particle Found: ", raw_param_gen[num_gen-1, int(best_id_gen[num_gen-1])])
+print("Best Particle Found Normalized: ", param_gen[num_gen-1, int(best_id_gen[num_gen-1])])
+print("Fitness: ", fit_gen[num_gen-1, int(best_id_gen[num_gen-1])])
 psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen)
 #animateParameter(0, param_gen, avg_gen, best_gen)
-
-# Add live view of robot decisions side by side.
-# Set pause time to zero and check values 
+# 
