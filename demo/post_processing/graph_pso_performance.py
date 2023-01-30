@@ -19,13 +19,13 @@ time_to_cross_arena = 36125.079475174839899 #ms
 step_to_cross_arena = time_to_cross_arena / time_step
 ###########################################################
 
-psodir = (str(os.getcwd())) + "/../jobfiles/Run_1"
+psodir = (str(os.getcwd())) + "/../../Run_0"
 param_min = [19, tao_square/3, tao_square/3, 5, 0, 10]
 param_max = [21, tao_square*3, step_to_cross_arena, 95, step_to_cross_arena, 250]
 worst_case_fitess = 11200
 num_particles = 10
 num_noise = 5
-num_gen = 15
+num_gen = 14
 num_robots = 4
 particle_dim = 6
 param_names = ["Alpha", "Tao", "Random Forward", "CA Trigger", "Hysterisis", "Observation Wait Time"]
@@ -121,6 +121,7 @@ def psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen):
     plt.fill_between(np.arange(num_gen), bottom, avg_gen + std_gen, where=(avg_gen + std_gen)>0, color='blue', alpha=0.3)
     plt.twinx()
     plt.plot(l2_gen, color='darkorange', label='L2 Norm')
+    plt.savefig(psodir + '/graph.png', bbox_inches='tight')
     plt.show()
 
 

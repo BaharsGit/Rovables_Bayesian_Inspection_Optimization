@@ -314,7 +314,7 @@ int main(int argc, char **argv) {
         
         p = incbeta(alpha, beta, 0.5);
         
-        if ((observationCount) > obs_wait_time) {
+        if ((observationCount) >= obs_wait_time) {
         
           // Logic for first time making decision
           if ((d_f == -1) && u_plus) {
