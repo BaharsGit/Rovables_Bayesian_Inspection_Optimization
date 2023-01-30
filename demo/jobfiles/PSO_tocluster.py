@@ -407,7 +407,7 @@ if (PARTICLE_SET == 7):
     bounds = [0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 0, 15] 
 random.seed(0)
-print("Using Particle Set: ", bounds)
+print("Using Particle Set: ", PARTICLE_SET)
 WORST_FITNESS=100000 
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
