@@ -353,7 +353,7 @@ os.mkdir(run_dir)
 # initial=[5,5]               
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
-PARTICLE_SET = 3
+PARTICLE_SET = 5
 bounds = []
 num_dimensions = 6
 x0 = []
@@ -395,7 +395,10 @@ if (PARTICLE_SET == 3):
 if (PARTICLE_SET == 4):
     bounds = [0, 0, 10, 350, 20, 3000, 10, 90, 0, 0, 10, 250]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 0, 15]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
-if (PARTICLE_SET == 5):
+if (PARTICLE_SET == 5): # SET ONE 
+    bounds = [0, 0, tao_square/3, tao_square*3, tao_square/3, step_to_cross_arena, 5, 95, tao_square/3, step_to_cross_arena, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    x0=[0, tao_square*2, tao_square, 50, step_to_cross_arena/5, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
+if (PARTICLE_SET == 7):
     # THIS IS USED WITH THE TEST OPTIMIZATION FUNCTION
     bounds = [0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 0, 15] 
