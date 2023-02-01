@@ -17,8 +17,8 @@ INSTANCE_ID=$3
 NUM_ROBOTS=$4
 TEST_FUNC_VALUE=$5
 DYNAMIC_ENV=$6
-ENV_UP=$7
-ENV_LW=$8
+ENV_UB=$7
+ENV_LB=$8
 RUN_TEST_FUNC=false
 
 line=$((INSTANCE_ID + 1))
@@ -84,7 +84,7 @@ export FILL_RATIO=$FILL_RATIO
 if [ "$RUN_TEST_FUNC" = false ] ;
 then
    echo "Generating world and arena files..."
-   python3 -u $(pwd)/../../python_code/simSetupPSO.py -pid $PARTICLE_ID -iid $INSTANCE_ID -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS -d $DYNAMIC_ENV -dup $ENV_UB -dlb $ENV_LB 
+   python3 -u $(pwd)/../../python_code/simSetupPSO.py -pid $PARTICLE_ID -iid $INSTANCE_ID -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS -d $DYNAMIC_ENV -dub $ENV_UB -dlb $ENV_LB 
 fi
 echo "(`date`) Performing a total of $N_RUNS runs for particle $PARTICLE_ID"
 
@@ -177,6 +177,7 @@ if [ $INSTANCE_ID -ge 0 ]
 then
    mv $WB_WORKING_DIR/local_fitness.txt ${OUTPUT_DIR}/local_fitness_${PARTICLE_ID}_${INSTANCE_ID}.txt
    mv $WB_WORKING_DIR/webots_log.txt ${OUTPUT_DIR}/webots_log_${PARTICLE_ID}_${INSTANCE_ID}.txt
+   # mv $WB_WORKING_DIR/arena*.txt ${OUTPUT_DIR}/webots_log_${PARTICLE_ID}_${INSTANCE_ID}.txt
 else 
    mv $WB_WORKING_DIR/local_fitness.txt ${OUTPUT_DIR}/local_fitness_${PARTICLE_ID}.txt
 

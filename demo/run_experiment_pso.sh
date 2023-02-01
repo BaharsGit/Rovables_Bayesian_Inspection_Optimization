@@ -9,7 +9,7 @@ TEST_PSO=1
 TEST_FUNC=1
 
 #RUN DYNAMIC ENVIORNMENT
-DYNAMIC_ENV=1
+DYNAMIC_ENV=5
 ENV_LB=0.45
 ENV_UB=0.55
 
@@ -54,7 +54,7 @@ then
   echo "Number of nodes running Webots instances =" $NB_NODES
   pwd
   # MODIFIED FOR NOISE RESISTANT PSO
-  python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO -tf $TEST_FUNC -d $DYNAMIC_ENV -du $ENV_UB -dl $ENV_LB
+  python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO -tf $TEST_FUNC -d $DYNAMIC_ENV -dub $ENV_UB -dlb $ENV_LB
   
 # RUN PARALLEL
 else 
@@ -71,7 +71,7 @@ else
     cd $(pwd)/../../jobfiles
 
     # MODIFIED FOR NOISE RESISTANT PSO
-    python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO -tf $TEST_FUNC -d $DYNAMIC_ENV -du $ENV_UB -dl $ENV_LB
+    python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO -tf $TEST_FUNC -d $DYNAMIC_ENV -dub $ENV_UB -dlb $ENV_LB
 
   else
     # Run particle evaluation on other nodes
@@ -99,7 +99,6 @@ else
           INSTANCE_ID=-1
           echo "Starting a Webots instance for evaluation of particle" $PARTICLE_ID
           bash ../job_lily_parallel.sh $GEN_ID $PARTICLE_ID $INSTANCE_ID $NUM_ROBOTS 0 $DYNAMIC_ENV $ENV_UB $ENV_LB
-        else
         fi
         ((GEN_ID++))
       fi

@@ -91,17 +91,17 @@ static int obs_initial = 0;
 static int observationCount = 0;
 
 //Arena Parameters
-int dynamicEnvironment = *argv[2]
-int boxSize = 8;
-int imageDim = 128;
+static int dynamicEnvironment;
+static int boxSize = 8;
+static int imageDim = 128;
 std::vector<int> grid_x;
 std::vector<int> grid_y;
  
 
 //Function declarations
 double incbeta(double a, double b, double x); //Beta function used for calculating posterior
-static int getColor(void); //Check against grid arena to observe color
-static int readArena(); //Reads in arena file
+static int getColor(int dynamicEnvironment); //Check against grid arena to observe color
+static int readArena(int dynamicEnvironment); //Reads in arena file
 static void readParameters(void); //Reads in prob.txt produced from PSO
 
 int main(int argc, char **argv) {
@@ -117,6 +117,9 @@ int main(int argc, char **argv) {
 
   std::cout << "Controller Seed: " << *argv[1] << std::endl;
   srand(*argv[1]); // Seed is set during world fild generation
+
+  int dynamicEnvironment = *argv[2];
+  std::cout << "Using Dynamic Enviornment: " << dynamicEnvironment << std::endl;
   
   const char *motors_names[2] = {"left motor", "right motor"};
   const char *distance_sensors_names[4] = {"left distance sensor", "right distance sensor", "angle left distance sensor", "angle right distance sensor"};
@@ -163,10 +166,10 @@ int main(int argc, char **argv) {
   turn_count = rand() % rand_const_turn;
   
   //Read in the 
-  readArena();
+  readArena(dynamicEnvironment);
   readParameters();
   
-  C = getColor();
+  C = getColor(dynamicEnvironment);
   
   p = incbeta(alpha, beta, 0.5);
 
@@ -284,7 +287,7 @@ int main(int argc, char **argv) {
       
       case FSM_OBS:
       {
-        C = getColor();
+        C = getColor(dynamicEnvironment);
         alpha = alpha + C;
         beta = beta + (1 - C);
         observationCount = observationCount + 1;
@@ -473,13 +476,13 @@ double incbeta(double a, double b, double x) {
     return 1.0/0.0; /*Needed more loops, did not converge.*/
 }
 
-static int getColor() {
+static int getColor(int dynamicEnvironment) {
   if (dynamicEnvironment > 0) {
     if (observationCount - arena_count > 200) {
-        grid_x.clear()
-        grid_y.clear()
+        grid_x.clear();
+        grid_y.clear();
         arena_count = observationCount;
-        readArena();
+        readArena(dynamicEnvironment);
         if (arena_index > dynamicEnvironment) {
           arena_index = 1;
         } else {
@@ -504,7 +507,7 @@ static int getColor() {
   return 0;
 }
 
-static int readArena(int arena_num) {
+static int readArena(int dynamicEnvironment) {
   if (dynamicEnvironment == 0) { 
     char arena_name[256];
     if (pPath != NULL) {

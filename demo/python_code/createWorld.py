@@ -20,7 +20,7 @@ class WorldGenerator():
         - A single .wbt file that is specific to the given seed.
     """
 
-    def __init__(self, particle_id=0, instance_id=0, fill_ratio= 0.52, robot_number=4, path=None, dynamic_env=1, env_upper=0.55, env_lower=0.45):
+    def __init__(self, particle_id=0, instance_id=0, fill_ratio= 0.52, robot_number=4, path=None, dynamic_env=0, env_upper=0.55, env_lower=0.45):
         self.particle_id = particle_id
         self.instance_id = instance_id
         self.fill_ratio = fill_ratio
@@ -95,7 +95,7 @@ class WorldGenerator():
                   i = i + 1
 
           #Save arena file to instance id specific path
-          np.savetxt(self.path + '/arena' + i + '.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
+          np.savetxt(self.path + '/arena' + str(i) + '.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
 
 
     def createPos(self):
@@ -190,6 +190,7 @@ Wall {
     
     def createRobots(self, file):
         arg = "\"" + str(self.instance_id) + "\""
+        arg2 = "\"" + str(self.dynamic_env) + "\""
         file.write(
         """Robot {
   name "Bayes Bot Supervisor"
@@ -206,7 +207,7 @@ Wall {
   rotation 1 0 0 -1.5707953071795862
   name "r""" + rov_number + """"
   controller "bayes_fsm"
-  controllerArgs """ + arg + " " + self.dynamic_env """
+  controllerArgs """ + arg + """ """ + arg2 + """
   supervisor TRUE
   customData "0.500000-"
   extensionSlot [
