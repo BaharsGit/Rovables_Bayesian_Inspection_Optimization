@@ -70,7 +70,7 @@ class WorldGenerator():
         #Save arena file to instance id specific path
         np.savetxt(self.path + '/arena.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
       else:
-        for i in range(1, self.dynamic_env+1, 1):
+        for j in range(1, self.dynamic_env+1, 1):
 
           picDim = 128
           fill = np.random.uniform(self.env_lower, self.env_upper)
@@ -95,7 +95,8 @@ class WorldGenerator():
                   i = i + 1
 
           #Save arena file to instance id specific path
-          np.savetxt(self.path + '/arena' + str(i) + '.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
+          
+          np.savetxt(self.path + '/arena' + str(j) + '.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
 
 
     def createPos(self):
@@ -207,7 +208,10 @@ Wall {
   rotation 1 0 0 -1.5707953071795862
   name "r""" + rov_number + """"
   controller "bayes_fsm"
-  controllerArgs """ + arg + """ """ + arg2 + """
+  controllerArgs [
+    """ + arg + """
+    """ + arg2 + """
+  ]
   supervisor TRUE
   customData "0.500000-"
   extensionSlot [

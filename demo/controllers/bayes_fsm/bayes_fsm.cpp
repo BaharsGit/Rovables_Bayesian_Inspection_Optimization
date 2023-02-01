@@ -4,6 +4,7 @@
 // Author:
 // Modifications:
 #include <stdlib.h>
+#include <cstdlib>
 #include <math.h>
 #include <iostream>
 #include <fstream>
@@ -115,10 +116,10 @@ int main(int argc, char **argv) {
   
   robotNum = name[1] - '0';
 
-  std::cout << "Controller Seed: " << *argv[1] << std::endl;
-  srand(*argv[1]); // Seed is set during world fild generation
+  std::cout << "Controller Seed: " << atoi(argv[1]) << std::endl;
+  srand(atoi(argv[1])); // Seed is set during world fild generation
 
-  int dynamicEnvironment = *argv[2];
+  dynamicEnvironment = atoi(argv[2]);
   std::cout << "Using Dynamic Enviornment: " << dynamicEnvironment << std::endl;
   
   const char *motors_names[2] = {"left motor", "right motor"};
@@ -479,15 +480,15 @@ double incbeta(double a, double b, double x) {
 static int getColor(int dynamicEnvironment) {
   if (dynamicEnvironment > 0) {
     if (observationCount - arena_count > 200) {
-        grid_x.clear();
-        grid_y.clear();
-        arena_count = observationCount;
-        readArena(dynamicEnvironment);
         if (arena_index > dynamicEnvironment) {
           arena_index = 1;
         } else {
           arena_index++;
         }
+        grid_x.clear();
+        grid_y.clear();
+        arena_count = observationCount;
+        readArena(dynamicEnvironment);
     }
   }
   Field *meField = me->getField("translation");
@@ -545,11 +546,11 @@ static int readArena(int dynamicEnvironment) {
   } else {
     char arena_name[256];
     if (pPath != NULL) {
-      sprintf(arena_name, "%s/arena%i.txt", pPath, arena_index);
+      sprintf(arena_name, "%s/arena%d.txt", pPath, arena_index);
     } else {
       sprintf(arena_name, "arena.txt");
     }
-    std::cout<<"Reading in Arena: " << arena_name << std::endl;
+    std::cout<<"Reading in Dynamic Arena: " << arena_name << std::endl;
     std::ifstream file(arena_name);
 
     while(!file.eof()){

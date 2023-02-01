@@ -114,7 +114,7 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
       else
          echo "Running file $WEBWORLD"
          #time timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt 
-         time timeout $WB_TIMEOUT xvfb-run webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt 
+         time timeout $WB_TIMEOUT xvfb-run -a webots --batch --mode=fast --stdout --stderr --no-rendering $WEBWORLD &> $WB_WORKING_DIR/webots_log.txt 
       fi
 
       # waiting just a while before copying the output
