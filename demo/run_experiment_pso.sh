@@ -4,8 +4,14 @@
 NB_NOISE_RES_EVALS=3
 NUM_ROBOTS=4
 
-#FLIP TO TEST PSO IN SERIES ON LOCAL
+#FLIP TO TEST PSO IN SERIES ON LOCAL OR USE TEST FUNCTION
 TEST_PSO=1
+TEST_FUNC=1
+
+#RUN DYNAMIC ENVIORNMENT
+DYNAMIC_ENV=1
+ENV_LB=0.45
+ENV_UB=0.55
 
 # Get the current AWS job indexes
 MY_ID=$((AWS_BATCH_JOB_NODE_INDEX))
@@ -48,7 +54,7 @@ then
   echo "Number of nodes running Webots instances =" $NB_NODES
   pwd
   # MODIFIED FOR NOISE RESISTANT PSO
-  python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO
+  python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO -tf $TEST_FUNC -d $DYNAMIC_ENV -du $ENV_UB -dl $ENV_LB
   
 # RUN PARALLEL
 else 
@@ -61,11 +67,11 @@ else
     export WEBOTS_HOME=/usr/local/webots
     make clean
     make
-    cd
-    cd cd $(pwd)/../../jobfiles
+
+    cd $(pwd)/../../jobfiles
 
     # MODIFIED FOR NOISE RESISTANT PSO
-    python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS
+    python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO -tf $TEST_FUNC -d $DYNAMIC_ENV -du $ENV_UB -dl $ENV_LB
 
   else
     # Run particle evaluation on other nodes
@@ -88,11 +94,12 @@ else
         then
           INSTANCE_ID=$(((($MY_ID-1)-$PARTICLE_ID)/$NB_PARTICLES))
           echo "Starting a Webots instance for evaluation of instance $INSTANCE_ID of particle $PARTICLE_ID"  
-          bash ../job_lily_parallel.sh $GEN_ID $PARTICLE_ID $INSTANCE_ID $NUM_ROBOTS
+          bash ../job_lily_parallel.sh $GEN_ID $PARTICLE_ID $INSTANCE_ID $NUM_ROBOTS 0 $DYNAMIC_ENV $ENV_UB $ENV_LB
         else
           INSTANCE_ID=-1
           echo "Starting a Webots instance for evaluation of particle" $PARTICLE_ID
-          bash ../job_lily_parallel.sh $GEN_ID $PARTICLE_ID $INSTANCE_ID $NUM_ROBOTS
+          bash ../job_lily_parallel.sh $GEN_ID $PARTICLE_ID $INSTANCE_ID $NUM_ROBOTS 0 $DYNAMIC_ENV $ENV_UB $ENV_LB
+        else
         fi
         ((GEN_ID++))
       fi

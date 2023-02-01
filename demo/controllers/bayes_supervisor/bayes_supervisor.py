@@ -36,6 +36,7 @@ reset_flag = 0
 defArray = []
 defIndex = 0
 decision_switch_count = 1
+f_change = 10 # number of times the fill arena changes during the simulation
 
 print(os.name)
 print(platform.system())

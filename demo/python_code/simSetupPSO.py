@@ -18,7 +18,9 @@ parser.add_argument("-iid", "--instance_id", required=True, type=int, default="0
 parser.add_argument("-fr", "--fill_ratio", required=True, type=float, default="0.52")
 parser.add_argument("-p", "--path", required=True)
 parser.add_argument("-r", "--num_robots", required=True, type=int, default="4")
-
+parser.add_argument("-d", "--dynamic_env", required=True, type=int, default="1")
+parser.add_argument("-dup", "--env_upper", required=True, type=float, default="0.55")
+parser.add_argument("-dlb", "--env_lower", required=True, type=float, default="0.45")
 
 args = parser.parse_args()
 

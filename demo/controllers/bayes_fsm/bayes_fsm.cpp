@@ -84,11 +84,14 @@ static int forward_count;
 static int pause_count;
 static int turn_count;
 static int control_count = 0;
+static int arena_count = 0;
+static int arena_index = 1;
 static double decision_time = 0;
 static int obs_initial = 0;
 static int observationCount = 0;
 
 //Arena Parameters
+int dynamicEnvironment = *argv[2]
 int boxSize = 8;
 int imageDim = 128;
 std::vector<int> grid_x;
@@ -98,7 +101,7 @@ std::vector<int> grid_y;
 //Function declarations
 double incbeta(double a, double b, double x); //Beta function used for calculating posterior
 static int getColor(void); //Check against grid arena to observe color
-static int readArena(void); //Reads in arena file
+static int readArena(); //Reads in arena file
 static void readParameters(void); //Reads in prob.txt produced from PSO
 
 int main(int argc, char **argv) {
@@ -471,7 +474,19 @@ double incbeta(double a, double b, double x) {
 }
 
 static int getColor() {
-
+  if (dynamicEnvironment > 0) {
+    if (observationCount - arena_count > 200) {
+        grid_x.clear()
+        grid_y.clear()
+        arena_count = observationCount;
+        readArena();
+        if (arena_index > dynamicEnvironment) {
+          arena_index = 1;
+        } else {
+          arena_index++;
+        }
+    }
+  }
   Field *meField = me->getField("translation");
   const double *meV = meField->getSFVec3f();
   double xPos = meV[2];
@@ -489,40 +504,76 @@ static int getColor() {
   return 0;
 }
 
-static int readArena() {
-  std::string filePath;
-  char arena_name[256];
-  if (pPath != NULL) {
-    sprintf(arena_name, "%s/arena.txt", pPath);
-  } else {
-    sprintf(arena_name, "arena.txt");
-  }
-  std::ifstream file(arena_name);
-
-  while(!file.eof()){
-    std::string line;
-    std::getline(file, line);
-    
-    std::stringstream iss(line);
-    
-    for (int j = 0; j < 2; j++) {
-      std::string val;
-      std::string end = "# -1";
-      std::getline (iss, val, ',');
-      std::stringstream converter(val);
-      // std::cout << val << std::endl;
-      if (val.compare(end) == 0) {
-        file.close();
-        return 1;
-      }
-      //Add to X or Y vector depending on location
-      if (j == 0) grid_x.push_back(std::stoi(val));
-      if (j == 1) grid_y.push_back(std::stoi(val));
-      
+static int readArena(int arena_num) {
+  if (dynamicEnvironment == 0) { 
+    char arena_name[256];
+    if (pPath != NULL) {
+      sprintf(arena_name, "%s/arena.txt", pPath);
+    } else {
+      sprintf(arena_name, "arena.txt");
     }
+    std::cout<<"Reading in Arena: " << arena_name << std::endl;
+    std::ifstream file(arena_name);
+
+    while(!file.eof()){
+      std::string line;
+      std::getline(file, line);
+      
+      std::stringstream iss(line);
+      
+      for (int j = 0; j < 2; j++) {
+        std::string val;
+        std::string end = "# -1";
+        std::getline (iss, val, ',');
+        std::stringstream converter(val);
+        // std::cout << val << std::endl;
+        if (val.compare(end) == 0) {
+          file.close();
+          return 1;
+        }
+        //Add to X or Y vector depending on location
+        if (j == 0) grid_x.push_back(std::stoi(val));
+        if (j == 1) grid_y.push_back(std::stoi(val));
+        
+      }
+    }
+    file.close();
+    return 0;
+  } else {
+    char arena_name[256];
+    if (pPath != NULL) {
+      sprintf(arena_name, "%s/arena%i.txt", pPath, arena_index);
+    } else {
+      sprintf(arena_name, "arena.txt");
+    }
+    std::cout<<"Reading in Arena: " << arena_name << std::endl;
+    std::ifstream file(arena_name);
+
+    while(!file.eof()){
+      std::string line;
+      std::getline(file, line);
+      
+      std::stringstream iss(line);
+      
+      for (int j = 0; j < 2; j++) {
+        std::string val;
+        std::string end = "# -1";
+        std::getline (iss, val, ',');
+        std::stringstream converter(val);
+        // std::cout << val << std::endl;
+        if (val.compare(end) == 0) {
+          file.close();
+          return 1;
+        }
+        //Add to X or Y vector depending on location
+        if (j == 0) grid_x.push_back(std::stoi(val));
+        if (j == 1) grid_y.push_back(std::stoi(val));
+        
+      }
+    }
+    file.close();
+    return 0;
   }
-  file.close();
-  return 0;
 }
 
 //Read in the parameters from prob.txt

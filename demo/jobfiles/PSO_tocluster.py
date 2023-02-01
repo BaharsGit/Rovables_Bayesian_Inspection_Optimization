@@ -248,6 +248,7 @@ class PSO():
                 # MODIFIED FOR NOISE RESISTANT PSO
                 else:
                     if (args.test_pso):
+                        #RUNS PSO IN SERIES
                         f = open("outputFile","wb")
                         #Start webots
                         os.system('echo RUNNING TEST')
@@ -258,7 +259,7 @@ class PSO():
                         print(os.getcwd())
                         # with open('/tmp/job' + str(iteration) + '_' + str(particle) + '_' + str(instance) + 'local_fitness.txt', 'w') as f:
                         #     f.write(str(test_optimization_space(swarm[particle].position_i)))
-                        subprocess.check_call(['.././job_lily_parallel.sh', str(iteration), str(particle), str(instance), '4', str(test_optimization_space(swarm[particle].position_i))], stdout=f)
+                        subprocess.check_call(['.././job_lily_parallel.sh', str(iteration), str(particle), str(instance), '4', str(test_optimization_space(swarm[particle].position_i))], str(args.dynamic), str(args.env_upper), str(args.env_lower), stdout=f)
                         
                         os.chdir("../")
                     
@@ -334,6 +335,10 @@ parser = argparse.ArgumentParser(description='Run PSO to optimize parameters in 
 parser.add_argument("-n", "--nb_particles", required=False, type=int, default="15", help="number of particles for PSO")
 parser.add_argument("-e", "--nb_noise_res_evals", required=False, type=int, default="0", help="number of noise resistance evaluations for PSO")
 parser.add_argument("-t", "--test_pso", required=False, type=int, default="0", help="Boolean to run PSO in series or parallel")
+parser.add_argument("-tf", "--test_function", required=False, type=int, default="0", help="Boolean to use the test function")
+parser.add_argument("d", "--dynamic", required=True, type=int, default="0", help="Boolean to determine if using a dynamic enviornment")
+parser.add_argument("dup", "--env_upper", required=True, type=float, default="0.55", help="Determines the upper bound of dynamic environment fill")
+parser.add_argument("dlb", "--env_lower", required=True, type=float, default="0.45", help="Determines the lower bound of dynamic enviornment fill")
 
 args = parser.parse_args()
 if args.nb_particles < 2:

@@ -15,6 +15,10 @@ PARTICLE_ID=$2
 # MODIFIED FOR NOISE RESISTANT PSO
 INSTANCE_ID=$3
 NUM_ROBOTS=$4
+TEST_FUNC_VALUE=$5
+DYNAMIC_ENV=$6
+ENV_UP=$7
+ENV_LW=$8
 RUN_TEST_FUNC=false
 
 line=$((INSTANCE_ID + 1))
@@ -80,7 +84,7 @@ export FILL_RATIO=$FILL_RATIO
 if [ "$RUN_TEST_FUNC" = false ] ;
 then
    echo "Generating world and arena files..."
-   python3 -u $(pwd)/../../python_code/simSetupPSO.py -pid $PARTICLE_ID -iid $INSTANCE_ID -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS
+   python3 -u $(pwd)/../../python_code/simSetupPSO.py -pid $PARTICLE_ID -iid $INSTANCE_ID -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS -d $DYNAMIC_ENV -dup $ENV_UB -dlb $ENV_LB 
 fi
 echo "(`date`) Performing a total of $N_RUNS runs for particle $PARTICLE_ID"
 
@@ -104,8 +108,8 @@ for (( RUN_ID=1; RUN_ID<=$N_RUNS; RUN_ID++ ))
       if $RUN_TEST_FUNC
       then
          echo "Running Test Function"
-         echo $5
-         echo $5 > $JOB_BASE_DIR/local_fitness.txt
+         echo TEST_FUNC_VALUE
+         echo TEST_FUNC_VALUE > $JOB_BASE_DIR/local_fitness.txt
          
       else
          echo "Running file $WEBWORLD"

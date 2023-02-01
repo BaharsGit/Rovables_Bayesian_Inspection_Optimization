@@ -20,12 +20,15 @@ class WorldGenerator():
         - A single .wbt file that is specific to the given seed.
     """
 
-    def __init__(self, particle_id=0, instance_id=0, fill_ratio= 0.52, robot_number=4, path=None):
+    def __init__(self, particle_id=0, instance_id=0, fill_ratio= 0.52, robot_number=4, path=None, dynamic_env=1, env_upper=0.55, env_lower=0.45):
         self.particle_id = particle_id
         self.instance_id = instance_id
         self.fill_ratio = fill_ratio
         self.robot_number = robot_number
         self.path = path
+        self.dynamic_env = dynamic_env
+        self.env_upper = env_upper
+        self.env_lower = env_lower
 
         #This will store the intial positions of the robots.
         self.initialX = [] 
@@ -40,32 +43,59 @@ class WorldGenerator():
       return 1
 
     def createArena(self):
-      
-      picDim = 128
+      #Do not use dynamic environment
+      if (self.dynamic_env == 0):
+        picDim = 128
 
-      print("Generating Arena with Fill Ratio: ", self.fill_ratio)
+        print("Generating Arena with Fill Ratio: ", self.fill_ratio)
 
-      sqSize = 8
-      picArea = picDim * picDim
-      sqArea = sqSize * sqSize
-      fillCount = math.ceil((self.fill_ratio * picArea) / sqArea)
-      startArray = np.zeros((fillCount,2)) #Defines bottom left of white square
-      possibleX = list(range(0, picDim, sqSize))
-      possibleY = list(range(0, picDim, sqSize))
-      i = 0
+        sqSize = 8
+        picArea = picDim * picDim
+        sqArea = sqSize * sqSize
+        fillCount = math.ceil((self.fill_ratio * picArea) / sqArea)
+        startArray = np.zeros((fillCount,2)) #Defines bottom left of white square
+        possibleX = list(range(0, picDim, sqSize))
+        possibleY = list(range(0, picDim, sqSize))
+        i = 0
 
-      while i < fillCount:
-          rX = random.randint(0, len(possibleX)-1)
-          rY = random.randint(0, len(possibleY)-1)
+        while i < fillCount:
+            rX = random.randint(0, len(possibleX)-1)
+            rY = random.randint(0, len(possibleY)-1)
 
-          if (self.checkCoord(possibleX[rX], possibleY[rY], startArray)):
-              startArray[i][0] = possibleX[rX]
-              startArray[i][1] = possibleY[rY]
-              i = i + 1
+            if (self.checkCoord(possibleX[rX], possibleY[rY], startArray)):
+                startArray[i][0] = possibleX[rX]
+                startArray[i][1] = possibleY[rY]
+                i = i + 1
 
-      #Save arena file to instance id specific path
-      np.savetxt(self.path + '/arena.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
+        #Save arena file to instance id specific path
+        np.savetxt(self.path + '/arena.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
+      else:
+        for i in range(1, self.dynamic_env+1, 1):
 
+          picDim = 128
+          fill = np.random.uniform(self.env_lower, self.env_upper)
+          print("Generating Arena with Fill Ratio: ", fill)
+
+          sqSize = 8
+          picArea = picDim * picDim
+          sqArea = sqSize * sqSize
+          fillCount = math.ceil((self.fill_ratio * picArea) / sqArea)
+          startArray = np.zeros((fillCount,2)) #Defines bottom left of white square
+          possibleX = list(range(0, picDim, sqSize))
+          possibleY = list(range(0, picDim, sqSize))
+          i = 0
+
+          while i < fillCount:
+              rX = random.randint(0, len(possibleX)-1)
+              rY = random.randint(0, len(possibleY)-1)
+
+              if (self.checkCoord(possibleX[rX], possibleY[rY], startArray)):
+                  startArray[i][0] = possibleX[rX]
+                  startArray[i][1] = possibleY[rY]
+                  i = i + 1
+
+          #Save arena file to instance id specific path
+          np.savetxt(self.path + '/arena' + i + '.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
 
 
     def createPos(self):
@@ -176,7 +206,7 @@ Wall {
   rotation 1 0 0 -1.5707953071795862
   name "r""" + rov_number + """"
   controller "bayes_fsm"
-  controllerArgs """ + arg + """
+  controllerArgs """ + arg + " " + self.dynamic_env """
   supervisor TRUE
   customData "0.500000-"
   extensionSlot [
