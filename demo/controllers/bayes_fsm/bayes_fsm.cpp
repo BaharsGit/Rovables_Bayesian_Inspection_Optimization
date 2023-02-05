@@ -4,7 +4,6 @@
 // Author:
 // Modifications:
 #include <stdlib.h>
-#include <cstdlib>
 #include <math.h>
 #include <iostream>
 #include <fstream>
@@ -38,7 +37,8 @@ using namespace webots;
 #define FSM_OBS 3
 #define FSM_SEND 4
 #define FSM_PULL 5
-#define STOP 1.0e-8
+#define FSM_CHECK_O 6
+#define STOP 1.0e-8 
 #define TINY 1.0e-30
 
 enum Side { LEFT, RIGHT };
@@ -92,17 +92,17 @@ static int obs_initial = 0;
 static int observationCount = 0;
 
 //Arena Parameters
-static int dynamicEnvironment;
-static int boxSize = 8;
-static int imageDim = 128;
+int dynamicEnvironment = *argv[2]
+int boxSize = 8;
+int imageDim = 128;
 std::vector<int> grid_x;
 std::vector<int> grid_y;
  
 
 //Function declarations
 double incbeta(double a, double b, double x); //Beta function used for calculating posterior
-static int getColor(int dynamicEnvironment); //Check against grid arena to observe color
-static int readArena(int dynamicEnvironment); //Reads in arena file
+static int getColor(void); //Check against grid arena to observe color
+static int readArena(); //Reads in arena file
 static void readParameters(void); //Reads in prob.txt produced from PSO
 
 int main(int argc, char **argv) {
@@ -116,11 +116,8 @@ int main(int argc, char **argv) {
   
   robotNum = name[1] - '0';
 
-  std::cout << "Controller Seed: " << atoi(argv[1]) << std::endl;
-  srand(atoi(argv[1])); // Seed is set during world fild generation
-
-  dynamicEnvironment = atoi(argv[2]);
-  std::cout << "Using Dynamic Enviornment: " << dynamicEnvironment << std::endl;
+  std::cout << "Controller Seed: " << *argv[1] << std::endl;
+  srand(*argv[1]); // Seed is set during world fild generation
   
   const char *motors_names[2] = {"left motor", "right motor"};
   const char *distance_sensors_names[4] = {"left distance sensor", "right distance sensor", "angle left distance sensor", "angle right distance sensor"};
@@ -167,10 +164,10 @@ int main(int argc, char **argv) {
   turn_count = rand() % rand_const_turn;
   
   //Read in the 
-  readArena(dynamicEnvironment);
+  readArena();
   readParameters();
   
-  C = getColor(dynamicEnvironment);
+  C = getColor();
   
   p = incbeta(alpha, beta, 0.5);
 
@@ -288,7 +285,7 @@ int main(int argc, char **argv) {
       
       case FSM_OBS:
       {
-        C = getColor(dynamicEnvironment);
+        C = getColor();
         alpha = alpha + C;
         beta = beta + (1 - C);
         observationCount = observationCount + 1;
@@ -320,68 +317,98 @@ int main(int argc, char **argv) {
         }
         
         p = incbeta(alpha, beta, 0.5);
+        //    Initial Decision Black         Initial Decision White     Decision Flips from white to black     Decision flips from black to whtie
+        if ((d_f == -1) && (p > p_c)) || ((d_f == -1) && ((1-p) > p_c)) || ((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c)) {
+          FSM_STATE = FSM_CHECK_O;
+        } else {
+          obs_initial = 0; // Failed hysteresis. Reset observation delta. 
+          FSM_STATE = FSM_RW;
+        }
+        break;
+        // if ((observationCount) >= obs_wait_time) {
         
-        if ((observationCount) >= obs_wait_time) {
-        
-          // Logic for first time making decision
-          if ((d_f == -1) && u_plus) {
+        //   // Logic for first time making decision
+        //   if ((d_f == -1) && u_plus) || ((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c)) {
+            
+        //     //Set initial observation hysterisis state 
+        //     if (obs_initial == 0 && (p > p_c || (1 - p) > p_c)) {
+        //       obs_initial = observationCount;
+        //       // std::cout << obs_initial << std::endl;
+        //       std::cout << robotNum << " Initial Hysteresis Start " << obs_initial << std::endl;
+        //     }
+        //     //Resets hysterisis state 
+        //     else if (obs_initial != 0 && (p < p_c) && ((1-p) < p_c)) {
+        //       //std::cout << robotNum << " Reset Intiial Hysteresis State" << std::endl;
+        //       obs_initial = observationCount;
+        //     } 
+        //     //Hysteresis has been met, decision flag can be set
+        //     else if ((p > p_c || (1 - p) > p_c) && (observationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
+        //       std::cout << robotNum << " Hysteresis Condition Check" << std::endl;
+        //       if (p > p_c) {
+        //         std::cout << "Positive Feedback - Black" << std::endl;
+        //         d_f = 0;
+        //       } else if ((1 - p) > p_c) {
+        //         std::cout << robotNum << " Positive Feedback - White" << std::endl;
+        //         d_f = 1;
+        //       }
   
-            //Set initial observation hysterisis state 
-            if (obs_initial == 0 && (p > p_c || (1 - p) > p_c)) {
-              obs_initial = observationCount;
-              // std::cout << obs_initial << std::endl;
-              std::cout << robotNum << " Initial Hysteresis Start " << obs_initial << std::endl;
-            }
-            //Resets hysterisis state 
-            else if (obs_initial != 0 && (p < p_c) && ((1-p) < p_c)) {
-              //std::cout << robotNum << " Reset Intiial Hysteresis State" << std::endl;
-              obs_initial = observationCount;
-            } 
-            //Hysteresis has been met, decision flag can be set
-            else if ((p > p_c || (1 - p) > p_c) && (observationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
-              std::cout << robotNum << " Hysteresis Condition Check" << std::endl;
-              if (p > p_c) {
-                std::cout << "Positive Feedback - Black" << std::endl;
-                d_f = 0;
-              } else if ((1 - p) > p_c) {
-                std::cout << robotNum << " Positive Feedback - White" << std::endl;
-                d_f = 1;
-              }
-  
-              //Mark decision times     
-              decision_time = robot->getTime();
-              std::cout << robotNum << " Decision time: " << decision_time << std::endl;
-              obs_initial = 0; 
-            }
-          } else {
+        //       //Mark decision times     
+        //       decision_time = robot->getTime();
+        //       std::cout << robotNum << " Decision time: " << decision_time << std::endl;
+        //       obs_initial = 0; 
+        //     }
+        //   } else {
           
-            // Check if decision is ever flipped
-            if (((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c))) {
-              std::cout << robotNum << " Decision Flipped!" << std::endl;
-              //Conditional to start counting 
-              if (obs_initial == 0) obs_initial = observationCount;
+        //     // Check if decision is ever flipped
+        //     if (((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c))) {
+        //       std::cout << robotNum << " Decision Flipped!" << std::endl;
+        //       //Conditional to start counting 
+        //       if (obs_initial == 0) obs_initial = observationCount;
               
-              // Once Counting passes hysteresis threshold then change decision
-              if ((observationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
-                decision_time = robot->getTime();
-                std::cout << robotNum << " Reset Decision time: " << decision_time << std::endl;
-                if (p > p_c) {
-                  std::cout << "Positive Feedback - Black" << std::endl;
-                  d_f = 0;
-                } else if ((1 - p) > p_c) {
-                  std::cout << robotNum << " Positive Feedback - White" << std::endl;
-                  d_f = 1;
-                }
-              }  
-            } else {
-              obs_initial = 0;
-            } 
-          } 
+        //       // Once Counting passes hysteresis threshold then change decision
+        //       if ((observationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
+        //         decision_time = robot->getTime();
+        //         std::cout << robotNum << " Reset Decision time: " << decision_time << std::endl;
+        //         if (p > p_c) {
+        //           std::cout << "Positive Feedback - Black" << std::endl;
+        //           d_f = 0;
+        //         } else if ((1 - p) > p_c) {
+        //           std::cout << robotNum << " Positive Feedback - White" << std::endl;
+        //           d_f = 1;
+        //         }
+        //       }  
+        //     } else {
+        //       obs_initial = 0;
+        //     } 
+        //   } 
+        // }
+      }
+      case FSM_CHECK_O:
+      { 
+        // First time we pass credibility thresdhold.
+        if (obs_initial == 0) {
+          obs_initial = observationCount;
+          std::cout << robotNum << " Initial Hysteresis Start " << obs_initial << std::endl;
+        } 
+        if (observationCount - obs_initial >= obs_hysteresis) && (obs_initial != 0){
+          //Passed hysteresis determine which decision.
+          if (p > p_c) {
+            std::cout << "Decision Made - Black" << std::endl;
+            d_f = 0;
+          } else if ((1 - p) > p_c) {
+            std::cout << robotNum << "Decision Made - White" << std::endl;
+            d_f = 1;
+          }
+
+          decision_time = robot->getTime();
+          std::cout << robotNum << " Decision time: " << decision_time << std::endl;
+          obs_initial = 0;
         }
         FSM_STATE = FSM_RW;
         break;
       }
-      
+
+
     }
     //Update robot custom data field with recent belief, and decision time (if available)
     std::string currentData = myDataField->getSFString();
@@ -477,18 +504,18 @@ double incbeta(double a, double b, double x) {
     return 1.0/0.0; /*Needed more loops, did not converge.*/
 }
 
-static int getColor(int dynamicEnvironment) {
+static int getColor() {
   if (dynamicEnvironment > 0) {
     if (observationCount - arena_count > 200) {
+        grid_x.clear()
+        grid_y.clear()
+        arena_count = observationCount;
+        readArena();
         if (arena_index > dynamicEnvironment) {
           arena_index = 1;
         } else {
           arena_index++;
         }
-        grid_x.clear();
-        grid_y.clear();
-        arena_count = observationCount;
-        readArena(dynamicEnvironment);
     }
   }
   Field *meField = me->getField("translation");
@@ -508,7 +535,7 @@ static int getColor(int dynamicEnvironment) {
   return 0;
 }
 
-static int readArena(int dynamicEnvironment) {
+static int readArena(int arena_num) {
   if (dynamicEnvironment == 0) { 
     char arena_name[256];
     if (pPath != NULL) {
@@ -546,11 +573,11 @@ static int readArena(int dynamicEnvironment) {
   } else {
     char arena_name[256];
     if (pPath != NULL) {
-      sprintf(arena_name, "%s/arena%d.txt", pPath, arena_index);
+      sprintf(arena_name, "%s/arena%i.txt", pPath, arena_index);
     } else {
       sprintf(arena_name, "arena.txt");
     }
-    std::cout<<"Reading in Dynamic Arena: " << arena_name << std::endl;
+    std::cout<<"Reading in Arena: " << arena_name << std::endl;
     std::ifstream file(arena_name);
 
     while(!file.eof()){
