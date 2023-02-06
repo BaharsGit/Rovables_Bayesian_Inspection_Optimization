@@ -38,6 +38,7 @@ using namespace webots;
 #define FSM_OBS 3
 #define FSM_SEND 4
 #define FSM_PULL 5
+#define FSM_CHECK_O 6
 #define STOP 1.0e-8
 #define TINY 1.0e-30
 
@@ -321,70 +322,14 @@ int main(int argc, char **argv) {
         
         p = incbeta(alpha, beta, 0.5);
         //    Initial Decision Black         Initial Decision White     Decision Flips from white to black     Decision flips from black to whtie
-        if ((d_f == -1) && (p > p_c)) || ((d_f == -1) && ((1-p) > p_c)) || ((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c)) {
+        if (((d_f == -1) && (p > p_c)) || ((d_f == -1) && ((1-p) > p_c)) || ((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c))) {
+          std::cout << "Decision Pass" << std::endl;
           FSM_STATE = FSM_CHECK_O;
         } else {
           obs_initial = 0; // Failed hysteresis. Reset observation delta. 
           FSM_STATE = FSM_RW;
         }
         break;
-        // if ((observationCount) >= obs_wait_time) {
-        
-        //   // Logic for first time making decision
-        //   if ((d_f == -1) && u_plus) || ((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c)) {
-            
-        //     //Set initial observation hysterisis state 
-        //     if (obs_initial == 0 && (p > p_c || (1 - p) > p_c)) {
-        //       obs_initial = observationCount;
-        //       // std::cout << obs_initial << std::endl;
-        //       std::cout << robotNum << " Initial Hysteresis Start " << obs_initial << std::endl;
-        //     }
-        //     //Resets hysterisis state 
-        //     else if (obs_initial != 0 && (p < p_c) && ((1-p) < p_c)) {
-        //       //std::cout << robotNum << " Reset Intiial Hysteresis State" << std::endl;
-        //       obs_initial = observationCount;
-        //     } 
-        //     //Hysteresis has been met, decision flag can be set
-        //     else if ((p > p_c || (1 - p) > p_c) && (observationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
-        //       std::cout << robotNum << " Hysteresis Condition Check" << std::endl;
-        //       if (p > p_c) {
-        //         std::cout << "Positive Feedback - Black" << std::endl;
-        //         d_f = 0;
-        //       } else if ((1 - p) > p_c) {
-        //         std::cout << robotNum << " Positive Feedback - White" << std::endl;
-        //         d_f = 1;
-        //       }
-  
-        //       //Mark decision times     
-        //       decision_time = robot->getTime();
-        //       std::cout << robotNum << " Decision time: " << decision_time << std::endl;
-        //       obs_initial = 0; 
-        //     }
-        //   } else {
-          
-        //     // Check if decision is ever flipped
-        //     if (((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c))) {
-        //       std::cout << robotNum << " Decision Flipped!" << std::endl;
-        //       //Conditional to start counting 
-        //       if (obs_initial == 0) obs_initial = observationCount;
-              
-        //       // Once Counting passes hysteresis threshold then change decision
-        //       if ((observationCount - obs_initial >= obs_hysteresis) && obs_initial != 0) {
-        //         decision_time = robot->getTime();
-        //         std::cout << robotNum << " Reset Decision time: " << decision_time << std::endl;
-        //         if (p > p_c) {
-        //           std::cout << "Positive Feedback - Black" << std::endl;
-        //           d_f = 0;
-        //         } else if ((1 - p) > p_c) {
-        //           std::cout << robotNum << " Positive Feedback - White" << std::endl;
-        //           d_f = 1;
-        //         }
-        //       }  
-        //     } else {
-        //       obs_initial = 0;
-        //     } 
-        //   } 
-        // }
       }
       case FSM_CHECK_O:
       { 
@@ -393,13 +338,13 @@ int main(int argc, char **argv) {
           obs_initial = observationCount;
           std::cout << robotNum << " Initial Hysteresis Start " << obs_initial << std::endl;
         } 
-        if (observationCount - obs_initial >= obs_hysteresis) && (obs_initial != 0){
+        if ((observationCount - obs_initial >= obs_hysteresis) && (obs_initial != 0)) {
           //Passed hysteresis determine which decision.
           if (p > p_c) {
             std::cout << "Decision Made - Black" << std::endl;
             d_f = 0;
           } else if ((1 - p) > p_c) {
-            std::cout << robotNum << "Decision Made - White" << std::endl;
+            std::cout << robotNum << " Decision Made - White" << std::endl;
             d_f = 1;
           }
 
@@ -407,6 +352,7 @@ int main(int argc, char **argv) {
           std::cout << robotNum << " Decision time: " << decision_time << std::endl;
           obs_initial = 0;
         }
+        std::cout << "Observation Delta: "<< observationCount - obs_initial << std::endl;
         FSM_STATE = FSM_RW;
         break;
       }
@@ -509,7 +455,7 @@ double incbeta(double a, double b, double x) {
 
 static int getColor(int dynamicEnvironment) {
   if (dynamicEnvironment > 0) {
-    if (observationCount - arena_count > 200) {
+    if (control_count - arena_count > 200) {
         if (arena_index > dynamicEnvironment) {
           arena_index = 1;
         } else {
@@ -517,7 +463,7 @@ static int getColor(int dynamicEnvironment) {
         }
         grid_x.clear();
         grid_y.clear();
-        arena_count = observationCount;
+        arena_count = control_count;
         readArena(dynamicEnvironment);
     }
   }

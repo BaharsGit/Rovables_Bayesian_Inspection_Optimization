@@ -1,0 +1,981 @@
+Warning: QApplication: invalid style override 'adwaita' passed, ignoring it.
+	Available styles: Windows, Fusion
+INFO: bayes_supervisor: Starting controller: python3 -u bayes_supervisor.py 1
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 1 0
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 1 0
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 1 0
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 1 0
+posix
+Linux
+Supervisor Fill Ratio:  0.52
+['rov_0', 'rov_1', 'rov_2', 'rov_3']
+Using Supervisor Seed:  1
+Controller Seed: 1
+Using Dynamic Enviornment: 0
+Reading in Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/tmp/job1_9_1/arena.txt
+Reading in Parameters: 
+0
+1250.26
+663.876
+27.5075
+56.4454
+0
+Alpha Prior: 0
+Tao: 1250
+Random Forward: 663
+Collision Avoidance Trigger: 27.5075
+Hysteresis Timer: 56
+Observation Wait Time: 0
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 1
+Using Dynamic Enviornment: 0
+Reading in Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/tmp/job1_9_1/arena.txt
+Reading in Parameters: 
+0
+1250.26
+663.876
+27.5075
+56.4454
+0
+Alpha Prior: 0
+Tao: 1250
+Random Forward: 663
+Collision Avoidance Trigger: 27.5075
+Hysteresis Timer: 56
+Observation Wait Time: 0
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 1
+Using Dynamic Enviornment: 0
+Reading in Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/tmp/job1_9_1/arena.txt
+Reading in Parameters: 
+0
+1250.26
+663.876
+27.5075
+56.4454
+0
+Alpha Prior: 0
+Tao: 1250
+Random Forward: 663
+Collision Avoidance Trigger: 27.5075
+Hysteresis Timer: 56
+Observation Wait Time: 0
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 1
+Using Dynamic Enviornment: 0
+Reading in Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/tmp/job1_9_1/arena.txt
+Reading in Parameters: 
+0
+1250.26
+663.876
+27.5075
+56.4454
+0
+Alpha Prior: 0
+Tao: 1250
+Random Forward: 663
+Collision Avoidance Trigger: 27.5075
+Hysteresis Timer: 56
+Observation Wait Time: 0
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+FSM State: 0 Robot 0 Belief: 1 -> 0, 1
+FSM State: 0 Robot 1 Belief: 1 -> 0, 1
+FSM State: 0 Robot 2 Belief: 1 -> 0, 1
+FSM State: 0 Robot 3 Belief: 1 -> 0, 1
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.251722 -> 12, 9
+FSM State: 2 Robot 1 Belief: 0.202436 -> 14, 10
+FSM State: 2 Robot 2 Belief: 0.261734 -> 13, 10
+FSM State: 2 Robot 3 Belief: 0.191655 -> 13, 9
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0.105804 -> 31, 22
+FSM State: 2 Robot 1 Belief: 0.131219 -> 30, 22
+FSM State: 1 Robot 2 Belief: 0.161118 -> 29, 22
+FSM State: 2 Robot 3 Belief: 0.195801 -> 28, 22
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0.127152 -> 44, 34
+FSM State: 1 Robot 1 Belief: 0.100339 -> 43, 32
+FSM State: 1 Robot 2 Belief: 0.120822 -> 42, 32
+FSM State: 2 Robot 3 Belief: 0.103368 -> 44, 33
+Decision Pass
+1 Initial Hysteresis Start 20
+Observation Delta: 0
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.0795348 -> 57, 43
+FSM State: 2 Robot 1 Belief: 0.0921429 -> 55, 42
+FSM State: 2 Robot 2 Belief: 0.0646463 -> 57, 42
+FSM State: 2 Robot 3 Belief: 0.0774079 -> 56, 42
+Decision Pass
+0 Initial Hysteresis Start 26
+Observation Delta: 0
+RESET POSITIONS
+RESET POSITIONS
+Decision Pass
+Decision Pass
+2 Initial Hysteresis Start 28
+Observation Delta: 0
+Decision Pass
+1 Initial Hysteresis Start 28
+Observation Delta: 0
+Observation Delta: 1
+Decision Pass
+Observation Delta: 1
+Decision Pass
+Decision Pass
+Observation Delta: 2
+1 Initial Hysteresis Start 30
+Observation Delta: 0
+Decision Pass
+Decision Pass
+Observation Delta: 1
+0 Initial Hysteresis Start 29
+Observation Delta: 0
+Decision Pass
+3 Initial Hysteresis Start 33
+Observation Delta: 0
+FSM State: 0 Robot 0 Belief: 0.0354508 -> 72, 52
+FSM State: 2 Robot 1 Belief: 0.0647881 -> 72, 55
+FSM State: 2 Robot 2 Belief: 0.0535157 -> 72, 54
+FSM State: 2 Robot 3 Belief: 0.0437764 -> 72, 53
+Decision Pass
+2 Initial Hysteresis Start 33
+Observation Delta: 0
+Decision Pass
+2 Initial Hysteresis Start 39
+Observation Delta: 0
+Decision Pass
+0 Initial Hysteresis Start 33
+Observation Delta: 0
+FSM State: 0 Robot 0 Belief: 0.0409309 -> 84, 63
+FSM State: 2 Robot 1 Belief: 0.0767219 -> 80, 63
+FSM State: 1 Robot 2 Belief: 0.048197 -> 83, 63
+FSM State: 1 Robot 3 Belief: 0.0841296 -> 76, 60
+Decision Pass
+Decision Pass
+1 Initial Hysteresis Start 39
+Observation Delta: 0
+Observation Delta: 1
+Decision Pass
+1 Initial Hysteresis Start 43
+Observation Delta: 0
+FSM State: 0 Robot 0 Belief: 0.0562151 -> 90, 70
+FSM State: 2 Robot 1 Belief: 0.0791844 -> 91, 73
+FSM State: 2 Robot 2 Belief: 0.067624 -> 91, 72
+FSM State: 1 Robot 3 Belief: 0.0841296 -> 76, 60
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.150348 -> 99, 85
+FSM State: 1 Robot 1 Belief: 0.0891693 -> 99, 81
+FSM State: 2 Robot 2 Belief: 0.133071 -> 99, 84
+FSM State: 2 Robot 3 Belief: 0.117123 -> 99, 83
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0.243559 -> 109, 99
+FSM State: 1 Robot 1 Belief: 0.221756 -> 109, 98
+FSM State: 2 Robot 2 Belief: 0.2425 -> 108, 98
+FSM State: 2 Robot 3 Belief: 0.220643 -> 108, 97
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.255328 -> 121, 111
+FSM State: 2 Robot 1 Belief: 0.27649 -> 120, 111
+FSM State: 2 Robot 2 Belief: 0.298571 -> 119, 111
+FSM State: 2 Robot 3 Belief: 0.32152 -> 118, 111
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.176129 -> 138, 123
+FSM State: 2 Robot 1 Belief: 0.192192 -> 137, 123
+FSM State: 2 Robot 2 Belief: 0.175199 -> 137, 122
+FSM State: 2 Robot 3 Belief: 0.159128 -> 137, 121
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.182433 -> 145, 130
+FSM State: 2 Robot 1 Belief: 0.170784 -> 150, 134
+FSM State: 2 Robot 2 Belief: 0.171634 -> 151, 135
+FSM State: 2 Robot 3 Belief: 0.186725 -> 150, 135
+FSM State: 0 Robot 0 Belief: 0.167143 -> 164, 147
+FSM State: 2 Robot 1 Belief: 0.182911 -> 165, 149
+FSM State: 2 Robot 2 Belief: 0.16792 -> 165, 148
+FSM State: 1 Robot 3 Belief: 0.182142 -> 164, 148
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.193831 -> 180, 164
+FSM State: 1 Robot 1 Belief: 0.17899 -> 180, 163
+FSM State: 2 Robot 2 Belief: 0.164844 -> 180, 162
+FSM State: 2 Robot 3 Belief: 0.151403 -> 180, 161
+FSM State: 1 Robot 0 Belief: 0.127312 -> 198, 176
+FSM State: 2 Robot 1 Belief: 0.138111 -> 197, 176
+FSM State: 2 Robot 2 Belief: 0.126673 -> 197, 175
+FSM State: 2 Robot 3 Belief: 0.137464 -> 196, 175
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.146249 -> 210, 189
+FSM State: 2 Robot 1 Belief: 0.14503 -> 208, 187
+FSM State: 2 Robot 2 Belief: 0.157744 -> 209, 189
+FSM State: 2 Robot 3 Belief: 0.145641 -> 209, 188
+FSM State: 0 Robot 0 Belief: 0.072761 -> 228, 198
+FSM State: 2 Robot 1 Belief: 0.0552896 -> 231, 198
+FSM State: 2 Robot 2 Belief: 0.0606895 -> 230, 198
+FSM State: 2 Robot 3 Belief: 0.0665068 -> 229, 198
+Decision Pass
+Decision Pass
+1 Initial Hysteresis Start 106
+Observation Delta: 0
+0 Initial Hysteresis Start 104
+Observation Delta: 0
+Decision Pass
+3 Initial Hysteresis Start 110
+Observation Delta: 0
+Decision Pass
+Observation Delta: 1
+Decision Pass
+Decision Pass
+Observation Delta: 1
+Decision Pass
+2 Initial Hysteresis Start 117
+Observation Delta: 0
+Decision Pass
+1 Initial Hysteresis Start 108
+Observation Delta: 0
+Observation Delta: 2
+Decision Pass
+Decision Pass
+Observation Delta: 2
+Observation Delta: 1
+Decision Pass
+Observation Delta: 3
+RESET POSITIONS
+RESET POSITIONS
+Decision Pass
+Decision Pass
+Observation Delta: 2
+Decision Pass
+Observation Delta: 1
+Observation Delta: 4
+Decision Pass
+Decision Pass
+Observation Delta: 3
+Decision Pass
+Observation Delta: 3
+Decision Pass
+Observation Delta: 2
+Observation Delta: 5
+Decision Pass
+Decision Pass
+Observation Delta: 4
+Decision Pass
+Observation Delta: 4
+Observation Delta: 3
+FSM State: 0 Robot 0 Belief: 0.0170882 -> 249, 204
+FSM State: 2 Robot 1 Belief: 0.0154655 -> 251, 205
+FSM State: 2 Robot 2 Belief: 0.0172875 -> 250, 205
+FSM State: 2 Robot 3 Belief: 0.0152809 -> 250, 204
+Decision Pass
+Decision Pass
+Observation Delta: 5
+Decision Pass
+Observation Delta: 5
+Decision Pass
+Observation Delta: 4
+Observation Delta: 6
+Decision Pass
+Decision Pass
+Observation Delta: 6
+Decision Pass
+Observation Delta: 6
+Decision Pass
+Observation Delta: 5
+Observation Delta: 7
+Decision Pass
+Decision Pass
+Observation Delta: 7
+Decision Pass
+Observation Delta: 7
+Decision Pass
+Observation Delta: 6
+Observation Delta: 8
+Decision Pass
+Decision Pass
+Observation Delta: 8
+Decision Pass
+Observation Delta: 8
+Decision Pass
+Observation Delta: 7
+Observation Delta: 9
+Decision Pass
+Decision Pass
+Observation Delta: 9
+Decision Pass
+Observation Delta: 9
+Decision Pass
+Observation Delta: 8
+Observation Delta: 10
+Decision Pass
+Decision Pass
+Observation Delta: 10
+Decision Pass
+Observation Delta: 10
+Observation Delta: 9
+Decision Pass
+Decision Pass
+Observation Delta: 11
+Decision Pass
+Observation Delta: 10
+Observation Delta: 11
+Decision Pass
+Decision Pass
+Observation Delta: 12
+Decision Pass
+Observation Delta: 11
+Observation Delta: 12
+FSM State: 0 Robot 0 Belief: 0.0462507 -> 261, 224
+FSM State: 2 Robot 1 Belief: 0.041846 -> 261, 223
+FSM State: 1 Robot 2 Belief: 0.0377788 -> 261, 222
+FSM State: 2 Robot 3 Belief: 0.0243106 -> 260, 217
+Decision Pass
+Observation Delta: 11
+Decision Pass
+Decision Pass
+Observation Delta: 12
+Observation Delta: 13
+Decision Pass
+Decision Pass
+Observation Delta: 12
+Decision Pass
+Observation Delta: 13
+Decision Pass
+Observation Delta: 13
+Observation Delta: 14
+RESET POSITIONS
+Decision Pass
+Decision Pass
+Observation Delta: 13
+Decision Pass
+Observation Delta: 14
+Decision Pass
+Observation Delta: 14
+Observation Delta: 15
+Decision Pass
+Decision Pass
+Observation Delta: 14
+Observation Delta: 15
+Decision Pass
+Observation Delta: 16
+Decision Pass
+Decision Pass
+Observation Delta: 15
+Observation Delta: 16
+Decision Pass
+Observation Delta: 17
+RESET POSITIONS
+Decision Pass
+Decision Pass
+Observation Delta: 16
+Decision Pass
+Observation Delta: 17
+Decision Pass
+Observation Delta: 15
+Observation Delta: 18
+Decision Pass
+Decision Pass
+Observation Delta: 17
+Decision Pass
+Observation Delta: 18
+Observation Delta: 16
+Decision Pass
+Decision Pass
+Observation Delta: 18
+Decision Pass
+Observation Delta: 19
+Decision Pass
+Observation Delta: 17
+Observation Delta: 19
+FSM State: 0 Robot 0 Belief: 0.0423425 -> 276, 237
+FSM State: 2 Robot 1 Belief: 0.0383543 -> 276, 236
+FSM State: 2 Robot 2 Belief: 0.0346704 -> 276, 235
+FSM State: 1 Robot 3 Belief: 0.0312755 -> 276, 234
+Decision Pass
+Decision Pass
+Observation Delta: 20
+Decision Pass
+Observation Delta: 18
+Observation Delta: 20
+Decision Pass
+Decision Pass
+Observation Delta: 19
+Observation Delta: 21
+Decision Pass
+Observation Delta: 21
+Decision Pass
+Decision Pass
+Observation Delta: 20
+Decision Pass
+Observation Delta: 22
+Decision Pass
+Observation Delta: 19
+Observation Delta: 22
+Decision Pass
+Decision Pass
+Observation Delta: 21
+Decision Pass
+Observation Delta: 23
+Decision Pass
+Observation Delta: 20
+Observation Delta: 23
+Decision Pass
+Observation Delta: 22
+Decision Pass
+Decision Pass
+Observation Delta: 21
+Observation Delta: 24
+FSM State: 0 Robot 0 Belief: 0.0597637 -> 286, 250
+FSM State: 2 Robot 1 Belief: 0.0504765 -> 288, 250
+FSM State: 2 Robot 2 Belief: 0.0648984 -> 285, 250
+FSM State: 1 Robot 3 Belief: 0.0549611 -> 287, 250
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0.0659752 -> 288, 253
+FSM State: 2 Robot 1 Belief: 0.0695326 -> 298, 263
+FSM State: 2 Robot 2 Belief: 0.0638872 -> 298, 262
+FSM State: 2 Robot 3 Belief: 0.0582665 -> 297, 260
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.0740801 -> 311, 276
+FSM State: 2 Robot 1 Belief: 0.0679508 -> 310, 274
+FSM State: 1 Robot 2 Belief: 0.0682866 -> 311, 275
+FSM State: 2 Robot 3 Belief: 0.0737335 -> 310, 275
+Decision Pass
+0 Initial Hysteresis Start 140
+Observation Delta: 0
+Decision Pass
+Decision Pass
+2 Initial Hysteresis Start 162
+Observation Delta: 0
+1 Initial Hysteresis Start 149
+Observation Delta: 0
+Decision Pass
+3 Initial Hysteresis Start 152
+Observation Delta: 0
+Decision Pass
+1 Initial Hysteresis Start 151
+Observation Delta: 0
+FSM State: 0 Robot 0 Belief: 0.0524828 -> 325, 285
+FSM State: 2 Robot 1 Belief: 0.048139 -> 325, 284
+FSM State: 2 Robot 2 Belief: 0.0519111 -> 323, 283
+FSM State: 1 Robot 3 Belief: 0.0475907 -> 323, 282
+Decision Pass
+Decision Pass
+2 Initial Hysteresis Start 164
+Observation Delta: 0
+Decision Pass
+Observation Delta: 1
+0 Initial Hysteresis Start 144
+Observation Delta: 0
+Decision Pass
+Decision Pass
+Observation Delta: 1
+Observation Delta: 2
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.109839 -> 335, 304
+FSM State: 2 Robot 1 Belief: 0.102401 -> 335, 303
+FSM State: 2 Robot 2 Belief: 0.0953253 -> 335, 302
+FSM State: 2 Robot 3 Belief: 0.0886052 -> 335, 301
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.0644665 -> 350, 311
+FSM State: 2 Robot 1 Belief: 0.0601224 -> 352, 312
+FSM State: 2 Robot 2 Belief: 0.0647564 -> 351, 312
+FSM State: 2 Robot 3 Belief: 0.0598424 -> 351, 311
+Decision Pass
+Decision Pass
+3 Initial Hysteresis Start 167
+Observation Delta: 0
+Decision Pass
+2 Initial Hysteresis Start 179
+Observation Delta: 0
+Decision Pass
+1 Initial Hysteresis Start 167
+Observation Delta: 0
+0 Initial Hysteresis Start 158
+Observation Delta: 0
+Decision Pass
+Observation Delta: 1
+Decision Pass
+Decision Pass
+Observation Delta: 1
+Observation Delta: 1
+Decision Pass
+Decision Pass
+Observation Delta: 2
+Decision Pass
+Observation Delta: 1
+Decision Pass
+Observation Delta: 2
+Observation Delta: 2
+Decision Pass
+Decision Pass
+Observation Delta: 3
+Decision Pass
+Observation Delta: 2
+Decision Pass
+Observation Delta: 3
+Observation Delta: 3
+Decision Pass
+Decision Pass
+Observation Delta: 4
+Decision Pass
+Observation Delta: 3
+Observation Delta: 4
+Decision Pass
+Decision Pass
+Observation Delta: 5
+Decision Pass
+Observation Delta: 4
+Observation Delta: 5
+Decision Pass
+Decision Pass
+Observation Delta: 6
+Observation Delta: 5
+Decision Pass
+Observation Delta: 4
+FSM State: 0 Robot 0 Belief: 0.0400283 -> 369, 323
+FSM State: 1 Robot 1 Belief: 0.0430798 -> 367, 322
+FSM State: 2 Robot 2 Belief: 0.0433083 -> 368, 323
+FSM State: 2 Robot 3 Belief: 0.0468071 -> 367, 323
+Decision Pass
+Decision Pass
+Observation Delta: 7
+Observation Delta: 6
+Decision Pass
+Observation Delta: 5
+Decision Pass
+Decision Pass
+Observation Delta: 8
+Decision Pass
+Observation Delta: 7
+Decision Pass
+Observation Delta: 6
+Observation Delta: 6
+Decision Pass
+Decision Pass
+Observation Delta: 9
+Decision Pass
+Observation Delta: 8
+Decision Pass
+Observation Delta: 7
+Observation Delta: 7
+Decision Pass
+Decision Pass
+Observation Delta: 10
+Decision Pass
+Observation Delta: 9
+Decision Pass
+Observation Delta: 8
+Observation Delta: 8
+Decision Pass
+Decision Pass
+Observation Delta: 11
+Observation Delta: 10
+Decision Pass
+Observation Delta: 9
+Decision Pass
+Decision Pass
+Observation Delta: 12
+Decision Pass
+Observation Delta: 11
+Decision Pass
+Observation Delta: 9
+Observation Delta: 10
+Decision Pass
+Decision Pass
+Observation Delta: 13
+Decision Pass
+Observation Delta: 12
+Decision Pass
+Observation Delta: 10
+Observation Delta: 11
+Decision Pass
+Observation Delta: 14
+Decision Pass
+Decision Pass
+Observation Delta: 11
+Observation Delta: 12
+FSM State: 0 Robot 0 Belief: 0.0286357 -> 386, 335
+FSM State: 2 Robot 1 Belief: 0.0261963 -> 386, 334
+FSM State: 2 Robot 2 Belief: 0.0307115 -> 383, 333
+FSM State: 2 Robot 3 Belief: 0.0284627 -> 385, 334
+Decision Pass
+Decision Pass
+Observation Delta: 15
+Decision Pass
+Observation Delta: 13
+Decision Pass
+Observation Delta: 12
+Observation Delta: 13
+Decision Pass
+Decision Pass
+Observation Delta: 16
+Observation Delta: 14
+RESET POSITIONS
+RESET POSITIONS
+Decision Pass
+Decision Pass
+Observation Delta: 17
+Decision Pass
+Observation Delta: 15
+Decision Pass
+Observation Delta: 13
+Observation Delta: 14
+Decision Pass
+Decision Pass
+Observation Delta: 18
+Observation Delta: 16
+Decision Pass
+Observation Delta: 15
+Decision Pass
+Decision Pass
+Observation Delta: 19
+Decision Pass
+Observation Delta: 17
+Decision Pass
+Observation Delta: 14
+Observation Delta: 16
+Decision Pass
+Decision Pass
+Observation Delta: 20
+Decision Pass
+Observation Delta: 18
+Decision Pass
+Observation Delta: 15
+Observation Delta: 17
+Decision Pass
+Decision Pass
+Observation Delta: 16
+Observation Delta: 18
+Decision Pass
+Decision Pass
+Observation Delta: 21
+Decision Pass
+Observation Delta: 19
+Decision Pass
+Observation Delta: 17
+Observation Delta: 19
+FSM State: 0 Robot 0 Belief: 0.014038 -> 404, 344
+FSM State: 2 Robot 1 Belief: 0.0153465 -> 403, 344
+FSM State: 2 Robot 2 Belief: 0.0139328 -> 403, 343
+FSM State: 2 Robot 3 Belief: 0.012631 -> 403, 342
+Decision Pass
+Decision Pass
+Observation Delta: 22
+Decision Pass
+Observation Delta: 20
+Decision Pass
+Observation Delta: 18
+Observation Delta: 20
+Decision Pass
+Observation Delta: 21
+Decision Pass
+Observation Delta: 21
+Decision Pass
+Decision Pass
+Observation Delta: 23
+Decision Pass
+Observation Delta: 22
+Decision Pass
+Observation Delta: 19
+Observation Delta: 22
+Decision Pass
+Decision Pass
+Observation Delta: 24
+Decision Pass
+Observation Delta: 23
+Decision Pass
+Observation Delta: 20
+Observation Delta: 23
+Decision Pass
+Decision Pass
+Observation Delta: 25
+Decision Pass
+Observation Delta: 24
+Decision Pass
+Observation Delta: 21
+Observation Delta: 24
+Decision Pass
+Decision Pass
+Observation Delta: 26
+Decision Pass
+Observation Delta: 25
+Observation Delta: 22
+Decision Pass
+Decision Pass
+Observation Delta: 27
+Observation Delta: 26
+Decision Pass
+Observation Delta: 25
+RESET POSITIONS
+Decision Pass
+Decision Pass
+Observation Delta: 28
+Decision Pass
+Observation Delta: 27
+Decision Pass
+Observation Delta: 23
+Observation Delta: 26
+FSM State: 1 Robot 0 Belief: 0.00726392 -> 422, 354
+FSM State: 2 Robot 1 Belief: 0.00654093 -> 422, 353
+FSM State: 2 Robot 2 Belief: 0.0072004 -> 421, 353
+FSM State: 2 Robot 3 Belief: 0.00791874 -> 420, 353
+Decision Pass
+Decision Pass
+Observation Delta: 29
+Decision Pass
+Observation Delta: 28
+Observation Delta: 24
+Decision Pass
+Decision Pass
+Observation Delta: 25
+Observation Delta: 27
+Decision Pass
+Decision Pass
+Observation Delta: 30
+Decision Pass
+Observation Delta: 29
+Observation Delta: 26
+Decision Pass
+Decision Pass
+Observation Delta: 31
+Decision Pass
+Observation Delta: 30
+Decision Pass
+Observation Delta: 27
+Observation Delta: 28
+Decision Pass
+Decision Pass
+Observation Delta: 32
+Decision Pass
+Observation Delta: 31
+Decision Pass
+Observation Delta: 28
+Observation Delta: 29
+Decision Pass
+Decision Pass
+Observation Delta: 33
+Decision Pass
+Observation Delta: 32
+Decision Pass
+Observation Delta: 29
+Observation Delta: 30
+Decision Pass
+Decision Pass
+Observation Delta: 34
+Observation Delta: 33
+Decision Pass
+Decision Pass
+Observation Delta: 35
+Decision Pass
+Observation Delta: 34
+Decision Pass
+Observation Delta: 30
+Observation Delta: 31
+FSM State: 1 Robot 0 Belief: 0.00811154 -> 435, 367
+FSM State: 2 Robot 1 Belief: 0.0073278 -> 435, 366
+FSM State: 2 Robot 2 Belief: 0.00661067 -> 435, 365
+FSM State: 2 Robot 3 Belief: 0.00595547 -> 435, 364
+Decision Pass
+Decision Pass
+Observation Delta: 36
+Decision Pass
+Observation Delta: 35
+Observation Delta: 31
+Decision Pass
+Observation Delta: 36
+Decision Pass
+Observation Delta: 32
+Decision Pass
+Decision Pass
+Observation Delta: 37
+Observation Delta: 37
+Decision Pass
+Observation Delta: 33
+Decision Pass
+Decision Pass
+Observation Delta: 38
+Decision Pass
+Observation Delta: 38
+Decision Pass
+Observation Delta: 32
+Observation Delta: 34
+RESET POSITIONS
+Decision Pass
+Decision Pass
+Observation Delta: 39
+Decision Pass
+Observation Delta: 39
+Decision Pass
+Observation Delta: 33
+Observation Delta: 35
+Decision Pass
+Decision Pass
+Observation Delta: 40
+Decision Pass
+Observation Delta: 40
+Decision Pass
+Observation Delta: 34
+Observation Delta: 36
+Decision Pass
+Observation Delta: 41
+Decision Pass
+Decision Pass
+Observation Delta: 35
+Observation Delta: 37
+Decision Pass
+Decision Pass
+Observation Delta: 42
+Decision Pass
+Observation Delta: 41
+Observation Delta: 36
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.00447062 -> 450, 375
+FSM State: 2 Robot 1 Belief: 0.00332312 -> 453, 375
+FSM State: 2 Robot 2 Belief: 0.0036718 -> 452, 375
+FSM State: 2 Robot 3 Belief: 0.0040534 -> 451, 375
+Decision Pass
+Decision Pass
+Observation Delta: 43
+Decision Pass
+Observation Delta: 42
+Decision Pass
+Observation Delta: 37
+Observation Delta: 38
+Decision Pass
+Decision Pass
+Observation Delta: 43
+Decision Pass
+Observation Delta: 38
+Observation Delta: 39
+Decision Pass
+Decision Pass
+Observation Delta: 44
+Decision Pass
+Observation Delta: 44
+Decision Pass
+Observation Delta: 39
+Observation Delta: 40
+Decision Pass
+Decision Pass
+Observation Delta: 45
+Decision Pass
+Observation Delta: 45
+Decision Pass
+Observation Delta: 40
+Observation Delta: 41
+Decision Pass
+Decision Pass
+Observation Delta: 46
+Decision Pass
+Observation Delta: 46
+Decision Pass
+Observation Delta: 41
+Observation Delta: 42
+Decision Pass
+Decision Pass
+Observation Delta: 47
+Decision Pass
+Observation Delta: 42
+Observation Delta: 43
+Decision Pass
+Decision Pass
+Observation Delta: 47
+Decision Pass
+Observation Delta: 48
+Decision Pass
+Observation Delta: 43
+Observation Delta: 44
+Decision Pass
+Decision Pass
+Observation Delta: 48
+Decision Pass
+Observation Delta: 49
+Decision Pass
+Observation Delta: 44
+Observation Delta: 45
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.00383782 -> 468, 390
+FSM State: 2 Robot 1 Belief: 0.00422763 -> 467, 390
+FSM State: 2 Robot 2 Belief: 0.00465295 -> 466, 390
+FSM State: 2 Robot 3 Belief: 0.00418932 -> 466, 389
+Decision Pass
+Decision Pass
+Observation Delta: 49
+Decision Pass
+Observation Delta: 50
+Decision Pass
+Observation Delta: 45
+Observation Delta: 46
+Decision Pass
+Decision Pass
+Observation Delta: 50
+Decision Pass
+Observation Delta: 51
+Observation Delta: 46
+Decision Pass
+Decision Pass
+Observation Delta: 51
+Decision Pass
+Observation Delta: 52
+Observation Delta: 47
+Decision Pass
+Decision Pass
+Observation Delta: 53
+Decision Pass
+Observation Delta: 48
+Observation Delta: 47
+Decision Pass
+Decision Pass
+Observation Delta: 49
+Observation Delta: 48
+Decision Pass
+Decision Pass
+Observation Delta: 52
+Decision Pass
+Observation Delta: 54
+Decision Pass
+Observation Delta: 50
+Observation Delta: 49
+INFO: bayes_supervisor: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+Robot did not make decision in time!
+Robot did not make decision in time!
+Robot did not make decision in time!
+Robot did not make decision in time!
+Decision Times:  [2700.008 2700.008 2700.008 2700.008]
+Fitness of particle:  11200
+Wrote file: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/tmp/job1_9_1/local_fitness
+Ceaning up simulation

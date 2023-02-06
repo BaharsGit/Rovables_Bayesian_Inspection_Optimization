@@ -19,13 +19,13 @@ time_to_cross_arena = 36125.079475174839899 #ms
 step_to_cross_arena = time_to_cross_arena / time_step
 ###########################################################
 
-psodir = (str(os.getcwd())) + "/../jobfiles/Run_2"
+psodir = (str(os.getcwd())) + "/demo/jobfiles/Run_3"
 param_min = [19, tao_square/3, tao_square/3, 5, 0, 10]
 param_max = [21, tao_square*3, step_to_cross_arena, 95, step_to_cross_arena, 250]
 worst_case_fitess = 11200
 num_particles = 10
 num_noise = 10
-num_gen = 18
+num_gen = 5
 num_robots = 4
 particle_dim = 6
 param_names = ["Alpha", "Tao", "Random Forward", "CA Trigger", "Hysterisis", "Observation Wait Time"]

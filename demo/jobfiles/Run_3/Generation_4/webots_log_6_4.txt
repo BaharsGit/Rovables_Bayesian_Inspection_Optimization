@@ -1,0 +1,771 @@
+Warning: QApplication: invalid style override 'adwaita' passed, ignoring it.
+	Available styles: Windows, Fusion
+INFO: bayes_supervisor: Starting controller: python3 -u bayes_supervisor.py 4
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 4 0
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 4 0
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 4 0
+INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/controllers/bayes_fsm/bayes_fsm 4 0
+posix
+Linux
+Supervisor Fill Ratio:  0.52
+['rov_0', 'rov_1', 'rov_2', 'rov_3']
+Using Supervisor Seed:  4
+Controller Seed: 4
+Using Dynamic Enviornment: 0
+Reading in Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/tmp/job4_6_4/arena.txt
+Reading in Parameters: 
+0
+56.4454
+160.648
+7.5494
+56.4454
+0
+Alpha Prior: 0
+Tao: 56
+Random Forward: 160
+Collision Avoidance Trigger: 7.5494
+Hysteresis Timer: 56
+Observation Wait Time: 0
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 4
+Using Dynamic Enviornment: 0
+Reading in Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/tmp/job4_6_4/arena.txt
+Reading in Parameters: 
+0
+56.4454
+160.648
+7.5494
+56.4454
+0
+Alpha Prior: 0
+Tao: 56
+Random Forward: 160
+Collision Avoidance Trigger: 7.5494
+Hysteresis Timer: 56
+Observation Wait Time: 0
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 4
+Using Dynamic Enviornment: 0
+Reading in Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/tmp/job4_6_4/arena.txt
+Reading in Parameters: 
+0
+56.4454
+160.648
+7.5494
+56.4454
+0
+Alpha Prior: 0
+Tao: 56
+Random Forward: 160
+Collision Avoidance Trigger: 7.5494
+Hysteresis Timer: 56
+Observation Wait Time: 0
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+Controller Seed: 4
+Using Dynamic Enviornment: 0
+Reading in Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/tmp/job4_6_4/arena.txt
+Reading in Parameters: 
+0
+56.4454
+160.648
+7.5494
+56.4454
+0
+Alpha Prior: 0
+Tao: 56
+Random Forward: 160
+Collision Avoidance Trigger: 7.5494
+Hysteresis Timer: 56
+Observation Wait Time: 0
+Positive Feedback: 1
+Credibility Thresdhold: 0.95
+Random Turn: 50
+-----------------------------
+FSM State: 0 Robot 0 Belief: 1 -> 0, 1
+FSM State: 0 Robot 1 Belief: 1 -> 0, 1
+FSM State: 0 Robot 2 Belief: 1 -> 0, 1
+FSM State: 0 Robot 3 Belief: 1 -> 0, 1
+Decision Pass
+Decision Pass
+1 Initial Hysteresis Start 61
+Observation Delta: 0
+0 Initial Hysteresis Start 62
+Observation Delta: 0
+RESET POSITIONS
+Decision Pass
+Decision Pass
+3 Initial Hysteresis Start 48
+Observation Delta: 0
+Decision Pass
+2 Initial Hysteresis Start 67
+Observation Delta: 0
+Observation Delta: 1
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0.320104 -> 336, 324
+FSM State: 0 Robot 1 Belief: 0.334042 -> 335, 324
+FSM State: 0 Robot 2 Belief: 0.348233 -> 334, 324
+FSM State: 0 Robot 3 Belief: 0.362662 -> 333, 324
+Decision Pass
+Decision Pass
+1 Initial Hysteresis Start 253
+Observation Delta: 0
+0 Initial Hysteresis Start 244
+Observation Delta: 0
+Decision Pass
+Decision Pass
+3 Initial Hysteresis Start 205
+Observation Delta: 0
+Decision Pass
+2 Initial Hysteresis Start 249
+Observation Delta: 0
+Decision Pass
+Observation Delta: 1
+Observation Delta: 1
+Decision Pass
+Decision Pass
+Observation Delta: 1
+Decision Pass
+Observation Delta: 1
+Decision Pass
+Observation Delta: 2
+Observation Delta: 2
+Decision Pass
+Decision Pass
+Observation Delta: 2
+Decision Pass
+Observation Delta: 2
+Decision Pass
+Observation Delta: 3
+Observation Delta: 3
+Decision Pass
+Decision Pass
+Observation Delta: 3
+Decision Pass
+Observation Delta: 3
+Decision Pass
+Observation Delta: 4
+Observation Delta: 4
+Decision Pass
+Decision Pass
+Observation Delta: 4
+Decision Pass
+Observation Delta: 4
+Decision Pass
+Observation Delta: 5
+Observation Delta: 5
+Decision Pass
+Decision Pass
+Observation Delta: 5
+Decision Pass
+Observation Delta: 5
+Decision Pass
+Observation Delta: 6
+Observation Delta: 6
+Decision Pass
+Decision Pass
+Observation Delta: 6
+Decision Pass
+Observation Delta: 6
+Decision Pass
+Observation Delta: 7
+Observation Delta: 7
+Decision Pass
+Decision Pass
+Observation Delta: 7
+Decision Pass
+Observation Delta: 8
+Observation Delta: 8
+Decision Pass
+Decision Pass
+Observation Delta: 8
+Decision Pass
+Observation Delta: 9
+Observation Delta: 9
+Decision Pass
+Decision Pass
+Observation Delta: 9
+Decision Pass
+Observation Delta: 10
+Observation Delta: 10
+Decision Pass
+Decision Pass
+Observation Delta: 10
+Decision Pass
+Observation Delta: 11
+Observation Delta: 11
+Decision Pass
+Decision Pass
+Observation Delta: 11
+Decision Pass
+Observation Delta: 12
+Observation Delta: 12
+Decision Pass
+Decision Pass
+Observation Delta: 12
+Decision Pass
+Observation Delta: 13
+Observation Delta: 13
+Decision Pass
+Decision Pass
+Observation Delta: 7
+Decision Pass
+Observation Delta: 13
+Decision Pass
+Observation Delta: 14
+Observation Delta: 14
+Decision Pass
+Decision Pass
+Observation Delta: 8
+Decision Pass
+Observation Delta: 14
+Decision Pass
+Observation Delta: 15
+Observation Delta: 15
+Decision Pass
+Decision Pass
+Observation Delta: 9
+Decision Pass
+Observation Delta: 15
+Decision Pass
+Observation Delta: 16
+Observation Delta: 16
+Decision Pass
+Decision Pass
+Observation Delta: 10
+Decision Pass
+Observation Delta: 16
+Decision Pass
+Observation Delta: 17
+Observation Delta: 17
+Decision Pass
+Decision Pass
+Observation Delta: 11
+Decision Pass
+Observation Delta: 17
+Decision Pass
+Observation Delta: 18
+Observation Delta: 18
+Decision Pass
+Decision Pass
+Observation Delta: 12
+Decision Pass
+Observation Delta: 18
+Decision Pass
+Observation Delta: 19
+Observation Delta: 19
+Decision Pass
+Decision Pass
+Observation Delta: 13
+Decision Pass
+Observation Delta: 19
+Decision Pass
+Observation Delta: 20
+Observation Delta: 20
+Decision Pass
+Decision Pass
+Observation Delta: 14
+Decision Pass
+Observation Delta: 20
+Decision Pass
+Observation Delta: 21
+Observation Delta: 21
+Decision Pass
+Decision Pass
+Observation Delta: 15
+Decision Pass
+Observation Delta: 21
+Decision Pass
+Observation Delta: 22
+Observation Delta: 22
+Decision Pass
+Decision Pass
+Observation Delta: 16
+Decision Pass
+Observation Delta: 22
+Decision Pass
+Observation Delta: 23
+Observation Delta: 23
+Decision Pass
+Decision Pass
+Observation Delta: 17
+Decision Pass
+Observation Delta: 23
+Decision Pass
+Observation Delta: 24
+Observation Delta: 24
+Decision Pass
+Decision Pass
+Observation Delta: 18
+Decision Pass
+Observation Delta: 24
+Decision Pass
+Observation Delta: 25
+Observation Delta: 25
+Decision Pass
+Decision Pass
+Observation Delta: 19
+Decision Pass
+Observation Delta: 25
+Decision Pass
+Observation Delta: 26
+Observation Delta: 26
+Decision Pass
+Decision Pass
+Observation Delta: 20
+Decision Pass
+Observation Delta: 26
+Decision Pass
+Observation Delta: 27
+Observation Delta: 27
+Decision Pass
+Decision Pass
+Observation Delta: 21
+Decision Pass
+Observation Delta: 27
+Decision Pass
+Observation Delta: 28
+Observation Delta: 28
+Decision Pass
+Decision Pass
+Observation Delta: 22
+Decision Pass
+Observation Delta: 28
+Decision Pass
+Observation Delta: 29
+Observation Delta: 29
+Decision Pass
+Decision Pass
+Observation Delta: 23
+Decision Pass
+Observation Delta: 29
+Decision Pass
+Observation Delta: 30
+Observation Delta: 30
+Decision Pass
+Decision Pass
+Observation Delta: 24
+Decision Pass
+Observation Delta: 30
+Decision Pass
+Observation Delta: 31
+Observation Delta: 31
+Decision Pass
+Decision Pass
+Observation Delta: 25
+Decision Pass
+Observation Delta: 31
+Decision Pass
+Observation Delta: 32
+Observation Delta: 32
+Decision Pass
+Decision Pass
+Observation Delta: 26
+Decision Pass
+Observation Delta: 32
+Decision Pass
+Observation Delta: 33
+Observation Delta: 33
+Decision Pass
+Decision Pass
+Observation Delta: 27
+Decision Pass
+Observation Delta: 33
+Decision Pass
+Observation Delta: 34
+Observation Delta: 34
+Decision Pass
+Decision Pass
+Observation Delta: 28
+Decision Pass
+Observation Delta: 34
+Decision Pass
+Observation Delta: 35
+Observation Delta: 35
+Decision Pass
+Decision Pass
+Observation Delta: 29
+Decision Pass
+Observation Delta: 35
+Decision Pass
+Observation Delta: 36
+Observation Delta: 36
+Decision Pass
+Decision Pass
+Observation Delta: 30
+Decision Pass
+Observation Delta: 36
+Decision Pass
+Observation Delta: 37
+Observation Delta: 37
+Decision Pass
+Decision Pass
+Observation Delta: 31
+Decision Pass
+Observation Delta: 37
+Decision Pass
+Observation Delta: 38
+Observation Delta: 38
+Decision Pass
+Decision Pass
+Observation Delta: 32
+Decision Pass
+Observation Delta: 38
+Decision Pass
+Observation Delta: 39
+Observation Delta: 39
+Decision Pass
+Decision Pass
+Observation Delta: 33
+Decision Pass
+Observation Delta: 39
+Decision Pass
+Observation Delta: 40
+Observation Delta: 40
+Decision Pass
+Decision Pass
+Observation Delta: 34
+Decision Pass
+Observation Delta: 40
+Decision Pass
+Observation Delta: 41
+Observation Delta: 41
+Decision Pass
+Decision Pass
+Observation Delta: 35
+Decision Pass
+Observation Delta: 41
+Decision Pass
+Observation Delta: 42
+Observation Delta: 42
+Decision Pass
+Decision Pass
+Observation Delta: 36
+Decision Pass
+Observation Delta: 42
+Decision Pass
+Observation Delta: 43
+Observation Delta: 43
+Decision Pass
+Decision Pass
+Observation Delta: 37
+Decision Pass
+Observation Delta: 43
+Decision Pass
+Observation Delta: 44
+Observation Delta: 44
+Decision Pass
+Decision Pass
+Observation Delta: 38
+Decision Pass
+Observation Delta: 44
+Decision Pass
+Observation Delta: 45
+Observation Delta: 45
+Decision Pass
+Decision Pass
+Observation Delta: 39
+Decision Pass
+Observation Delta: 45
+Decision Pass
+Observation Delta: 46
+Observation Delta: 46
+Decision Pass
+Decision Pass
+Observation Delta: 40
+Decision Pass
+Observation Delta: 46
+Decision Pass
+Observation Delta: 47
+Observation Delta: 47
+Decision Pass
+Decision Pass
+Observation Delta: 41
+Decision Pass
+Observation Delta: 47
+Decision Pass
+Observation Delta: 48
+Observation Delta: 48
+Decision Pass
+Decision Pass
+Observation Delta: 42
+Decision Pass
+Observation Delta: 48
+Decision Pass
+Observation Delta: 49
+Observation Delta: 49
+Decision Pass
+Decision Pass
+Observation Delta: 43
+Decision Pass
+Observation Delta: 49
+Decision Pass
+Observation Delta: 50
+Observation Delta: 50
+Decision Pass
+Decision Pass
+Observation Delta: 44
+Decision Pass
+Observation Delta: 50
+Decision Pass
+Observation Delta: 51
+Observation Delta: 51
+Decision Pass
+Observation Delta: 45
+Decision Pass
+Decision Pass
+Observation Delta: 52
+Observation Delta: 52
+Decision Pass
+Observation Delta: 46
+Decision Pass
+Decision Pass
+Observation Delta: 53
+Observation Delta: 53
+Decision Pass
+Observation Delta: 47
+Decision Pass
+Decision Pass
+Observation Delta: 54
+Observation Delta: 54
+Decision Pass
+Observation Delta: 48
+Decision Pass
+Decision Pass
+Observation Delta: 55
+Observation Delta: 55
+Decision Pass
+Observation Delta: 49
+Decision Pass
+Decision Pass
+1 Decision Made - White
+1 Decision time: 140.752
+Observation Delta: 309
+0 Decision Made - White
+0 Decision time: 140.76
+Observation Delta: 300
+Decision Pass
+Observation Delta: 50
+Decision Pass
+Decision Pass
+Observation Delta: 51
+Observation Delta: 51
+Decision Pass
+Decision Pass
+Observation Delta: 52
+Observation Delta: 52
+Decision Pass
+Decision Pass
+Observation Delta: 53
+Observation Delta: 53
+Decision Pass
+Decision Pass
+Observation Delta: 54
+Observation Delta: 54
+Decision Pass
+Decision Pass
+Observation Delta: 55
+Observation Delta: 55
+Decision Pass
+Decision Pass
+3 Decision Made - White
+3 Decision time: 143.872
+Observation Delta: 261
+2 Decision Made - White
+2 Decision time: 143.88
+Observation Delta: 305
+FSM State: 4 Robot 0 Belief: 6.92493e-08 -> 741, 552
+FSM State: 5 Robot 1 Belief: 1.22231e-08 -> 746, 546
+FSM State: 0 Robot 2 Belief: 4.74697e-07 -> 735, 559
+FSM State: 0 Robot 3 Belief: 1.453e-08 -> 746, 547
+FSM State: 0 Robot 0 Belief: 2.3947e-45 -> 1278, 663
+FSM State: 0 Robot 1 Belief: 5.24728e-53 -> 1303, 637
+FSM State: 0 Robot 2 Belief: 2.95463e-52 -> 1300, 639
+FSM State: 0 Robot 3 Belief: 1.61772e-59 -> 1322, 616
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 1.58555e-102 -> 1842, 763
+FSM State: 0 Robot 1 Belief: 1.29331e-108 -> 1857, 747
+FSM State: 0 Robot 2 Belief: 1.11281e-113 -> 1869, 734
+FSM State: 0 Robot 3 Belief: 1.87387e-130 -> 1908, 694
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 1.68815e-177 -> 2428, 840
+FSM State: 0 Robot 1 Belief: 5.1341e-178 -> 2431, 840
+FSM State: 0 Robot 2 Belief: 1.79261e-193 -> 2463, 807
+FSM State: 0 Robot 3 Belief: 1.11354e-208 -> 2493, 776
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 9.49366e-248 -> 2960, 920
+FSM State: 0 Robot 1 Belief: 3.66845e-252 -> 2968, 911
+FSM State: 0 Robot 2 Belief: 7.24545e-271 -> 3003, 875
+FSM State: 0 Robot 3 Belief: 6.11568e-267 -> 2995, 882
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 3543, 1005
+FSM State: 2 Robot 1 Belief: 0 -> 3553, 994
+FSM State: 2 Robot 2 Belief: 0 -> 3607, 939
+FSM State: 2 Robot 3 Belief: 0 -> 3603, 942
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 4087, 1089
+FSM State: 0 Robot 1 Belief: 0 -> 4085, 1090
+FSM State: 0 Robot 2 Belief: 0 -> 4158, 1016
+FSM State: 0 Robot 3 Belief: 0 -> 4171, 1002
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 4 Robot 0 Belief: 0 -> 4634, 1149
+FSM State: 5 Robot 1 Belief: 0 -> 4593, 1189
+FSM State: 0 Robot 2 Belief: 0 -> 4699, 1085
+FSM State: 0 Robot 3 Belief: 0 -> 4698, 1085
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 5221, 1222
+FSM State: 1 Robot 1 Belief: 0 -> 5161, 1275
+FSM State: 0 Robot 2 Belief: 0 -> 5283, 1159
+FSM State: 0 Robot 3 Belief: 0 -> 5282, 1159
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 5780, 1304
+FSM State: 0 Robot 1 Belief: 0 -> 5706, 1359
+FSM State: 0 Robot 2 Belief: 0 -> 5860, 1223
+FSM State: 0 Robot 3 Belief: 0 -> 5850, 1232
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0 -> 6321, 1394
+FSM State: 0 Robot 1 Belief: 0 -> 6286, 1437
+FSM State: 0 Robot 2 Belief: 0 -> 6425, 1297
+FSM State: 0 Robot 3 Belief: 0 -> 6421, 1287
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0 -> 6857, 1503
+FSM State: 0 Robot 1 Belief: 0 -> 6860, 1503
+FSM State: 0 Robot 2 Belief: 0 -> 6991, 1371
+FSM State: 0 Robot 3 Belief: 0 -> 7012, 1349
+FSM State: 0 Robot 0 Belief: 0 -> 7432, 1582
+FSM State: 2 Robot 1 Belief: 0 -> 7423, 1590
+FSM State: 2 Robot 2 Belief: 0 -> 7555, 1457
+FSM State: 2 Robot 3 Belief: 0 -> 7610, 1401
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 7988, 1699
+FSM State: 0 Robot 1 Belief: 0 -> 8036, 1650
+FSM State: 0 Robot 2 Belief: 0 -> 8150, 1535
+FSM State: 0 Robot 3 Belief: 0 -> 8173, 1511
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 4 Robot 0 Belief: 0 -> 8522, 1779
+FSM State: 5 Robot 1 Belief: 0 -> 8587, 1713
+FSM State: 0 Robot 2 Belief: 0 -> 8675, 1626
+FSM State: 1 Robot 3 Belief: 0 -> 8694, 1592
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0 -> 9064, 1852
+FSM State: 0 Robot 1 Belief: 0 -> 9140, 1778
+FSM State: 0 Robot 2 Belief: 0 -> 9198, 1706
+FSM State: 0 Robot 3 Belief: 0 -> 9245, 1672
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 9612, 1928
+FSM State: 1 Robot 1 Belief: 0 -> 9674, 1856
+FSM State: 0 Robot 2 Belief: 0 -> 9753, 1786
+FSM State: 0 Robot 3 Belief: 0 -> 9804, 1734
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 10173, 2010
+FSM State: 0 Robot 1 Belief: 0 -> 10268, 1914
+FSM State: 0 Robot 2 Belief: 0 -> 10297, 1884
+FSM State: 0 Robot 3 Belief: 0 -> 10358, 1822
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 10721, 2095
+FSM State: 0 Robot 1 Belief: 0 -> 10795, 2020
+FSM State: 1 Robot 2 Belief: 0 -> 10876, 1929
+FSM State: 0 Robot 3 Belief: 0 -> 10924, 1890
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 11327, 2144
+FSM State: 2 Robot 1 Belief: 0 -> 11373, 2097
+FSM State: 2 Robot 2 Belief: 0 -> 11460, 2009
+FSM State: 2 Robot 3 Belief: 0 -> 11527, 1941
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 11934, 2208
+FSM State: 0 Robot 1 Belief: 0 -> 11964, 2177
+FSM State: 0 Robot 2 Belief: 0 -> 12057, 2083
+FSM State: 0 Robot 3 Belief: 0 -> 12111, 2028
+FSM State: 4 Robot 0 Belief: 0 -> 12525, 2265
+FSM State: 5 Robot 1 Belief: 0 -> 12517, 2272
+FSM State: 0 Robot 2 Belief: 0 -> 12613, 2178
+FSM State: 0 Robot 3 Belief: 0 -> 12695, 2095
+FSM State: 0 Robot 0 Belief: 0 -> 13103, 2335
+FSM State: 0 Robot 1 Belief: 0 -> 13071, 2366
+FSM State: 0 Robot 2 Belief: 0 -> 13210, 2226
+FSM State: 0 Robot 3 Belief: 0 -> 13258, 2177
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0 -> 13676, 2399
+FSM State: 0 Robot 1 Belief: 0 -> 13630, 2457
+FSM State: 0 Robot 2 Belief: 0 -> 13762, 2324
+FSM State: 0 Robot 3 Belief: 0 -> 13835, 2250
+FSM State: 0 Robot 0 Belief: 0 -> 14259, 2457
+FSM State: 0 Robot 1 Belief: 0 -> 14165, 2550
+FSM State: 0 Robot 2 Belief: 0 -> 14297, 2417
+FSM State: 0 Robot 3 Belief: 0 -> 14381, 2332
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 1 Robot 0 Belief: 0 -> 14801, 2528
+FSM State: 0 Robot 1 Belief: 0 -> 14679, 2662
+FSM State: 0 Robot 2 Belief: 0 -> 14855, 2485
+FSM State: 0 Robot 3 Belief: 0 -> 14937, 2402
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 15390, 2601
+FSM State: 2 Robot 1 Belief: 0 -> 15250, 2740
+FSM State: 2 Robot 2 Belief: 0 -> 15427, 2562
+FSM State: 2 Robot 3 Belief: 0 -> 15523, 2465
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 15955, 2668
+FSM State: 0 Robot 1 Belief: 0 -> 15824, 2814
+FSM State: 0 Robot 2 Belief: 0 -> 16004, 2633
+FSM State: 0 Robot 3 Belief: 0 -> 16096, 2540
+RESET POSITIONS
+FSM State: 4 Robot 0 Belief: 0 -> 16531, 2747
+FSM State: 5 Robot 1 Belief: 0 -> 16389, 2888
+FSM State: 0 Robot 2 Belief: 0 -> 16592, 2686
+FSM State: 1 Robot 3 Belief: 0 -> 16618, 2641
+RESET POSITIONS
+RESET POSITIONS
+RESET POSITIONS
+FSM State: 0 Robot 0 Belief: 0 -> 17081, 2823
+FSM State: 0 Robot 1 Belief: 0 -> 16953, 2950
+FSM State: 0 Robot 2 Belief: 0 -> 17154, 2748
+FSM State: 0 Robot 3 Belief: 0 -> 17182, 2719
+FSM State: 0 Robot 0 Belief: 0 -> 17697, 2886
+FSM State: 0 Robot 1 Belief: 0 -> 17555, 3027
+FSM State: 0 Robot 2 Belief: 0 -> 17761, 2820
+FSM State: 0 Robot 3 Belief: 0 -> 17780, 2800
+FSM State: 0 Robot 0 Belief: 0 -> 18271, 2953
+FSM State: 0 Robot 1 Belief: 0 -> 18124, 3099
+FSM State: 0 Robot 2 Belief: 0 -> 18333, 2889
+FSM State: 0 Robot 3 Belief: 0 -> 18342, 2879
+INFO: bayes_supervisor: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+INFO: bayes_fsm: Terminating.
+Decision Times:  [140.76  140.752 143.88  143.872]
+Fitness of particle:  569.264
+Wrote file: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_3/tmp/job4_6_4/local_fitness
+Ceaning up simulation
