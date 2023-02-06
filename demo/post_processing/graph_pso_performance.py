@@ -20,14 +20,15 @@ step_to_cross_arena = time_to_cross_arena / time_step
 ###########################################################
 
 psodir = (str(os.getcwd())) + "/demo/jobfiles/Run_3"
-param_min = [19, tao_square/3, tao_square/3, 5, 0, 10]
-param_max = [21, tao_square*3, step_to_cross_arena, 95, step_to_cross_arena, 250]
+multiplier=5
+param_min = [0, tao_square/multiplier, tao_square/multiplier, 5, tao_square/multiplier]
+param_max = [0, tao_square*multiplier, step_to_cross_arena, 95, step_to_cross_arena]
 worst_case_fitess = 11200
 num_particles = 10
 num_noise = 10
-num_gen = 5
+num_gen = 7
 num_robots = 4
-particle_dim = 6
+particle_dim = 5
 param_names = ["Alpha", "Tao", "Random Forward", "CA Trigger", "Hysterisis", "Observation Wait Time"]
 std_gen = np.empty(num_gen) #tracks std deviation of particles per generation
 std_param_gen = np.empty(num_gen) #tracks the std deviation of normalized paramters per generation
@@ -83,8 +84,8 @@ def read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, r
 
             with open(prob_path) as f:
                 probIn = f.read().splitlines()
-            probIn = np.asarray(probIn, dtype=np.float64)
-            raw_param_gen[i, j] = probIn
+            probIn = np.asarray(probIn, dtype=np.float64)[:particle_dim]
+            raw_param_gen[i, j] = probIn[:particle_dim]
             for l in range(particle_dim):
                 if param_max[0] == 0:
                     if (l > 0):
