@@ -30,6 +30,8 @@ echo "Number of particles =" $NB_PARTICLES
 echo "Number of noise resistant evaluations =" $NB_NOISE_RES_EVALS
 echo "Number of nodes running Webots instances =" $NB_NODES
 
+export HOME_DIR = $(pwd)
+
 #cd /usr/local/efs/demo/jobfiles
 cd $(pwd)/jobfiles
 

@@ -20,6 +20,7 @@ py_path="$(pwd)/python_code"
 echo Compiling Code. . .
 cd $(pwd)/controllers/bayes_fsm
 export WEBOTS_HOME=/usr/local/webots
+export HOME_DIR = $(pwd)
 make clean
 make
 
@@ -33,7 +34,7 @@ SEED=$(sed -n ${line}p $(pwd)/seed_array.txt)
 FILL_RATIO=$(sed -n ${line}p $(pwd)/fill_array.txt)
 NUM_ROBOTS=4
 
-JOB_BASE_DIR=$(pwd)/data/tmp/job_${line}
+JOB_BASE_DIR=$(pwd)/tmp/job_${line}
 if [ ! -d $JOB_BASE_DIR ]
 
 then
