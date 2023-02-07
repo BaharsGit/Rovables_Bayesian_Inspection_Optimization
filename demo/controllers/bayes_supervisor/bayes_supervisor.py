@@ -18,7 +18,7 @@ MAX_TIME = 2700 #unit is in seconds, 2700 is around 45 minutes.
 WALL_TIME = 600
 #2700 45 min good?
 seedIn = 0
-baseline = 0
+baseline = sys.argv[2]
 run = 0
 nRobot = 0 # The number of robots is set later
 boxSize = 8    
@@ -181,13 +181,8 @@ def check_robbot_bound(xPos, yPos, me_index):
         if (me_index != j):
             other_pos = [trans_value_array[j][2], trans_value_array[j][0]]
             if (math.dist(me_pos, other_pos) < 0.025):
-            # if (math.dist(me_pos, other_pos) < 0.00006):
-                # print(math.dist(me_pos, other_pos))
-                # print(me_pos, other_pos)
-                # print(me_index, j)
                 print("RESET POSITIONS")
                 reset_flag = 1
-                #randomizePosition()
             
             
 
@@ -238,6 +233,7 @@ while supervisor.step(timestep) != -1:
             # Save position data
             robot_x = trans_value_array[i][2]
             robot_y = trans_value_array[i][0]
+            rowPosData.append(supervisor.getTime())
             rowPosData.append(robot_x)
             rowPosData.append(robot_y)
             currentData = data_array[i].getSFString()

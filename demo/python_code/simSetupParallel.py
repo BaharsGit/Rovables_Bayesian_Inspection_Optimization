@@ -31,7 +31,7 @@ if not os.path.exists(tempDir):
 
 # #Create World file with randomized positions and walks based on robot seed
 # # world_seed not used in this case as the texture is fixed. 
-WG = WorldGenerator(particle_id=args.seed, instance_id=args.seed, fill_ratio=args.fill_ratio, robot_number=4, path=args.path)
+WG = WorldGenerator(baseline=1, particle_id=args.seed, instance_id=args.seed, fill_ratio=args.fill_ratio, robot_number=args.num_robots, path=args.path, dynamic_env=0)
 WG.createWorld()
 
 # #Run the Webots simulation
@@ -40,7 +40,7 @@ dir = "../worlds/bayes_pso" + "_" + str(args.seed) + "_" + str(args.seed) + ".wb
 # #time.sleep(30)
 
 # # MODIFIED FOR AWS LAUNCH, LINES 32-42
-proc=subprocess.Popen(["xvfb-run","webots","--mode=realtime","--no-rendering","--batch","--stdout","--stderr", dir])
+proc=subprocess.Popen(["xvfb-run","webots","--mode=fast","--no-rendering","--batch","--stdout","--stderr", dir])
 
 # Get stdout and stderr messages during simulation
 try:

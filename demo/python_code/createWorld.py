@@ -20,7 +20,8 @@ class WorldGenerator():
         - A single .wbt file that is specific to the given seed.
     """
 
-    def __init__(self, particle_id=0, instance_id=0, fill_ratio= 0.52, robot_number=4, path=None, dynamic_env=0, env_upper=0.55, env_lower=0.45):
+    def __init__(self, baseline=0, particle_id=0, instance_id=0, fill_ratio= 0.52, robot_number=4, path=None, dynamic_env=0, env_upper=0.55, env_lower=0.45):
+        self.baseline = baseline
         self.particle_id = particle_id
         self.instance_id = instance_id
         self.fill_ratio = fill_ratio
@@ -192,11 +193,15 @@ Wall {
     def createRobots(self, file):
         arg = "\"" + str(self.instance_id) + "\""
         arg2 = "\"" + str(self.dynamic_env) + "\""
+        baselineArg = "\"" + str(self.dynamic_env) + "\""
         file.write(
         """Robot {
   name "Bayes Bot Supervisor"
   controller "bayes_supervisor"
-  controllerArgs """ + arg + """
+  controllerArgs [
+    """ + arg + """
+    """ + baselineArg + """
+  ]
   supervisor TRUE
 }\n""")
 

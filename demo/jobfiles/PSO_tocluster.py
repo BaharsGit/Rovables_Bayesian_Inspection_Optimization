@@ -389,27 +389,28 @@ time_step = 8 # this is in ms
 tao_square = square_time / time_step 
 time_to_cross_arena = 36125.079475174839899 #ms
 step_to_cross_arena = time_to_cross_arena / time_step #time steps 
+num_squares_in_arena = 128
 # F(R_FWD, TAO, Velicty) - Max samples taken when crossing arena
 # CHECK INITIAL VALUES
 multiplier = 5
 if (PARTICLE_SET == 1): 
     bounds = [0, 500, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, tao_square/multiplier, step_to_cross_arena, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-    x0=[50, tao_square*2, tao_square, 50, step_to_cross_arena/multiplier, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
+    x0=[50, tao_square, tao_square*2, 50, num_squares_in_arena, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
 if (PARTICLE_SET == 2):
     bounds = [0, 500, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, 0, 0, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-    x0=[50, tao_square*2, tao_square, 50, 0, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
+    x0=[50, tao_square, tao_square*2, 50, 0, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 3):
     bounds = [10, 10, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, tao_square/multiplier, step_to_cross_arena, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-    x0=[10, tao_square*2, tao_square, 50, step_to_cross_arena/multiplier, 0]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
+    x0=[10, tao_square, tao_square*2, 50, num_squares_in_arena, 0]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 4):
     bounds = [10, 10, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, 0, 0, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-    x0=[10, tao_square*2, tao_square, 50, 0, 0]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
-if (PARTICLE_SET == 5): # SET ONE 
+    x0=[10, tao_square, tao_square*2, 50, 0, 0]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
+if (PARTICLE_SET == 5): # SET ONE
     bounds = [0, 0, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, tao_square/multiplier, step_to_cross_arena, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-    x0=[0, tao_square*2, tao_square, 50, step_to_cross_arena/multiplier, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
+    x0=[0, tao_square, tao_square*2, 50, num_squares_in_arena, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
 if (PARTICLE_SET == 6): # SET ONE 
     bounds = [0, 0, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, 0, 0, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-    x0=[0, tao_square*2, tao_square, 50, 0, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
+    x0=[0, tao_square, tao_square*2, 50, 0, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
 if (PARTICLE_SET == 7):
     # THIS IS USED WITH THE TEST OPTIMIZATION FUNCTION
     bounds = [0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
