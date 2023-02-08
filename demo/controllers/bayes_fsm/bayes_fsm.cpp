@@ -323,7 +323,6 @@ int main(int argc, char **argv) {
         p = incbeta(alpha, beta, 0.5);
         //    Initial Decision Black         Initial Decision White     Decision Flips from white to black     Decision flips from black to whtie
         if (((d_f == -1) && (p > p_c)) || ((d_f == -1) && ((1-p) > p_c)) || ((d_f == 1) && (p > p_c)) || ((d_f == 0) && ((1-p) > p_c))) {
-          std::cout << "Decision Pass" << std::endl;
           FSM_STATE = FSM_CHECK_O;
         } else {
           obs_initial = 0; // Failed hysteresis. Reset observation delta. 
@@ -352,7 +351,6 @@ int main(int argc, char **argv) {
           std::cout << robotNum << " Decision time: " << decision_time << std::endl;
           obs_initial = 0;
         }
-        std::cout << "Observation Delta: "<< observationCount - obs_initial << std::endl;
         FSM_STATE = FSM_RW;
         break;
       }

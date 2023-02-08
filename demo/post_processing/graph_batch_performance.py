@@ -1,4 +1,5 @@
 import csv
+from turtle import pos
 import numpy as np
 import seaborn as sns
 from scipy import stats, integrate
@@ -7,6 +8,21 @@ from matplotlib import image
 import pandas
 
 import os
+
+n_robots = 4
+savePlots = 1
+pic_dim=128
+square_size=8
+squares_per_side=int(pic_dim/square_size)
+arena_squares = np.empty([squares_per_side, squares_per_side])
+distance_per_square = 1/squares_per_side
+fitness_run = []
+
+prob_column_names = []
+pos_column_names = []
+averages = pandas.DataFrame()
+pos_column_names.append('time_step')
+pos_run = []
 
 ################################### 2D Position Histogram ########################
 def create2dHist(run):
@@ -57,6 +73,9 @@ def createLine(run):
         plt.savefig(saveDest)
     plt.clf()
 
+# def getCoverage():
+
+
 #################################### Gaussian Heat Map #############################
 # From this: https://zbigatron.com/generating-heatmaps-from-coordinates/ and https://stackoverflow.com/questions/50091591/plotting-seaborn-heatmap-on-top-of-a-background-picture
 def createGauss(run):
@@ -94,71 +113,36 @@ def createGauss(run):
         plt.clf()
 
 
-n_robots = 4
-
-savePlots = 1
-
-prob_column_names = []
-pos_column_names = []
-averages = pandas.DataFrame()
 
 for i in range(n_robots):
     prob_column_names.append('rov_{}'.format(i))
     pos_column_names.append('rov_{}_x'.format(i))
     pos_column_names.append('rov_{}_y'.format(i))
 
-#for run in range(100):
+for run in range(100):
 
-run=92
-posData = []
-probData = []
-posFile = 'Log/Run' + str(run) + '/runPos.csv'
-posData = pandas.read_csv(posFile, names=pos_column_names)
+    posData = []
+    probData = []
+    posFile = 'Log/Run' + str(run) + '/runPos.csv'
+    posData = pandas.read_csv(posFile, names=pos_column_names)
 
-probFile = 'Log/Run' + str(run) + '/runProb.csv'
-probData = pandas.read_csv(probFile, names=prob_column_names)
-probData['mean'] = probData.mean(axis=1)
-currentAvgRun = (pandas.DataFrame({str(run): (probData.loc[:, 'mean']).to_list()}))
-#print(currentAvgRun.reset_index)
-averages = pandas.concat([averages, currentAvgRun], axis=1)
-image = plt.imread('worlds/textures/textrect.png')
+    decTimeFile = 'Log/Run' + str(run) + '/decTime.txt'
+    with open(decTimeFile) as f:
+        lines = f.read().splitlines()
+    fitness_run.append(float(lines[4]))
+    # pos_run.append(posData)
 
+    # probFile = 'Log/Run' + str(run) + '/runProb.csv'
+    # probData = pandas.read_csv(probFile, names=prob_column_names)
+    # probData['mean'] = probData.mean(axis=1)
+    # currentAvgRun = (pandas.DataFrame({str(run): (probData.loc[:, 'mean']).to_list()}))
+    # #print(currentAvgRun.reset_index)
+    # averages = pandas.concat([averages, currentAvgRun], axis=1)
+    # image = plt.imread('worlds/textures/textrect.png')
 
-xPos = []
-yPos = []
-xIndex = 0
-yIndex = 1
-for i in range(n_robots):
-    xPos = np.append(xPos, (posData.loc[:, pos_column_names[xIndex]]).to_list(), axis=0)
-    yPos = np.append(yPos, (posData.loc[:, pos_column_names[yIndex]]).to_list(), axis=0)
-    xIndex = xIndex + 2
-    yIndex = yIndex + 2
-
-
-    #plt.plot((probData.loc[:, 'mean']).to_list(), color="red", alpha=0.1)
-        # if run == 99:
-        #     plt.plot((probData.loc[:, 'mean']).to_list(), color="red", alpha=0.1, label='Run Specific Average')
-createGauss(run)
-createCDF(run)
-createLine(run)
-
-    #FIND A WAY TO CLEAR ALL FIGURES
-    #FIX PICTURE INPUT
-#print(len(averages))
-# xT = np.arange(0, 500, 100)
-# xT2 = np.arange(501, len(averages), 2500)
-# averages['mean'] = averages.mean(axis=1)
-# averages['std'] = averages.std(axis=1, ddof=0)
-# print(averages)
-# averages.to_csv('means.csv')
-# plt.plot(np.arange(16638), (averages.loc[:, 'mean']).to_list(), color='dodgerblue', label='Simulation Average')
-# plt.fill_between(np.arange(16638),
-# (averages.loc[:, 'mean']) - (averages.loc[:, 'std']), 
-# (averages.loc[:, 'mean']) + (averages.loc[:, 'std']), color='lightskyblue', alpha=0.3, label='One Standard Deviation')
-# #plt.xticks(np.concatenate([xT, xT2]))
-# plt.xlabel('Simulation Time')
-# plt.ylabel('Robot Belief')
-# plt.title('Simulation Performance')
-# plt.legend()
-# plt.savefig('SimAverage.png', transparent=True)
-# plt.show()
+    # createGauss(run)
+    # createCDF(run)
+    # createLine(run)
+print(fitness_run)
+plt.hist(fitness_run)
+plt.show() 

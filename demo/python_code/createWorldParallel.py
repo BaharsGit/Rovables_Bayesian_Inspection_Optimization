@@ -193,7 +193,7 @@ Wall {
     def createRobots(self, file):
         arg = "\"" + str(self.instance_id) + "\""
         arg2 = "\"" + str(self.dynamic_env) + "\""
-        baselineArg = "\"" + str(self.dynamic_env) + "\""
+        baselineArg = "\"" + str(self.baseline) + "\""
         file.write(
         """Robot {
   name "Bayes Bot Supervisor"

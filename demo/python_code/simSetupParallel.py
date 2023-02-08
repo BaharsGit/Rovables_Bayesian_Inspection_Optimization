@@ -40,7 +40,7 @@ dir = "../worlds/bayes_pso" + "_" + str(args.seed) + "_" + str(args.seed) + ".wb
 # #time.sleep(30)
 
 # # MODIFIED FOR AWS LAUNCH, LINES 32-42
-proc=subprocess.Popen(["xvfb-run","webots","--mode=fast","--no-rendering","--batch","--stdout","--stderr", dir])
+proc=subprocess.Popen(["xvfb-run", "-a", "webots","--mode=fast","--no-rendering","--batch","--stdout","--stderr", dir])
 
 # Get stdout and stderr messages during simulation
 try:
@@ -55,7 +55,7 @@ for file in os.listdir(tempDir):
     if file.endswith(".txt"):
         print("Decision time file found")
         shutil.move(tempDir + file, folder + file)
-    if file.endswith(".csv"):
+    elif file.endswith(".csv"):
         print("FILE FOUND")
         shutil.move(tempDir + file, folder + file)
     else:

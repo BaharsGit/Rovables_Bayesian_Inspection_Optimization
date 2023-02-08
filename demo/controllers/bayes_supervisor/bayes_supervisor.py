@@ -142,6 +142,11 @@ def cleanup(time_arr, fitness):
             # writing the data rows
             csvwriter.writerows(csvPosData)
 
+        fitOut = sum(fitness)
+        if (fitOut > MAX_TIME*nRobot):
+            fitOut = (MAX_TIME*nRobot) + (100 * nRobot)
+        print("Fitness of particle: ", fitOut)
+        time_arr = np.append(time_arr, fitOut)
         np.savetxt(decname, time_arr, delimiter=',')
  
     else:
@@ -227,13 +232,12 @@ while supervisor.step(timestep) != -1:
     else:
         rowProbData = []
         rowPosData = []
-
+        rowPosData.append(supervisor.getTime())
         for i in range(nRobot):
             trans_value_array[i] = trans_field_array[i].getSFVec3f()
             # Save position data
             robot_x = trans_value_array[i][2]
             robot_y = trans_value_array[i][0]
-            rowPosData.append(supervisor.getTime())
             rowPosData.append(robot_x)
             rowPosData.append(robot_y)
             currentData = data_array[i].getSFString()

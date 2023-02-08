@@ -62,7 +62,10 @@ Wall {
 Robot {
   name "Bayes Bot Supervisor"
   controller "bayes_supervisor"
-  controllerArgs "1"
+  controllerArgs [
+    "1"
+    "1"
+  ]
   supervisor TRUE
 }
 DEF rov_0 Rovable {
