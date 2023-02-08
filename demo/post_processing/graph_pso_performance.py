@@ -175,9 +175,19 @@ def animateParameter(l, param_gen, avg_gen, best_gen):
     #ani.save('animation.gif', writer='imagemagick', fps=1)
 np.set_printoptions(suppress=True)
 std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, raw_param_gen, param_gen, param_avg_gen, best_param_gen, l2_gen = read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, raw_param_gen, param_gen, param_avg_gen, best_param_gen, l2_gen)
-print("Best Particle Found: ", raw_param_gen[num_gen-1, int(best_id_gen[num_gen-1])])
-print("Best Particle Found Normalized: ", param_gen[num_gen-1, int(best_id_gen[num_gen-1])])
-print("Fitness: ", fit_gen[num_gen-1, int(best_id_gen[num_gen-1])])
+global_best = 0
+global_best_gen = 0
+for i in range(num_gen):
+    if (best_gen[i] < best_gen[i-1]):
+        global_best = int(best_id_gen[i])
+        global_best_gen = i
+print("Best Particle Parameters: ", raw_param_gen[global_best_gen, global_best])
+print("Best Particle Parameters Normalized: ", param_gen[global_best_gen, global_best])
+print("Fitness: ", fit_gen[global_best_gen, global_best])
+print("Best Particle: " + str(global_best) + " Generation: " + str(global_best_gen))
+print("Best Particle Evoluation: ")
+for i in range(num_gen):
+    print("Generation: " + str(i) + " : " + str(raw_param_gen[i, global_best]))
 psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen)
 #animateParameter(0, param_gen, avg_gen, best_gen)
 # 
