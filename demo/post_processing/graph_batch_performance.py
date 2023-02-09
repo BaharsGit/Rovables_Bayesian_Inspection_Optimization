@@ -1,11 +1,11 @@
 import csv
-from turtle import pos
 import numpy as np
 import seaborn as sns
 from scipy import stats, integrate
 import matplotlib.pyplot as plt
 from matplotlib import image
 import pandas
+from scipy.stats import gaussian_kde
 
 import os
 
@@ -23,6 +23,7 @@ pos_column_names = []
 averages = pandas.DataFrame()
 pos_column_names.append('time_step')
 pos_run = []
+home_dir = os.getcwd()
 
 ################################### 2D Position Histogram ########################
 def create2dHist(run):
@@ -74,6 +75,9 @@ def createLine(run):
     plt.clf()
 
 # def getCoverage():
+#     for i in range(squares_per_side):
+#         for j in range(squares_per_side):
+#             if ()
 
 
 #################################### Gaussian Heat Map #############################
@@ -112,8 +116,10 @@ def createGauss(run):
             plt.savefig(saveDest, transparent=True)
         plt.clf()
 
+x_total = []
+y_total = []
 
-
+print(home_dir)
 for i in range(n_robots):
     prob_column_names.append('rov_{}'.format(i))
     pos_column_names.append('rov_{}_x'.format(i))
@@ -123,14 +129,19 @@ for run in range(100):
 
     posData = []
     probData = []
-    posFile = 'Log/Run' + str(run) + '/runPos.csv'
+    posFile = home_dir + '/../Log/Run' + str(run) + '/runPos.csv'
     posData = pandas.read_csv(posFile, names=pos_column_names)
+    for i in range(n_robots):
+        x_total.append(posData['rov_{}_x'.format(i)].values.tolist())
+        y_total.append(posData['rov_{}_y'.format(i)].values.tolist())
 
-    decTimeFile = 'Log/Run' + str(run) + '/decTime.txt'
+
+    decTimeFile = home_dir + '/../Log/Run' + str(run) + '/decTime.txt'
     with open(decTimeFile) as f:
         lines = f.read().splitlines()
     fitness_run.append(float(lines[4]))
-    # pos_run.append(posData)
+    pos_run.append(posData)
+
 
     # probFile = 'Log/Run' + str(run) + '/runProb.csv'
     # probData = pandas.read_csv(probFile, names=prob_column_names)
@@ -143,6 +154,14 @@ for run in range(100):
     # createGauss(run)
     # createCDF(run)
     # createLine(run)
-print(fitness_run)
-plt.hist(fitness_run)
+# plt.hist(fitness_run)
+cmap = plt.cm.get_cmap('coolwarm')
+heatmap = sns.kdeplot(x=x_total[0], y=y_total[0], cmap=cmap, alpha=0.75, fill=True, zorder = 1)
+heatmap.imshow(image, extent=[0,1,0,1], zorder = 0, cmap='gray')
+plt.xlim([0, 1])
+plt.ylim([0, 1])
+# heatmap = sns.kdeplot(x=x_total[0], y=y_total[0], label='r{} path'.format(i), alpha=0.75, fill=True, zorder = 1)
+# plt.hist2d(x_total[0], y_total[0], bins=np.arange(0,1,distance_per_square), cmap='Blues')
+# cb = plt.colorbar()
+plt.imshow()
 plt.show() 

@@ -98,7 +98,7 @@ static int boxSize = 8;
 static int imageDim = 128;
 std::vector<int> grid_x;
 std::vector<int> grid_y;
- 
+static std::string obs_log;
 
 //Function declarations
 double incbeta(double a, double b, double x); //Beta function used for calculating posterior
@@ -116,9 +116,11 @@ int main(int argc, char **argv) {
   name = robot->getName();
   
   robotNum = name[1] - '0';
+  std::string seed = argv[1];
 
   std::cout << "Controller Seed: " << atoi(argv[1]) << std::endl;
   srand(atoi(argv[1])); // Seed is set during world fild generation
+  obs_log = "Data/Temp" + seed + "/observation_log.txt";
 
   dynamicEnvironment = atoi(argv[2]);
   std::cout << "Using Dynamic Enviornment: " << dynamicEnvironment << std::endl;
@@ -469,6 +471,11 @@ static int getColor(int dynamicEnvironment) {
   const double *meV = meField->getSFVec3f();
   double xPos = meV[2];
   double yPos = meV[0];
+  
+  std::ofstream logfile;
+  logfile.open(obs_log, std::ios_base::app);
+  logfile << xPos << ", " << yPos << "\n";
+  logfile.close();
 
   for (int i = 0; i < (int) grid_x.size(); i++) {
       if ((xPos >= 1.0 * grid_x[i]/imageDim) && 

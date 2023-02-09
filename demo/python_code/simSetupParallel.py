@@ -23,11 +23,15 @@ args = parser.parse_args()
 # Setup the directories for the simulation
 folder = "../Log/" + "Run" + str(args.seed) + "/"
 tempDir = "../controllers/bayes_supervisor/Data/Temp" + str(args.seed) + "/"
+tempDirObs = "../controllers/bayes_fsm/Data/Temp" + str(args.seed) + "/"
 if not os.path.exists(folder):
     os.makedirs(folder)
 
 if not os.path.exists(tempDir):
     os.makedirs(tempDir)
+
+if not os.path.exists(tempDirObs):
+    os.makedirs(tempDirObs)
 
 # #Create World file with randomized positions and walks based on robot seed
 # # world_seed not used in this case as the texture is fixed. 
@@ -61,5 +65,6 @@ for file in os.listdir(tempDir):
     else:
         print(file)
         print("NO FILE FOUND")
+shutil.move(tempDirObs, folder + file)
 
 os.rmdir(tempDir)
