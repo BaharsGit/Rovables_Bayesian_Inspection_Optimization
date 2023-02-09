@@ -74,11 +74,10 @@ def createLine(run):
         plt.savefig(saveDest)
     plt.clf()
 
-# def getCoverage():
-#     for i in range(squares_per_side):
-#         for j in range(squares_per_side):
-#             if ()
-
+def getCoverage():
+    for i in range(len(pos_run)):
+        for j in range(len(pos_run[i][:,'rov_{}_x'.format(i)])):
+            cov_t = (scipy.stats.binned_statistic_2d(x,y,values=None,statistic='count',bins=[np.arange(0,1,distance_per_square),np.arange(0,1,distance_per_square)],expand_binnumbers='True')).statistic
 
 #################################### Gaussian Heat Map #############################
 # From this: https://zbigatron.com/generating-heatmaps-from-coordinates/ and https://stackoverflow.com/questions/50091591/plotting-seaborn-heatmap-on-top-of-a-background-picture
@@ -125,23 +124,26 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_x'.format(i))
     pos_column_names.append('rov_{}_y'.format(i))
 
-for run in range(100):
+def read_data(x_total, y_total, pos_run, fitness_run):
+    
+    for run in range(100):
 
-    posData = []
-    probData = []
-    posFile = home_dir + '/../Log/Run' + str(run) + '/runPos.csv'
-    posData = pandas.read_csv(posFile, names=pos_column_names)
-    for i in range(n_robots):
-        x_total.append(posData['rov_{}_x'.format(i)].values.tolist())
-        y_total.append(posData['rov_{}_y'.format(i)].values.tolist())
+        posData = []
+        probData = []
+        posFile = home_dir + '/../Log/Run' + str(run) + '/runPos.csv'
+        posData = pandas.read_csv(posFile, names=pos_column_names)
+        for i in range(n_robots):
+            x_total.append(posData['rov_{}_x'.format(i)].values.tolist())
+            y_total.append(posData['rov_{}_y'.format(i)].values.tolist())
 
 
-    decTimeFile = home_dir + '/../Log/Run' + str(run) + '/decTime.txt'
-    with open(decTimeFile) as f:
-        lines = f.read().splitlines()
-    fitness_run.append(float(lines[4]))
-    pos_run.append(posData)
+        decTimeFile = home_dir + '/../Log/Run' + str(run) + '/decTime.txt'
+        with open(decTimeFile) as f:
+            lines = f.read().splitlines()
+        fitness_run.append(float(lines[4]))
+        pos_run.append(posData)
 
+    return x_total, y_total, pos_run, fitness_run
 
     # probFile = 'Log/Run' + str(run) + '/runProb.csv'
     # probData = pandas.read_csv(probFile, names=prob_column_names)
@@ -154,14 +156,16 @@ for run in range(100):
     # createGauss(run)
     # createCDF(run)
     # createLine(run)
-# plt.hist(fitness_run)
-cmap = plt.cm.get_cmap('coolwarm')
-heatmap = sns.kdeplot(x=x_total[0], y=y_total[0], cmap=cmap, alpha=0.75, fill=True, zorder = 1)
-heatmap.imshow(image, extent=[0,1,0,1], zorder = 0, cmap='gray')
-plt.xlim([0, 1])
-plt.ylim([0, 1])
-# heatmap = sns.kdeplot(x=x_total[0], y=y_total[0], label='r{} path'.format(i), alpha=0.75, fill=True, zorder = 1)
-# plt.hist2d(x_total[0], y_total[0], bins=np.arange(0,1,distance_per_square), cmap='Blues')
+
+x_total, y_total, pos_run, fitness_run = read_data(x_total, y_total, pos_run, fitness_run)
+
+#plt.hist(fitness_run)
+# cmap = plt.cm.get_cmap('coolwarm')
+# heatmap = sns.kdeplot(x=x_total[0], y=y_total[0], cmap=cmap, alpha=0.75, fill=True, zorder = 1)
+# heatmap.imshow(image, extent=[0,1,0,1], zorder = 0, cmap='gray')
+# plt.xlim([0, 1])
+# plt.ylim([0, 1])
+#heatmap = sns.kdeplot(x=x_total[0], y=y_total[0], label='r{} path'.format(i), alpha=0.75, fill=True, zorder = 1)
+# plt.hist2d(x_total[0], y_total[0], bins=np.arange(0,1,distance_per_square))
 # cb = plt.colorbar()
-plt.imshow()
-plt.show() 
+# plt.show() 
