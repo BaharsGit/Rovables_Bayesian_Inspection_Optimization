@@ -19,7 +19,7 @@ WALL_TIME = 600
 #2700 45 min good?
 reset_counter = 0
 seedIn = 0
-baseline = sys.argv[2]
+baseline = int(sys.argv[2])
 run = 0
 nRobot = 0 # The number of robots is set later
 boxSize = 8    
@@ -184,6 +184,7 @@ def cleanup(time_arr, fitness):
 
 def check_robbot_bound(xPos, yPos, me_index):
     global reset_flag
+    global reset_counter
     me_pos = [xPos, yPos]
     for j in range(nRobot):
         if (me_index != j):
