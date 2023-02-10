@@ -1,7 +1,4 @@
 #VRML_SIM R2021b utf8
-
-# Author: Johannes Boghaert, Darren Chiu
-
 WorldInfo {
   CFM 0.1
   ERP 0.1
@@ -14,8 +11,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.37410009861715926 -0.8017314106520007 -0.4661285888985836 2.0110979679680656
-  position -0.4573118151367981 1.0734694097374347 0.21413139964469322
+  orientation 0.04195353481457809 -0.991304382493381 -0.12472177903629537 3.8345604740322496
+  position 0.6665383243481414 0.08405371822778171 0.03405994717343552
 }
 TexturedBackground {
 }
@@ -77,8 +74,7 @@ DEF rov_0 Rovable {
     "95"
     "0"
   ]
-  supervisor TRUE
-  customData "0.500000-"
+  customData "0.527628-"
   extensionSlot [
     Receiver {
     }
@@ -95,8 +91,7 @@ DEF rov_1 Rovable {
     "95"
     "0"
   ]
-  supervisor TRUE
-  customData "0.500000-"
+  customData "0.527897-"
   extensionSlot [
     Receiver {
     }
@@ -113,7 +108,6 @@ DEF rov_2 Rovable {
     "95"
     "0"
   ]
-  supervisor TRUE
   customData "0.500000-"
   extensionSlot [
     Receiver {
@@ -131,8 +125,7 @@ DEF rov_3 Rovable {
     "95"
     "0"
   ]
-  supervisor TRUE
-  customData "0.500000-"
+  customData "0.472238-"
   extensionSlot [
     Receiver {
     }

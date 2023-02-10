@@ -189,7 +189,7 @@ def check_robbot_bound(xPos, yPos, me_index):
     for j in range(nRobot):
         if (me_index != j):
             other_pos = [trans_value_array[j][2], trans_value_array[j][0]]
-            if (math.dist(me_pos, other_pos) < 0.025):
+            if (math.dist(me_pos, other_pos) < 0.01):
                 reset_counter = reset_counter + 1
                 print("RESET POSITIONS")
                 reset_flag = 1

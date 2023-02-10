@@ -42,12 +42,12 @@ using namespace webots;
 #define STOP 1.0e-8
 #define TINY 1.0e-30
 
-enum Side { LEFT, RIGHT };
+enum Side { LEFT, RIGHT, FORWARD, BACKWARD };
 
 //Webots Parameters
 static Supervisor *robot;
 static Motor* motors[2]; //2
-static DistanceSensor* distance_sensors[4]; //2
+static DistanceSensor* distance_sensors[12]; //2
 static PositionSensor* encoders[2];
 static Node* rovNode[4];
 static Field* rovData[4];
@@ -126,7 +126,12 @@ int main(int argc, char **argv) {
   std::cout << "Using Dynamic Enviornment: " << dynamicEnvironment << std::endl;
   
   const char *motors_names[2] = {"left motor", "right motor"};
-  const char *distance_sensors_names[4] = {"left distance sensor", "right distance sensor", "angle left distance sensor", "angle right distance sensor"};
+  const char *distance_sensors_names[12] = {"left distance sensor", "right distance sensor", 
+  "angle left distance sensor", "angle right distance sensor",
+  "angle left two distance sensor", "angle right two distance sensor",
+  "side right distance sensor", "side right two distance sensor",
+  "side left distance sensor", "side left two distance sensor",
+  "back left distance sensor", "back right distance sensor"};
   const char *encoder_names[2] = {"left encoder", "right encoder"};
   
   // create the magnetic force 
@@ -144,7 +149,7 @@ int main(int argc, char **argv) {
   }
   
   //Distance Sensors
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 12; i++) {
     distance_sensors[i] = robot->getDistanceSensor(distance_sensors_names[i]);
     distance_sensors[i]->enable(TIME_STEP);
   }
@@ -186,8 +191,8 @@ int main(int argc, char **argv) {
     }
 
     //Distance Sensor values to be updated at each simulation step
-    double distance_sensors_values[4];
-    for (int i = 0; i < 4; i++){
+    double distance_sensors_values[12];
+    for (int i = 0; i < 10; i++){
       distance_sensors_values[i] = distance_sensors[i]->getValue();
     }
 
@@ -251,12 +256,18 @@ int main(int argc, char **argv) {
         direction = distance_sensors_values[LEFT] < distance_sensors_values[RIGHT] ? RIGHT : LEFT;
         
         if (((distance_sensors_values[LEFT] < close_distance) && (distance_sensors_values[RIGHT] < close_distance)) || ((distance_sensors_values[2] < close_distance) && (distance_sensors_values[3] < close_distance))) {
-          direction = -1;
-        } else if (distance_sensors_values[2] < distance_sensors_values[3]) {   
-          direction = RIGHT;
-        } else if (distance_sensors_values[3] < distance_sensors_values[2]) {
+          direction = BACKWARD;
+        } else if ((distance_sensors_values[6] < close_distance) || (distance_sensors_values[7] < close_distance)) {
           direction = LEFT;
-        } 
+        } else if ((distance_sensors_values[8] < close_distance) || (distance_sensors_values[9] < close_distance)) {
+          direction = RIGHT;
+        } else if ((distance_sensors_values[2] < distance_sensors_values[3]) || (distance_sensors_values[4] < distance_sensors_values[5])) {   
+          direction = RIGHT;
+        } else if ((distance_sensors_values[3] < distance_sensors_values[2]) || (distance_sensors_values[5] < distance_sensors_values[4])) {
+          direction = LEFT;
+        } else if ((distance_sensors_values[8] < close_distance) || (distance_sensors_values[9] < close_distance)) {
+          direction = FORWARD;
+        }
         
         //std::cout << robotNum << " "<< direction << std::endl;
         if (direction == LEFT) {
@@ -267,10 +278,13 @@ int main(int argc, char **argv) {
           // set the speed to turn to the right
           motors[LEFT]->setVelocity(speed);
           motors[RIGHT]->setVelocity(-speed);
-        } else if (direction == -1){
+        } else if (direction == BACKWARD){
           // set the speed to go backwards
           motors[LEFT]->setVelocity(-speed);
           motors[RIGHT]->setVelocity(-speed);
+        } else if (direction == FORWARD) { 
+          motors[LEFT]->setVelocity(speed);
+          motors[RIGHT]->setVelocity(speed);
         }
         break;
       }
