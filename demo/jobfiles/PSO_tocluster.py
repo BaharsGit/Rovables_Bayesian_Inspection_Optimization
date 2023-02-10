@@ -191,20 +191,18 @@ class PSO():
         swarm.append(Particle(x0,bounds))
 
         for i in range(1, num_particles):
-            rand_init_count = 0
             x=[]
             for j in range(0,num_dimensions):
                 #x.append(random.uniform(bounds[0],bounds[1])) MODIFIED FOR BAYES BOT
                 if (j == 0):
-                    sampled_number = random.uniform(0,bounds[rand_init_count + 1])
+                    sampled_number = random.uniform(0,x0[j]*5)
 
-                    if (sampled_number < bounds[rand_init_count]):
-                        x.append(sampled_number + bounds[rand_init_count])
+                    if (sampled_number < x0[j]/5):
+                        x.append(sampled_number + x0[5]/5)
                     else:
                         x.append(sampled_number)
                 else:
-                    x.append(random.uniform(bounds[rand_init_count],bounds[rand_init_count + 1])) #includes low excludes high
-                rand_init_count = rand_init_count + 2
+                    x.append(random.uniform(x0[j]/5,x0[j]*5)) #includes low excludes high
             
             swarm.append(Particle(x,bounds))
         print("PSO_tocluster.py: This is the number of particles in swarm: " + str(len(swarm)) + "\n")

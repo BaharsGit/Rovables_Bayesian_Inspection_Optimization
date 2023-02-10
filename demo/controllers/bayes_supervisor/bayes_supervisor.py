@@ -17,6 +17,7 @@ import sys
 MAX_TIME = 2700 #unit is in seconds, 2700 is around 45 minutes.
 WALL_TIME = 600
 #2700 45 min good?
+reset_counter = 0
 seedIn = 0
 baseline = sys.argv[2]
 run = 0
@@ -146,7 +147,9 @@ def cleanup(time_arr, fitness):
         if (fitOut > MAX_TIME*nRobot):
             fitOut = (MAX_TIME*nRobot) + (100 * nRobot)
         print("Fitness of particle: ", fitOut)
+        
         time_arr = np.append(time_arr, fitOut)
+        time_arr = np.append(time_arr, reset_counter)
         np.savetxt(decname, time_arr, delimiter=',')
  
     else:
@@ -186,6 +189,7 @@ def check_robbot_bound(xPos, yPos, me_index):
         if (me_index != j):
             other_pos = [trans_value_array[j][2], trans_value_array[j][0]]
             if (math.dist(me_pos, other_pos) < 0.025):
+                reset_counter = reset_counter + 1
                 print("RESET POSITIONS")
                 reset_flag = 1
             

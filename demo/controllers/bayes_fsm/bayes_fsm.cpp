@@ -243,14 +243,14 @@ int main(int argc, char **argv) {
       case FSM_CA:
       {
         //If nothing is in front, then go back to Random Walk
-        if (distance_sensors_values[LEFT] > 130 && distance_sensors_values[RIGHT] > 130 && distance_sensors_values[2] > 130 && distance_sensors_values[3] > 130) { 
+        if (distance_sensors_values[LEFT] > close_distance && distance_sensors_values[RIGHT] > close_distance && distance_sensors_values[2] > close_distance && distance_sensors_values[3] > close_distance) { 
           FSM_STATE = FSM_RW;
           break;
         }
 
         direction = distance_sensors_values[LEFT] < distance_sensors_values[RIGHT] ? RIGHT : LEFT;
         
-        if (((distance_sensors_values[LEFT] < 130) && (distance_sensors_values[RIGHT] < 130)) || ((distance_sensors_values[2] < 130) && (distance_sensors_values[3] < 130))) {
+        if (((distance_sensors_values[LEFT] < close_distance) && (distance_sensors_values[RIGHT] < close_distance)) || ((distance_sensors_values[2] < close_distance) && (distance_sensors_values[3] < close_distance))) {
           direction = -1;
         } else if (distance_sensors_values[2] < distance_sensors_values[3]) {   
           direction = RIGHT;
