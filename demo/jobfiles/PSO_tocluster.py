@@ -262,7 +262,7 @@ class PSO():
                         os.chdir("../")
                     
                     file_path = run_dir + "Generation_%d/local_fitness_%d_%d.txt" % (iteration, particle, instance)
-                    
+
                     if os.path.exists(file_path):
                         success = swarm[particle].evaluate(costFunc, iteration, particle, instance, noise_resistance_evals)
                         print("PSO_tocluster.py: evaluating Generation_" + str(iteration) + "/local_fitness_" + str(particle) + "_" + str(instance) + ".txt \n")
@@ -395,24 +395,24 @@ num_squares_in_arena = 128
 sim_time = 2700 * 1000 #max sim time in ms
 sim_time_steps = sim_time / 8 #total time steps in a simulation
 max_num_obs = sim_time_steps / (tao_square/multiplier) # maximum number of observations in a simulation
-
+distance_sensor_max = 150 #this is in mm
 if (PARTICLE_SET == 1): 
-    bounds = [0, 500, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, 0, max_num_obs, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    bounds = [0, 500, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, distance_sensor_max-5, 0, max_num_obs, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[50, tao_square, tao_square*2, 50, num_squares_in_arena, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
 if (PARTICLE_SET == 2):
     bounds = [0, 500, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, 0, 0, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[50, tao_square, tao_square*2, 50, 0, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 3):
-    bounds = [10, 10, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, 0, max_num_obs, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    bounds = [10, 10, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, distance_sensor_max-5, 0, max_num_obs, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, tao_square, tao_square*2, 50, num_squares_in_arena, 0]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 4):
-    bounds = [10, 10, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, 0, 0, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    bounds = [10, 10, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, distance_sensor_max-5, 0, 0, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, tao_square, tao_square*2, 50, 0, 0]  #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 if (PARTICLE_SET == 5): # SET ONE
-    bounds = [0, 0, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, 0, max_num_obs, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    bounds = [0, 0, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, distance_sensor_max-5, 0, max_num_obs, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[0, tao_square, tao_square*2, 50, num_squares_in_arena, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
 if (PARTICLE_SET == 6): # SET ONE 
-    bounds = [0, 0, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, 95, 0, 0, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    bounds = [0, 0, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, distance_sensor_max-5, 0, 0, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[0, tao_square, tao_square*2, 50, 0, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
 if (PARTICLE_SET == 7):
     # THIS IS USED WITH THE TEST OPTIMIZATION FUNCTION
