@@ -65,6 +65,10 @@ for file in os.listdir(tempDir):
     else:
         print(file)
         print("NO FILE FOUND")
+for file in os.listdir(args.path):
+    if file.endswith(".txt"):
+        print("Found file: ", file)
+        shutil.move(str(args.path) + "/" + file, folder + file)
 shutil.move(tempDirObs, folder + file)
 
 os.rmdir(tempDir)
