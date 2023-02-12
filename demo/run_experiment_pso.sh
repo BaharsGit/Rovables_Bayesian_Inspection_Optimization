@@ -1,12 +1,13 @@
 #!/bin/sh
+home_path="$(pwd)/efs/demo"
 
 # MODIFIED FOR NOISE RESISTANT PSO
-NB_NOISE_RES_EVALS=3
+NB_NOISE_RES_EVALS=2
 NUM_ROBOTS=4
 
 #FLIP TO TEST PSO IN SERIES ON LOCAL OR USE TEST FUNCTION
-TEST_PSO=1
-TEST_FUNC=1
+TEST_PSO=0
+TEST_FUNC=0
 
 #RUN DYNAMIC ENVIORNMENT
 DYNAMIC_ENV=0
@@ -32,7 +33,7 @@ echo "Number of nodes running Webots instances =" $NB_NODES
 
 
 #cd /usr/local/efs/demo/jobfiles
-cd $(pwd)/jobfiles
+cd ${home_path}/jobfiles
 
 # RUN IN SERIES
 if [ $TEST_PSO -eq 1 ]
@@ -64,12 +65,12 @@ else
     echo "Running PSO script"
     
     # MODIFIED FOR COMPILATION ON AWS INSTANCES TO AVOID NON-COMPATIBLE BINARY WARNING
-    cd $(pwd)/../controllers/bayes_fsm
+    cd ${home_path}/controllers/bayes_fsm
     export WEBOTS_HOME=/usr/local/webots
     make clean
     make
 
-    cd $(pwd)/../../jobfiles
+    cd ${home_path}/jobfiles
 
     # MODIFIED FOR NOISE RESISTANT PSO
     python3 -u PSO_tocluster.py -n $NB_PARTICLES -e $NB_NOISE_RES_EVALS -t $TEST_PSO -tf $TEST_FUNC -d $DYNAMIC_ENV -dub $ENV_UB -dlb $ENV_LB
@@ -84,6 +85,7 @@ else
 
     # Pipe ls command into head and print first line
     RUN_DIR=$(ls -td */| head -1)
+    echo "Change directory: " $RUN_DIR
     cd $RUN_DIR
     
     while true 
