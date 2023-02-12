@@ -57,10 +57,10 @@ except subprocess.TimeoutExpired:
 
 for file in os.listdir(tempDir):
     if file.endswith(".txt"):
-        print("Decision time file found")
+        print("File Found: ", file)
         shutil.move(tempDir + file, folder + file)
     elif file.endswith(".csv"):
-        print("FILE FOUND")
+        print("File Found: ", file)
         shutil.move(tempDir + file, folder + file)
     else:
         print(file)
@@ -69,6 +69,9 @@ for file in os.listdir(args.path):
     if file.endswith(".txt"):
         print("Found file: ", file)
         shutil.move(str(args.path) + "/" + file, folder + file)
-shutil.move(tempDirObs, folder + file)
+for file in os.listdir(tempDirObs):
+    if file.endswith(".txt"):
+        print("Found file: ", file)
+        shutil.move(tempDirObs, folder + file)
 
 os.rmdir(tempDir)
