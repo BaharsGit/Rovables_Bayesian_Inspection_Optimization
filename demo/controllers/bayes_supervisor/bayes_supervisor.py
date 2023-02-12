@@ -154,9 +154,9 @@ def cleanup(time_arr, fitness):
  
     else:
         fitOut = sum(fitness)
-        if (fitOut > MAX_TIME*nRobot):
-            fitOut = (MAX_TIME*nRobot) + (100 * nRobot)
-        print("Fitness of particle: ", fitOut)
+        # if (fitOut > MAX_TIME*nRobot):
+        #     fitOut = (MAX_TIME*nRobot) + (100 * nRobot)
+        # print("Fitness of particle: ", fitOut)
 
         # USED ONLY FOR PSO LAUNCH
 
@@ -258,6 +258,7 @@ while supervisor.step(timestep) != -1:
                     decision_switch_count = decision_switch_count + 1
                     fitness[i] = (fitness[i] + evaluateFitness(float(currentData[8:]), float(belief))) / decision_switch_count
                     dec_time[i] = currentData[8:]
+                print("Updated Robot Fitness: ", fitness)
 
         csvProbData.append(rowProbData)
         csvPosData.append(rowPosData)
@@ -272,6 +273,6 @@ while supervisor.step(timestep) != -1:
                     print("Robot did not make decision in time!")
                     dec_time[k] = supervisor.getTime()
                     fitness[i] = fitness[i] + supervisor.getTime()
-            print("Decision Times: ", dec_time)
+            print("Final Robot Fitness: ", fitness)
             cleanup(dec_time, fitness)
                 
