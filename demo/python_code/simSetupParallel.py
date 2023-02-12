@@ -72,6 +72,6 @@ for file in os.listdir(args.path):
 for file in os.listdir(tempDirObs):
     if file.endswith(".txt"):
         print("Found file: ", file)
-        shutil.move(tempDirObs, folder + file)
+        shutil.move(tempDirObs + file, folder + file)
 
 os.rmdir(tempDir)
