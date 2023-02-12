@@ -30,7 +30,7 @@ cd $home_path
 
 # Get the current AWS job index
 line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
-line=${i}
+# line=${i} Used this in a for loop for local test.
 SEED=$(sed -n ${line}p ${home_path}/seed_array.txt)
 FILL_RATIO=$(sed -n ${line}p ${home_path}/fill_array.txt)
 NUM_ROBOTS=4
