@@ -35,6 +35,8 @@ class WorldGenerator():
         self.initialX = [] 
         self.initialY = []
 
+        self.orientation = [[-1, 0, 0, -1.57], [0.577, 0.577, 0.577, -2.09], [0, 0.707106, 0.707107, 3.14159], [0.577, -0.577, -0.577, -2.09]]
+
     def checkCoord(self, x, y, array):
     #Iterates through 
       for coord in array:
@@ -194,6 +196,8 @@ Wall {
         arg = "\"" + str(self.instance_id) + "\""
         arg2 = "\"" + str(self.dynamic_env) + "\""
         baselineArg = "\"" + str(self.dynamic_env) + "\""
+        index = np.random.randint(0, 4)
+        rotationArg = str(self.orientation[index][0]) + " " + str(self.orientation[index][1]) + " " + str(self.orientation[index][2]) + " " + str(self.orientation[index][3]) 
         file.write(
         """Robot {
   name "Bayes Bot Supervisor"
@@ -210,7 +214,7 @@ Wall {
             file.write(
             """DEF rov_""" + rov_number + """ Rovable {
   translation """ + str(self.initialX[i]) + """ 0.023 """ + str(self.initialY[i]) + """
-  rotation 1 0 0 -1.5707953071795862
+  rotation """ + rotationArg + """
   name "r""" + rov_number + """"
   controller "bayes_fsm"
   controllerArgs [

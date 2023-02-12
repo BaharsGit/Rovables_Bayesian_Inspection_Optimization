@@ -4,7 +4,7 @@
 
 PROTO Rovable [
   field SFVec3f    translation              0 0.023 0
-  field SFRotation rotation                 0 0 1 0
+  field SFRotation rotation                 0 0 0 0
   field SFString   name                     "Rovable"
   field SFFloat    cameraFieldOfView        1.74533 # range in [0, pi] in rad.
   field SFVec2f    cameraResolution         1280 720 # width and height of the camera resolution in pixels
@@ -13,7 +13,7 @@ PROTO Rovable [
   field SFFloat    magneticForce            0.51 # total magnetic force in Newton
   field SFString   controller               "rovable_controller"
   field MFString   controllerArgs           []
-  field SFString   customData               "0000"
+  field SFString   customData               "0.500000-"
   field SFBool     supervisor               TRUE
   field SFBool     synchronization          TRUE
   field MFNode     extensionSlot            []
@@ -66,7 +66,7 @@ PROTO Rovable [
       }
       DEF DS_ANGLE_RIGHT DistanceSensor {
         translation 0.008 -0.009 0.000
-        rotation -0.935 0.251 -0.251 1.64
+        rotation 0 0 1 -0.5235
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
           USE DS_SHAPE
@@ -75,7 +75,7 @@ PROTO Rovable [
       }
       DEF DS_ANGLE_RIGHT_2 DistanceSensor {
         translation 0.008 -0.0075 0.000
-        rotation -0.935 0.651 -0.651 1.64
+        rotation 0 0 1 -1.0472
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
           USE DS_SHAPE
@@ -93,7 +93,7 @@ PROTO Rovable [
       }
       DEF DS_ANGLE_LEFT DistanceSensor {
         translation 0.008 0.009 0.000
-        rotation 0.935 0.251 -0.251 -1.64
+        rotation 0 0 1 0.5235
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
           USE DS_SHAPE
@@ -102,7 +102,7 @@ PROTO Rovable [
       }
       DEF DS_ANGLE_LEFT_2 DistanceSensor {
         translation 0.008 0.009 0.000
-        rotation 0.935 0.651 -0.651 -1.64
+        rotation 0 0 1 1.0472
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
           USE DS_SHAPE
@@ -138,7 +138,7 @@ PROTO Rovable [
       }
       DEF DS_BACK DistanceSensor {
         translation -0.005 -0.0075 0.000
-        rotation 0.00 0.707 -0.707 3.14159
+        rotation 0.00 0 1 3.14159
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
           USE DS_SHAPE
@@ -147,7 +147,7 @@ PROTO Rovable [
       }
       DEF DS_BACK DistanceSensor {
         translation -0.005 0.0075 0.000
-        rotation 0.00 0.707 -0.707 3.14159
+        rotation 0.00 0 1 3.14159
         lookupTable [ 0 0 0, 0.15 150 0 ]
         children [
           USE DS_SHAPE
