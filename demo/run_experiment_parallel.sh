@@ -8,6 +8,7 @@
 #       b.) Run the simulation. Producing -> runPos.csv and runProb.csv
 #       c.) Move the output files into the previously created log folder.
 echo Starting script. . . ${BASH_VERSION}
+cd "$(pwd)/efs/demo" # Used for correct path in batch launch on AWS. Disable if using on local test.
 
 # MODIFIED FOR AWS LAUNCH, LINES 16-20, DEFINE PY_PATH
 home_path="$(pwd)"
