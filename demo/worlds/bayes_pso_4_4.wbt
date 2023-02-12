@@ -70,7 +70,7 @@ Robot {
 }
 DEF rov_0 Rovable {
   translation 0.26244328076369106 0.023 0.14284943080764423
-  rotation 1 0 0 -1.5707953071795862
+  rotation 0 0.707106 0.707107 3.14159
   name "r0"
   controller "bayes_fsm"
   controllerArgs [
@@ -88,7 +88,7 @@ DEF rov_0 Rovable {
 }
 DEF rov_1 Rovable {
   translation 0.4064524183496129 0.023 0.18947504372216922
-  rotation 1 0 0 -1.5707953071795862
+  rotation 0.577 -0.577 -0.577 -2.09
   name "r1"
   controller "bayes_fsm"
   controllerArgs [
@@ -106,7 +106,7 @@ DEF rov_1 Rovable {
 }
 DEF rov_2 Rovable {
   translation 0.10986358611163091 0.023 0.4114319130365673
-  rotation 1 0 0 -1.5707953071795862
+  rotation 0 0.707106 0.707107 3.14159
   name "r2"
   controller "bayes_fsm"
   controllerArgs [
@@ -124,7 +124,7 @@ DEF rov_2 Rovable {
 }
 DEF rov_3 Rovable {
   translation 0.876159538778947 0.023 0.7704071163462276
-  rotation 1 0 0 -1.5707953071795862
+  rotation 1 0 0 -1.57
   name "r3"
   controller "bayes_fsm"
   controllerArgs [

@@ -119,7 +119,7 @@ int main(int argc, char **argv) {
   std::string seed = argv[1];
 
   std::cout << "Controller Seed: " << atoi(argv[1]) << std::endl;
-  srand(atoi(argv[1])); // Seed is set during world fild generation
+  srand(atoi(argv[1]) + robotNum); // Seed is set during world fild generation
   obs_log = "Data/Temp" + seed + "/observation_log.txt";
 
   dynamicEnvironment = atoi(argv[2]);
