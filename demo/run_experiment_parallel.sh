@@ -8,17 +8,18 @@
 #       b.) Run the simulation. Producing -> runPos.csv and runProb.csv
 #       c.) Move the output files into the previously created log folder.
 echo Starting script. . . ${BASH_VERSION}
-cd "$(pwd)/efs/demo" # Used for correct path in batch launch on AWS. Disable if using on local test.
+home_path="$(pwd)/efs/demo"
+# home_path="$(pwd)"
+cd $home_path # Used for correct path in batch launch on AWS. Disable if using on local test.
 
 # MODIFIED FOR AWS LAUNCH, LINES 16-20, DEFINE PY_PATH
-home_path="$(pwd)"
-py_path="$(pwd)/python_code"
+py_path="${home_path}/python_code"
 
 # UNCOMMENT BELOW TO TEST ON LOCAL MACHINE
 #py_path="/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/python_code"
 
 echo Compiling Code. . .
-cd $(pwd)/controllers/bayes_fsm
+cd ${home_path}/controllers/bayes_fsm
 export WEBOTS_HOME=/usr/local/webots
 make clean
 make
@@ -30,11 +31,11 @@ cd $home_path
 # Get the current AWS job index
 line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
 line=${i}
-SEED=$(sed -n ${line}p $(pwd)/seed_array.txt)
-FILL_RATIO=$(sed -n ${line}p $(pwd)/fill_array.txt)
+SEED=$(sed -n ${line}p ${home_path}/seed_array.txt)
+FILL_RATIO=$(sed -n ${line}p ${home_path}/fill_array.txt)
 NUM_ROBOTS=4
 
-JOB_BASE_DIR=$(pwd)/tmp/job_${line}
+JOB_BASE_DIR=${home_path}/tmp/job_${line}
 if [ ! -d $JOB_BASE_DIR ]
 
 then
@@ -52,9 +53,9 @@ echo "Running experiment version $SEED"
 # MODIFIED FOR AWS LAUNCH, LINES 48, USING PY_PATH
 pwd
 echo "Using Parameters File: "
-cat $(pwd)/baseline_param.txt
-cp $(pwd)/baseline_param.txt ${JOB_BASE_DIR}/prob.txt
+cat ${home_path}/baseline_param.txt
+cp ${home_path}/baseline_param.txt ${JOB_BASE_DIR}/prob.txt
 
-cd $(pwd)/python_code
+cd ${home_path}/python_code
 python3 -u simSetupParallel.py -s $SEED -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS #Setup directories and run the simulation
 cd ${home_path}
