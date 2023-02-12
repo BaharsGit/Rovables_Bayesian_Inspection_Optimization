@@ -262,8 +262,7 @@ class PSO():
                         os.chdir("../")
                     
                     file_path = run_dir + "Generation_%d/local_fitness_%d_%d.txt" % (iteration, particle, instance)
-                    print(file_path)
-                    print(os.getcwd())
+                    
                     if os.path.exists(file_path):
                         success = swarm[particle].evaluate(costFunc, iteration, particle, instance, noise_resistance_evals)
                         print("PSO_tocluster.py: evaluating Generation_" + str(iteration) + "/local_fitness_" + str(particle) + "_" + str(instance) + ".txt \n")
