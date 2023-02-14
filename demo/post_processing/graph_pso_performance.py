@@ -19,7 +19,7 @@ time_to_cross_arena = 36125.079475174839899 #ms
 step_to_cross_arena = time_to_cross_arena / time_step
 ###########################################################
 
-psodir = (str(os.getcwd())) + "/../jobfiles/Run_3"
+psodir = (str(os.getcwd())) + "/../jobfiles/Run_0"
 multiplier=5
 param_min = [0, tao_square/multiplier, tao_square/multiplier, 5, tao_square/multiplier]
 param_max = [0, tao_square*multiplier, step_to_cross_arena, 95, step_to_cross_arena]
