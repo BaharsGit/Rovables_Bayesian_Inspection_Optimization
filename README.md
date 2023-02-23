@@ -397,8 +397,10 @@ As mentioned earlier in the instuctions, for this project we use the _multi-node
 
 ### 8.2 Configuration
 #### 8.2.1 Compute environment
-* The first step consists in creating a compute environment in the [AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#compute-environments) by clicking on the _Create_ button. <br>
+* Under the batch environment click "compute environment" on the left column. The first step consists in creating a compute environment in the [AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#compute-environments) by clicking on the _Create_ button. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
+    
+* Select EC2 as the option, instead of Fargate.
 
 * Choose an arbitrary name for your environment. Choose _Managed_ as environment type to let Amazon organize the jobs automatically. Choose the default _Batch service-linked role_ to give all the permissions to access other AWS services like ECS. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_compute_env_config.png)
@@ -455,7 +457,7 @@ A job definition allows to define a set of parameters for future job executions.
 * Select the compute resources to allocate for each container. Choose 2vCPUs and 4096 MiB of memory. No GPU is needed. _m5.large_ instances will be automatically launched with these parameters. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config2.png)
     
-* Click expand additional configuration. The next step consists in mounting the EFS file system to the container. First add the mount point to the container. Then, choose the EFS file system as volume. Names defined in both sections must be the same. The file system ID can be found in the [EFS console](https://us-east-2.console.aws.amazon.com/efs/home?region=us-east-2#/file-systems) (see second illustration below). <br>
+* Click expand additional configuration. The next step consists in mounting the EFS file system to the container. First add the mount point to the container. Then, choose the EFS file system as volume. Names defined in both sections must be the same. The file system ID can be found in the [EFS console](https://us-east-2.console.aws.amazon.com/efs/home?region=us-east-2#/file-systems) (see second illustration below). Check the enable EFS button. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config3.png)
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_filesystem_id.png)
     
