@@ -110,13 +110,13 @@ def evaluateFitness(dec_time, last_belief):
             return dec_time
         else: 
             print("Punished with max time")   
-            return dec_time*2
+            return MAX_TIME
     else:
         if (last_belief > 0.5):
             return dec_time
         else: 
             print("Punished with max time")   
-            return dec_time*2
+            return MAX_TIME
 
 # Writes to the fitness file for the current iteration of particle
 def cleanup(time_arr, fitness):

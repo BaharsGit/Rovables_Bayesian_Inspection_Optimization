@@ -12,21 +12,24 @@ TODO:
 1. Add a standard deviation on location of current generation
 3. Add live view of robot decisions side by side.
 """
+multiplier=5
 square_time = 2257.817 #this is in ms
 time_step = 8 # this is in ms 
 tao_square = square_time / time_step 
 time_to_cross_arena = 36125.079475174839899 #ms
 step_to_cross_arena = time_to_cross_arena / time_step
+sim_time = 2700 * 1000 #max sim time in ms
+sim_time_steps = sim_time / 8 #total time steps in a simulation
+max_num_obs = sim_time_steps / (tao_square/multiplier) # maximum number of observations in a simulation
 ###########################################################
 
 psodir = (str(os.getcwd())) + "/../jobfiles/Run_0"
-multiplier=5
-param_min = [0, tao_square/multiplier, tao_square/multiplier, 5, tao_square/multiplier]
-param_max = [0, tao_square*multiplier, step_to_cross_arena, 95, step_to_cross_arena]
+param_min = [0, tao_square/multiplier, tao_square/multiplier, 5, 0]
+param_max = [0, tao_square*multiplier, step_to_cross_arena, 145, max_num_obs]
 worst_case_fitess = 11200
-num_particles = 10
+num_particles = 15
 num_noise = 10
-num_gen = 17
+num_gen = 30
 num_robots = 4
 particle_dim = 5
 param_names = ["Alpha", "Tao", "Random Forward", "CA Trigger", "Hysterisis", "Observation Wait Time"]
@@ -121,6 +124,8 @@ def psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen):
     bottom[bottom<0] = 0
     plt.fill_between(np.arange(num_gen), bottom, avg_gen + std_gen, where=(avg_gen + std_gen)>0, color='blue', alpha=0.3)
     plt.twinx()
+    plt.ylabel("Fitness (F)")
+    plt.xlabel("Iteration")
     plt.plot(l2_gen, color='darkorange', label='L2 Norm')
     plt.savefig(psodir + '/graph.png', bbox_inches='tight')
     plt.show()
@@ -143,19 +148,24 @@ def animateParameter(l, param_gen, avg_gen, best_gen):
         # axProjection.set_xlim(0, 1)
         # axProjection.set_ylim(0, 1)
         # axProjection.set_zlim(0, 1)
-        axProjection.set_xlabel("Alpha Prior")
-        axProjection.set_ylabel("Tao")
-        axProjection.set_zlabel("Observation Wait Time")
+        axProjection.set_xlabel("Tau")
+        axProjection.set_ylabel("Random Forward")
+        axProjection.set_zlabel("Hysteresis")
+        # axProjection.set_ylim(0, 1)
+        # axProjection.set_xlim(0, 1)
+        # axProjection.set_zlim(0, 1)
         axFitness.set_ylim(0, 1500)
         # axFitness.set_xlim(0, num_gen)
         axFitness.set_xlabel("Iteration")
         axFitness.set_ylabel("Fitness Value")
         axFitness.yaxis.set_label_position("right")
+        axFitness.set_ylim(0, 15000)
+        axFitness.set_xlim(0, num_gen)
 
         for j in range(num_particles):
             #s=(param_gen[:frame, j,4]*100)
-            axProjection.scatter(param_gen[:frame, j, 0], param_gen[:frame, j, 1], param_gen[:frame, j, 5], s=25, color='black', alpha=0.3, label='Previous Particle Location' if j == 0 else "")           
-            axProjection.scatter(param_gen[frame, j, 0], param_gen[frame, j, 1], param_gen[frame, j, 5], s=25, color='green', label='Current Particle Location' if j == 0 else "")  
+            #axProjection.scatter(param_gen[:frame, j, 1], param_gen[:frame, j, 2], param_gen[:frame, j, 4], s=10, color='black', alpha=0.3, label='Previous 3 Iteration Particles' if j == 0 else "")           
+            axProjection.scatter(param_gen[frame, j, 1], param_gen[frame, j, 2], param_gen[frame, j, 4], s=25, color='green', label='Current Particle Location' if j == 0 else "")  
             axFitness.plot(avg_gen[:frame], color='blue', label="Average Fitness" if j == 0 else "")
             axFitness.plot(best_gen[:frame], color='red', label='Best Fitness' if j == 0 else "")
             axFitness.plot(std_gen[:frame], linestyle='dashed', label='Standard Dev.' if j == 0 else "", color='purple' )
@@ -171,8 +181,8 @@ def animateParameter(l, param_gen, avg_gen, best_gen):
     # run the animation
     ani = FuncAnimation(fig, animate, frames=num_gen, interval=1000, repeat=True)
 
-    plt.show()
-    #ani.save('animation.gif', writer='imagemagick', fps=1)
+    #plt.show()
+    ani.save('animation.gif', writer='imagemagick', fps=1)
 np.set_printoptions(suppress=True)
 std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, raw_param_gen, param_gen, param_avg_gen, best_param_gen, l2_gen = read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, raw_param_gen, param_gen, param_avg_gen, best_param_gen, l2_gen)
 global_best = 0
@@ -188,6 +198,8 @@ print("Best Particle: " + str(global_best) + " Generation: " + str(global_best_g
 print("Best Particle Evoluation: ")
 for i in range(num_gen):
     print("Generation: " + str(i) + " : " + str(raw_param_gen[i, global_best]))
+print(l2_gen)
+
 psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen)
 #animateParameter(0, param_gen, avg_gen, best_gen)
-# 
+

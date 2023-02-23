@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 from matplotlib import image
 import pandas
 from scipy.stats import gaussian_kde
-
 import os
 
+#Simulation constants
 n_robots = 4
 savePlots = 1
 pic_dim=128
@@ -16,68 +16,89 @@ square_size=8
 squares_per_side=int(pic_dim/square_size)
 arena_squares = np.empty([squares_per_side, squares_per_side])
 distance_per_square = 1/squares_per_side
-fitness_run = []
 
-prob_column_names = []
-pos_column_names = []
+
+#Data structures used to graph and store data
+num_batch = 100 # This dictates the number of batch launches used.
+fitness_run = np.empty(num_batch) #Describes the fitness of each batch launch
+reset_run = np.empty(num_batch) #Describes the number of times the robots reset at each batch launch
+pos_x_run = np.empty((num_batch, n_robots), object) #Describes the positions at each run: Position log of Robot 2 in Run 7 is pos_x_run[7, 2]
+pos_y_run = np.empty((num_batch, n_robots), object) #Describes the positions at each run
+belief_run = np.empty((num_batch, n_robots), object) #Describes the belief at each run
+cov_count = np.zeros((squares_per_side, squares_per_side))
+obs_run = np.empty((num_batch, 2), object) #Describes which positions were observed per run
+cov_avg = []
+cov_std = []
+x_total = [] #Describes the total x positions over all bacth runs
+y_total = [] #Describes the total y positions over all batch runs
+prob_column_names = [] #Format for describing the robots
+pos_column_names = [] #Format for describing the robots
 averages = pandas.DataFrame()
 pos_column_names.append('time_step')
 pos_run = []
-home_dir = os.getcwd()
+home_dir = os.getcwd() + "/../.."
+folderName = "Log_x0"
 
-################################### 2D Position Histogram ########################
-def create2dHist(run):
-    #Normalize frequency in bins. 
-    #, bins=[np.arange(0,1,0.0001),np.arange(0,1,0.0001)]
+for i in range(n_robots):
+    prob_column_names.append('rov_{}'.format(i))
+    pos_column_names.append('rov_{}_x'.format(i))
+    pos_column_names.append('rov_{}_y'.format(i))
 
-    plt.figure(1)
-    plt.hist2d(xPos,yPos)
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.colorbar()
-    if(savePlots):
-        saveDest = 'Log/Run' + str(run) + '/Hist.png'
-        plt.savefig(saveDest)
-    plt.clf()
+def cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std):
 
-#################################### CDF Line Graph ############################
-# The changes of values would not line not with eachother since the random walk takes precedence -- number of steps in random walk differs per robot.
-def createCDF(run):
-    plt.figure(2)
-    for i in range(n_robots):
-        plt.plot((probData.loc[:, prob_column_names[i]]).to_list(), label = 'r{} CDF'.format(i))
+    fig=plt.figure()
+    ax=fig.add_subplot(211, label="1")
+    ax2=fig.add_subplot(211, label="2", frame_on=False)
+    h = fig.add_subplot(212, label="3", projection='3d')
 
-    plt.legend()
-    if(savePlots):
-        saveDest = 'Log/Run' + str(run) + '/Decision.png'
-        plt.savefig(saveDest)
-    plt.clf()
+    ax.plot(np.arange(len(cov_avg)), cov_avg, color="C0")
+    bottom = np.subtract(cov_avg, cov_std)
+    bottom[bottom<0] = 0
+    ax.fill_between(np.arange(len(cov_avg)), bottom, np.add(cov_avg, cov_std), color='C0', alpha=0.3)
+    ax.set_xlabel("Observations", color="C0")
+    ax.set_ylabel("Coverage", color="C0")
+    ax.set_ylim(0,1)
+    ax.tick_params(axis='x', colors="C0")
+    ax.tick_params(axis='y', colors="C0")
 
+    ax2.plot(np.arange(len(belief_avg)), belief_avg, color="C1")
+    bottom = np.subtract(belief_avg, belief_std)
+    bottom[bottom<0] = 0
+    ax2.fill_between(np.arange(len(belief_avg)), bottom, np.add(belief_avg, belief_std), color='C1', alpha=0.3)
+    ax2.xaxis.tick_top()
+    ax2.yaxis.tick_right()
+    ax2.set_ylim(0,1)
+    ax2.set_xlabel('Simulation Time', color="C1") 
+    ax2.set_ylabel('Belief', color="C1")       
+    ax2.xaxis.set_label_position('top') 
+    ax2.yaxis.set_label_position('right') 
+    ax2.tick_params(axis='x', colors="C1")
+    ax2.tick_params(axis='y', colors="C1")
 
-####################################### Scatter Plot ##############################
-#Add starting position and end position
-def createLine(run):
-    plt.figure(3)
-    xIndex = 0
-    yIndex = 1
-    markers = ['-bo', '-go', '-ro', '-yo']
-    
-    for i in range(n_robots):
-        plt.plot(posData.loc[:,pos_column_names[xIndex]].to_list(), posData.loc[:,pos_column_names[yIndex]].to_list(), markers[i] , markevery=[0],label = 'r{} path'.format(i))        
-        xIndex = xIndex + 2
-        yIndex = yIndex + 2
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.legend()
-    if(savePlots):
-        saveDest = 'Log/Run' + str(run) + '/Path.png'
-        plt.savefig(saveDest)
-    plt.clf()
-
-def getCoverage():
-    for i in range(len(pos_run)):
-        for j in range(len(pos_run[i][:,'rov_{}_x'.format(i)])):
-            cov_t = (scipy.stats.binned_statistic_2d(x,y,values=None,statistic='count',bins=[np.arange(0,1,distance_per_square),np.arange(0,1,distance_per_square)],expand_binnumbers='True')).statistic
+    # Using this corresponding post: https://stackoverflow.com/questions/14061061/how-can-i-render-3d-histograms-in-python
+    data_array = np.array(cov_count)
+    #
+    # Create an X-Y mesh of the same dimension as the 2D data. You can
+    # think of this as the floor of the plot.
+    #
+    x_data, y_data = np.meshgrid(np.arange(data_array.shape[1]),
+                                np.arange(data_array.shape[0]) )
+    #
+    # Flatten out the arrays so that they may be passed to "ax.bar3d".
+    # Basically, ax.bar3d expects three one-dimensional arrays:
+    # x_data, y_data, z_data. The following call boils down to picking
+    # one entry from each array and plotting a bar to from
+    # (x_data[i], y_data[i], 0) to (x_data[i], y_data[i], z_data[i]).
+    #
+    x_data = x_data.flatten()
+    y_data = y_data.flatten()
+    z_data = data_array.flatten()
+    h.bar3d(x_data,
+            y_data,
+            np.zeros(len(z_data)),
+            1, 1, z_data )
+    # h.hist2d(x_data, y_data, cmap=plt.cm.jet)
+    plt.show()
 
 #################################### Gaussian Heat Map #############################
 # From this: https://zbigatron.com/generating-heatmaps-from-coordinates/ and https://stackoverflow.com/questions/50091591/plotting-seaborn-heatmap-on-top-of-a-background-picture
@@ -115,57 +136,73 @@ def createGauss(run):
             plt.savefig(saveDest, transparent=True)
         plt.clf()
 
-x_total = []
-y_total = []
-
 print(home_dir)
-for i in range(n_robots):
-    prob_column_names.append('rov_{}'.format(i))
-    pos_column_names.append('rov_{}_x'.format(i))
-    pos_column_names.append('rov_{}_y'.format(i))
 
-def read_data(x_total, y_total, pos_run, fitness_run):
-    
-    for run in range(100):
 
+def read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std):
+    #Iterate through and save data into corresponding arrays
+    swarm_bel_avg = pandas.DataFrame() #I believe it is more efficient when storing in a dataframe 
+    for run in range(num_batch):
         posData = []
-        probData = []
-        posFile = home_dir + '/../Log/Run' + str(run) + '/runPos.csv'
+        posFile = home_dir + '/../' + folderName + '/Run' + str(run) + '/runPos.csv'
+        beliefFile = home_dir + '/../' + folderName + '/Run' + str(run) + '/runProb.csv'
+        obsFile = home_dir + '/../' + folderName + '/Run' + str(run) + '/observation_log.txt'
         posData = pandas.read_csv(posFile, names=pos_column_names)
-        for i in range(n_robots):
-            x_total.append(posData['rov_{}_x'.format(i)].values.tolist())
-            y_total.append(posData['rov_{}_y'.format(i)].values.tolist())
+        beliefData = pandas.read_csv(beliefFile, names=prob_column_names)
+        obsData = pandas.read_csv(obsFile, names=["x", "y"])
+        for robot in range(n_robots):
+            pos_x_run[run, robot] = posData['rov_{}_x'.format(i)].values.tolist()
+            pos_y_run[run, robot] = posData['rov_{}_y'.format(i)].values.tolist()
+            belief_run[run, robot] = beliefData['rov_{}'.format(i)].values.tolist()
+        
+        obs_run[run, 0] = obsData["x"]
+        obs_run[run, 1] = obsData["y"]
 
-
-        decTimeFile = home_dir + '/../Log/Run' + str(run) + '/decTime.txt'
+        decTimeFile = home_dir + '/../' + folderName + '/Run' + str(run) + '/decTime.txt'
         with open(decTimeFile) as f:
             lines = f.read().splitlines()
-        fitness_run.append(float(lines[4]))
+        fitness_run[run] = float(lines[4])
+        reset_run[run] = float(lines[5])
         pos_run.append(posData)
 
-    return x_total, y_total, pos_run, fitness_run
+        swarm_bel_avg[str(run)] = beliefData.mean(axis=1)
+    
+    #Belief average and standard deviation
+    belief_avg = swarm_bel_avg.mean(axis=1)
+    belief_std = swarm_bel_avg.std(axis=1)
 
-    # probFile = 'Log/Run' + str(run) + '/runProb.csv'
-    # probData = pandas.read_csv(probFile, names=prob_column_names)
-    # probData['mean'] = probData.mean(axis=1)
-    # currentAvgRun = (pandas.DataFrame({str(run): (probData.loc[:, 'mean']).to_list()}))
-    # #print(currentAvgRun.reset_index)
-    # averages = pandas.concat([averages, currentAvgRun], axis=1)
-    # image = plt.imread('worlds/textures/textrect.png')
+    #Store the arena coverage
 
-    # createGauss(run)
-    # createCDF(run)
-    # createLine(run)
+    for time in range(1, len(obs_run[0, 0]), 1):
+        cov = 0
+        std_arr = np.empty(num_batch)
+        # bel = 0
+        for run in range(num_batch):
+            #Place observations into binnings based on tiles
+            cov_t = (stats.binned_statistic_2d(obs_run[run, 0][:time], obs_run[run, 1][:time],
+                    values=None,statistic='count',bins=[np.arange(0,1+distance_per_square,distance_per_square),
+                        np.arange(0,1+distance_per_square,distance_per_square)],expand_binnumbers='True')).statistic
+            #Convert counts into binary values
+            cov_count = np.add(cov_count, cov_t)
+            cov_bin = np.where(cov_t > 0, 1, 0)
+            #Calculate Average coverage
+            cov = cov + (np.sum(cov_bin)/(squares_per_side * squares_per_side))
+            if ((np.sum(cov_bin)/(squares_per_side * squares_per_side)) < 1) and (time > len(obs_run[0, 0])*0.95):
+                print("Run: ", run)
+                print(cov_bin)
+            std_arr[run] = (np.sum(cov_bin)/(squares_per_side * squares_per_side))
 
-x_total, y_total, pos_run, fitness_run = read_data(x_total, y_total, pos_run, fitness_run)
+        cov_avg.append(cov/num_batch)
+        cov_std.append(np.std(std_arr))
 
-#plt.hist(fitness_run)
-# cmap = plt.cm.get_cmap('coolwarm')
-# heatmap = sns.kdeplot(x=x_total[0], y=y_total[0], cmap=cmap, alpha=0.75, fill=True, zorder = 1)
-# heatmap.imshow(image, extent=[0,1,0,1], zorder = 0, cmap='gray')
-# plt.xlim([0, 1])
-# plt.ylim([0, 1])
-#heatmap = sns.kdeplot(x=x_total[0], y=y_total[0], label='r{} path'.format(i), alpha=0.75, fill=True, zorder = 1)
-# plt.hist2d(x_total[0], y_total[0], bins=np.arange(0,1,distance_per_square))
-# cb = plt.colorbar()
-# plt.show() 
+    cov_avg = np.asarray(cov_avg)
+    cov_std = np.asarray(cov_std)
+    belief_avg = np.asarray(belief_avg)
+    belief_std = np.asarray(belief_std)
+
+    return fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, belief_avg, belief_std, obs_run, np.divide(cov_count,num_batch), cov_avg, cov_std
+
+
+fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, belief_avg, belief_std, obs_run, cov_count, cov_avg, cov_std = read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std)
+# print(cov_count)
+cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std)
