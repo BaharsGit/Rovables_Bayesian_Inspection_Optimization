@@ -1,21 +1,17 @@
-# PSO for Self-assembling Robots AWS
-This repository describes the steps to deploy multiple distributed Webots simulations that communicate with a master node on AWS. The simulation uses PSO to optimize the parameters of self-assembling Lily robots as well as the physics of the fluid in which they float.
+# PSO for Bayesian Surface Inspection on AWS
+This repository describes the steps to deploy multiple distributed Webots simulations that communicate with a master node on AWS. The simulation uses Particle Swarm Optimization (PSO) to optimize the parameters of a decentralized bayesian surface inspection algorithm.
 
 ## Table of Content
 
 * 1 [Goal](#1-goal)
-* 2 [Provided simulation](#2-provided-simulation)
-    * 2.1 [Simulation description](#21-simulation-description)
-    * 2.2 [File structure](#22-file-structure)
-    * 2.3 [Conversion to Webots R2022a](#23-conversion-to-webots-r2022a)
-* 3 [Amazon account](#3-amazon-account)
-* 4 [Global cloud solution](#4-global-cloud-solution)
+* 2 [Amazon account](#3-amazon-account)
+* 3 [Global cloud solution](#4-global-cloud-solution)
     * 4.1 [Diagram](#41-diagram) 
     * 4.2 [New file structure for AWS](#42-new-file-structure-for-aws)
-* 5 [Textures downloading](#5-textures-downloading)
+* 4 [Textures downloading](#5-textures-downloading)
     * 5.1 [Local textures](#51-local-textures)
     * 5.2 [Configure internet access](#52-configure-internet-access)
-* 6 [Elastic Container Registry (ECR)](#6-elastic-container-registry-ecr)<br>
+* 5 [Elastic Container Registry (ECR)](#6-elastic-container-registry-ecr)<br>
     * 6.1 [Description](#61-description)<br>
     * 6.2 [Create a Dockerfile](#61-create-a-dockerfile)<br>
     * 6.3 [Create repository](#63-create-repository)<br>
@@ -24,39 +20,26 @@ This repository describes the steps to deploy multiple distributed Webots simula
     * 6.4 [IAM authorization](#64-iam-authorization)<br>
     * 6.5 [Configure AWS CLI](#65-configure-aws-cli)<br>
     * 6.6 [Upload Docker image](#66-upload-docker-image)<br>
-* 7 [Elastic File System (EFS)](#7-elastic-file-system-efs)
+* 6 [Elastic File System (EFS)](#7-elastic-file-system-efs)
     * 7.1. [Description](#71-description)
     * 7.2. [Create a file system](#72-create-a-file-system)
     * 7.3. [Enable NFS in your security group](#73-enable-nfs-in-your-security-group)
     * 7.4. [EC2 Instance](#74-ec2-instance)
     * 7.5. [Transfer files to EFS](#75-transfer-files-to-efs)
     * 7.6. [Important information about EC2 instances](#76-important-information-about-ec2-instances)
-* 8 [AWS Batch Service](#8-aws-batch-service)
+* 7 [AWS Batch Service](#8-aws-batch-service)
     * 8.1 [Description](#81-description)
     * 8.2 [Configuration](#82-configuration)
         * 8.2.1 [Compute environment](#821-compute-environment)
         * 8.2.2 [Job queue](#822-job-queue)
         * 8.2.3 [Job definition](#823-job-definition)
-* 9 [Run simulations](#9-run-simulations)
-* 10 [Additional information](#10-additional-information)
-      
+* 8 [Run simulations](#9-run-simulations)
+* 9 [Additional information](#10-additional-information)
+
 ## 1 Goal
 The goal of this implementation is to parallelize multiple Webots simulations in a distributed way on a cloud service. The involved simulation, described in the next section, is provided by Harvard University and was originally created on Webots 8.5.4. The first part of this work consists in converting the simulation to Webots R2022b. 
 
 The proposed solution is using Amazon Web Services to deploy and parallelize the provided simulation in the cloud. The work is structured as follows. First, a brief description of the simulation is provided. Next, the modifications made to the files in order to run the simulation on the cloud in Webots R2022b are presented, followed by a description of the different Amazon services involved and how to use them.
-
-## 2 Provided simulation
-### 2.1 Simulation description
-
-The simulation involves self-assembling floating Lily robots. There are 15 Lilys in the simulation floating in a cylindrical container filled with water. 
-
-At the beginning of the simulation, the Lilys are randomly teleported into the fluid and a physics plugin is used to simulate fluid motion, moving the robots in a circular fashion in the fluid. When two robots are close to each other and well aligned, they may eventually assemble. After some time, based on some rule, the robots may choose to remove the connection. Their goal is to form a pre-defined shape.
-<div align = center>
-  
-https://user-images.githubusercontent.com/61198661/165769125-ff0583e6-a6bf-4268-8fe8-683adc23bfc5.mp4
-  
-</div>
-
 
 A PSO algorithm is coded in Python and runs independently of Webots simulations. The PSO script is responsible for starting multiple Webots instances, running the simulations for some time with the chosen parameters and getting the results to process them.
 
@@ -82,27 +65,13 @@ The actual simulation is made of the following important files.
   
 </div>
 
-### 2.3 Conversion to Webots R2022a
-The original simulation was running on Webots 8.5.4, which was released early 2017. Therefore, a few modifications must be applied to the project to run on Webots R2022a. The changes are commented directly on the files in the commits of the repository. The following description of changes contains links to the various comments.
-
-| Modification  | Related comments |
-| ------------- | ------------- |
-| **NUE/RUB conversion to ENU/FLU** <br> Since Webots R2022a the general coordinate system has changed. The world coordinates are now expressed in the ENU system, while robots use the FLU convention for better consistency with other libraries, like ROS for example. A [Python script](https://github.com/cyberbotics/webots/blob/master/scripts/converter/convert_nue_to_enu_rub_to_flu.py) allows to perform an automatic conversion of the worlds and PROTO files. The script is run on the world file `24Lilies_LaLn.wbt` and the PROTO file `Lily.proto` **before** the first launch of Webots R2022a on the project. Connectors and light sensors of the PROTO were not rotated correctly by the script, therefore needing a manual rotation. | [`24Lilies_LaLn.wbt`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/e3eadd9a534fcbf60528d8b2217649929bfa684d#r71881505) <br><br> [`Lily.proto`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/6d31419e7ae15d255b3758ddea045ef61d7126e8#r71882582)  |
-| **Robot teleportation** <br> `supervisor_track_LaLn` teleports the robots to a random initial configuration before each run. Because of the new coordinate system, Y and Z axis must be switched when setting the new position of each robot.  | [`supervisor_track_LaLn`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/9b76090af9b1793b1250c4b631654bbe3fea94bf#r71880041) |
-| **Physics plugin** <br> The new coordinate system has a large impact on the physics plugin, because it is mainly applying forces along the different axis. The velocity of the fluid at each coordinate of the cylinder is stored in a text file. This text file is not modified. Instead, the coordinates are read in a transposed manner to keep the same representation as before, but simply used in the new coordinate system. This conversion also impacts the discrete cells representation and the access to the velocity table in getFlowVelocity(). Finally, in computeDrag() and computeDrag_randn(), the Y and Z axis of the faces are swapped. The faces order in the code is not the same as before, but the forces are still applied correctly everywhere and the final behavior is exactly the same. | [`15Lilies`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/b058b90f2307f7aae7d616e40a12fb2445197b88) |
-| **Supervisor node is deprecated** <br> The Supervisor node doesn't exist anymore. It has been replaced by a Supervisor field in the Robot field. Multiple files must be updated to this new feature. | [`24Lilies_LaLn.wbt`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/e3eadd9a534fcbf60528d8b2217649929bfa684d#r71881566)<br><br>[`Lily.proto`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/6d31419e7ae15d255b3758ddea045ef61d7126e8#r71882440)<br>[`Lily.proto`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/6d31419e7ae15d255b3758ddea045ef61d7126e8#r71882460) |
-| **data field is now customData** <br> The data field has been renamed customData. Lilys are affected by this change. | [`lily_ack_epm_com_LaLn`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/e3eadd9a534fcbf60528d8b2217649929bfa684d#r71881566) <br><br> [`Lily.proto`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/6d31419e7ae15d255b3758ddea045ef61d7126e8#r71882470) |
-| **Gravity field** <br> The Gravity field in the WorldInfo node was a 3D vector before. It has been converted to a single float value. |       [`supervisor_track_LaLn`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/9b76090af9b1793b1250c4b631654bbe3fea94bf#r71879753)<br> [`supervisor_track_LaLn`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/9b76090af9b1793b1250c4b631654bbe3fea94bf#r71879844)<br> [`supervisor_track_LaLn`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/9b76090af9b1793b1250c4b631654bbe3fea94bf#r71880073)<br> [`supervisor_track_LaLn`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/9b76090af9b1793b1250c4b631654bbe3fea94bf#r71880102)<br> [`supervisor_track_LaLn`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/9b76090af9b1793b1250c4b631654bbe3fea94bf#r71880120)<br> [`supervisor_track_LaLn`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/9b76090af9b1793b1250c4b631654bbe3fea94bf#r71880133) |
-| **New command to reload a simulation** <br> The previous command to reload a simulation was wb_supervisor_simulation_revert(). It has be changed to wb_supervisor_world_reload(). |       [`supervisor_track_LaLn`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/9b76090af9b1793b1250c4b631654bbe3fea94bf#r71880323) |
-| **Fixed a crash in the plugin** <br> The Parameters[] variable was declared as const but values are assigned further in the code, involving a crash at Webots startup. |       [`15Lilies`](https://github.com/cyberbotics/pso_self-assembly_aws/commit/b058b90f2307f7aae7d616e40a12fb2445197b88#r71883468) |
- 
 ## 3 Amazon account
 Create an account on the [AWS welcome page](https://aws.amazon.com/?nc1=h_ls).
 * Click on _Create an AWS account_ <br>
 ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/create_account.png) 
 * Enter your email, password and username
 * Enter your personal informations
-* Enter your credit card informations
+* Enter your credit card information
 * Confirm your identity using your phone number
 * Choose a free or paying support plan
 * Head to the management console<br>
@@ -143,42 +112,18 @@ The communication between nodes is provided by the file system. When the `prob_#
 
 Since the communication is based solely on the file system, the different runs of the PSO must be distinguished using different folders. The Python script is therefore responsible for creating a `Run_#` folder to store all `Generation_#` directories and the resulting files ([comment1](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72407963)). The paths of other scripts are also updated to remain consistent ([comment2](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72408012), [comment3](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72408041) and [comment4](https://github.com/cyberbotics/pso_self-assembly_aws/commit/0f932b01e90a7a91cec78411ae12987715285be4#r72408076)).
 
-## 5 Textures downloading
-Webots downloads textures from Github when starting a world for the first time to save some space locally. This feature is problematic with the _multi-node parallel jobs_ feature of AWS Batch, as there is no internet access in the containers natively. In the Lily simulation, the Floor object is the only one requiring textures. The whole instructions explain the steps to follow for the two following possible implementations:
-1. **Add the textures locally**: the Floor PROTO and the corresponding textures are added to the local simulation files so that Webots doesn't have to download them from Github. To apply this solution, head to [section 5.1](#51-local-textures).
-2. **Configure internet connection**: the world is kept intact without any deletion or any new local files. This option requires to configure internet access for the containers which costs 0.045$ per hour of usage. This option requires some additional implementation effort. Additional pricing and implementation information can be found in the last section [9 Additional information](9-additional-information). To apply this solution, head to [section 5.2](#52-configure-internet-access).
-
-### 5.1 Local textures
-A solution to avoid requests to Github to download the textures at runtime is to add them directly in the simulation file so that they are directly accessible. In the example of this project, the Floor object is declared from the Floor PROTO, itself dependent on the Parquetry PROTO. The Parquetry PROTO requests four different textures using URLs to the location in the Webots resources. Here, the Floor and Parquetry PROTOs are added to the `protos` folder and a new `textures` folder contains the four .png files. The URLs in the Parquetry PROTO are also updated with the relative path (see [this commit](https://github.com/cyberbotics/pso_self-assembly_aws/commit/32d4490724335d1b2d1215b0022602d5a91d36f5)). If this is the chosen option, you can continue directly with [section 6](#6-elastic-container-registry-ecr).
-
-### 5.2 Configure internet access
-The following steps taken from the [AWS documentation](https://docs.aws.amazon.com/batch/latest/userguide/create-public-private-vpc.html) must be applied. The goal is to create a Virtual Private Cloud (VPC) with one public and two private subnets. The public subnet gets a NAT gateway which allows internet access. Configuring AWS Batch later with this VPC will allow Webots to access the online textures.
-* **Step 1**: Create an Elastic IP Address for your NAT Gateway. A NAT gateway requires an Elastic IP address in your public subnet, but the VPC wizard does not create one for you.
-  * Open the Amazon VPC console at https://console.aws.amazon.com/vpc/.
-  * In the left navigation pane, choose **Elastic IPs**.
-  * Choose **Allocate new address**, 
-  * Don't modify any settings and press **Allocate**.
-  * Note the Allocation ID for your newly created Elastic IP address; you enter this later in the VPC wizard.
-
-* **Step 2**: The VPC wizard automatically creates and configures most of your VPC resources for you.
-  * Open the Amazon VPC console at https://console.aws.amazon.com/vpc/.
-  * In the left navigation pane, disable **New VPC Experience**.
-  * In the left navigation pane, choose **VPC Dashboard**.
-  * Choose **Launch VPC Wizard**, **VPC with Public and Private Subnets**, **Select**.
-  * For **VPC name**, give your VPC a unique name, like _internet-vpc_.
-  * For **Availability Zone** of both subnets, choose **us-east-2a**.
-  * For **Elastic IP Allocation ID**, choose the ID of the Elastic IP address that you created earlier.
-  * Leave everything else unchange and choose **Create VPC**.
-
-* **Step 3**: To improve availability of instances, add a new private subnet to your network.
-  * Open the Amazon VPC console at https://console.aws.amazon.com/vpc/.
-  * In the left navigation pane, choose **Subnets**.
-  * Choose **Create Subnet**.
-  * For **Subnet Name**, enter a name for your subnet, such as _Private subnet_.
-  * For **VPC**, choose the VPC that you created earlier.
-  * For **Availability Zone**, choose **us-east-2b**.
-  * For **IPv4 CIDR block**, enter a valid CIDR block. For example, the wizard creates CIDR blocks in 10.0.0.0/24 and 10.0.1.0/24 by default. You could use 10.0.2.0/24 for your second private subnet.
-  * Choose **Create Subnet**.
+## 5 Configure internet access through a VPC
+The following steps taken from the [AWS documentation](https://docs.aws.amazon.com/batch/latest/userguide/create-public-private-vpc.html) must be applied. The goal is to create a Virtual Private Cloud (VPC) with three public subnets. The public subnet gets a NAT gateway which allows internet access. Configuring AWS Batch later with this VPC will allow Webots to access the online textures.
+ * Navigate to the "VPC Dashboard" using the search bar.
+ * Click on Create VPC 
+ * Select "VPC and more" 
+ * Keep "Auto-generate" enabled, and select an intuitive name for the VPC.
+ * Set the number of Availability Zones (AZ) to 3
+ * Set number of private subnets to 0
+ * Set number of public subnets to 3
+ * Keep NAT Gateway as none. This is only needed if using private subnets. 
+ * Change VPC Endpoint to None
+ * Click on Create VPC to finish the process. 
 
 ## 6 Elastic Container Registry (ECR)
 ### 6.1 Description
@@ -359,7 +304,7 @@ For this work, only a simple Ubuntu server is needed to mount a file system. Kee
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_launch_instances.png)
 * Choose a name for the instance, like _EFSMount_.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_name.png)
-* Choose Ubuntu 20.04 in the list of AMIs.<br>
+* Choose Ubuntu in the list of AMIs.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_AMI_choice.png)
     
 * Further, keep the default _t2.micro_ type of instance. We only need to mount a file system so no more resources are needed.<br>
@@ -370,11 +315,9 @@ For this work, only a simple Ubuntu server is needed to mount a file system. Kee
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_new_key_pair.png)
 * In the _Network settings_, click on _Edit_.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_edit_network_button.png)
-* | Internet VPC  | Default VPC |
-  | ------------- | ------------- |
-  | If you use the _internet-vpc_ VPC, apply the following configuration. Be sure to choose a public subnet and enable the public IP address. <br> ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_vpc_internet.png) | If you use the default VPC, apply the following configuration. Choose  any subnet and enable the public IP address. <br> ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_vpc_no_internet.png) |
-* Create a new security group, to allow SSH connections and the NFS protocol. The security group should look as follows.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_security_groups.png)
+    * Make sure the recently created VPC is selected. Choose auto-assign public IP.
+* Create a new security group, to allow SSH connections and the NFS protocol.
+
 * In _Configure storage_, click on _Edit_ next to _0x File system_ to add a file system.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_edit_fs.png)
 * Click on _Add shared file system_.<br>
@@ -494,7 +437,7 @@ A job definition allows to define a set of parameters for future job executions.
 * Open the [job definitions in the AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#job-definition) and click on the _Create_ button. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
 
-* Choose _multi-node parallel_ as job type. <br>
+* Select EC2 and choose _multi-node parallel_ as job type. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_type.png)
     
 * Choose and arbitrary name for the job definition, such as _multi-pso-job_. <br>
@@ -512,7 +455,7 @@ A job definition allows to define a set of parameters for future job executions.
 * Select the compute resources to allocate for each container. Choose 2vCPUs and 4096 MiB of memory. No GPU is needed. _m5.large_ instances will be automatically launched with these parameters. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config2.png)
     
-* The next step consists in mounting the EFS file system to the container. First add the mount point to the container. Then, choose the EFS file system as volume. Names defined in both sections must be the same. The file system ID can be found in the [EFS console](https://us-east-2.console.aws.amazon.com/efs/home?region=us-east-2#/file-systems) (see second illustration below). <br>
+* Click expand additional configuration. The next step consists in mounting the EFS file system to the container. First add the mount point to the container. Then, choose the EFS file system as volume. Names defined in both sections must be the same. The file system ID can be found in the [EFS console](https://us-east-2.console.aws.amazon.com/efs/home?region=us-east-2#/file-systems) (see second illustration below). <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config3.png)
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_filesystem_id.png)
     
