@@ -87,8 +87,8 @@ def test_optimization_space(position):
     #Using the Rosenbrock function, where the minimum is X_n = 1
     for i in range(num_dimensions-1):
         test_fitness = test_fitness + 100*math.pow((position[i+1] - math.pow(position[i], 2)), 2) + math.pow((1-position[0]), 2)
-    test_fitness = np.random.normal(test_fitness, test_fitness*0.001, 1)
-    return test_fitness[0]
+    #test_fitness = np.random.normal(test_fitness, test_fitness*0.001, 1)
+    return test_fitness
 
 # --- MAIN ---------------------------------------------------------------------+
 
@@ -177,38 +177,79 @@ class Particle:
                 self.velocity_i[i] = -0.15*(bounds[dim_index + 1]-bounds[dim_index])
 
             dim_index = dim_index + 2
+            
 
 # MODIFIED FOR NOISE RESISTANT PSO
 class PSO():
-    def __init__(self, x0, costFunc, bounds, maxiter, num_particles = 15, noise_resistance_evals = 0):
+    def __init__(self, resume, resume_iteration, x0, costFunc, bounds, maxiter, num_particles = 15, noise_resistance_evals = 0):
         global num_dimensions
 
-        fit_best_g = -1  # best global fitness
-        pos_best_g = []  # best position
+        if (resume):
+            print("PSO_tocluster.py: Resuming a PSO launch at iteration: " + str(resume_iteration))
+            swarm = []
 
-        # establish the swarm
-        swarm = []
-        swarm.append(Particle(x0,bounds))
+            filename = run_dir + "Final_Results/positions.txt"
+            with open(filename, "r") as file:
+                positions = [[float(data) for data in line.strip().split(", ")] for line in file]
 
-        for i in range(1, num_particles):
-            x=[]
-            for j in range(0,num_dimensions):
-                #x.append(random.uniform(bounds[0],bounds[1])) MODIFIED FOR BAYES BOT
-                if (j == 0):
-                    sampled_number = random.uniform(0,x0[j]*5)
+            filename = run_dir + "Final_Results/velocity.txt"
+            with open(filename, "r") as file:
+                velocities = [[float(data) for data in line.strip().split(", ")] for line in file]
 
-                    if (sampled_number < x0[j]/5):
-                        x.append(sampled_number + x0[5]/5)
+            filename = run_dir + "Final_Results/positions_best.txt"
+            with open(filename, "r") as file:
+                best_positions = [[float(data) for data in line.strip().split(", ")] for line in file]
+
+            filename = run_dir + "Final_Results/particle_fitness.txt"
+            with open(filename, "r") as file:
+                particle_fitness = [[float(data) for data in line.strip().split(", ")] for line in file]
+
+            filename = run_dir + "Final_Results/pso_fitness.txt"
+            with open(filename, "r") as file:
+                pso_fitness = [[float(data) for data in line.strip().split(", ")] for line in file]
+            print(pso_fitness)
+            for i in range(num_particles):
+                particle = Particle(x0, bounds)
+                particle.position_i = positions[i]
+                particle.velocity_i = velocities[i]
+                particle.pos_best_i = best_positions[i]
+                particle.fit_best_i = particle_fitness[i][0]
+                particle.fit_i = particle_fitness[i][1]
+
+                swarm.append(particle)
+            pos_best_g = pso_fitness[0]
+            fit_best_g = pso_fitness[1][0]
+            print("PSO_tocluster.py: Previous Best Fitness =  " + str(fit_best_g))
+            iteration = resume_iteration
+        else:
+            fit_best_g = -1  # best global fitness
+            pos_best_g = []  # best position
+
+            # establish the swarm
+            swarm = []
+            swarm.append(Particle(x0,bounds))
+
+            for i in range(1, num_particles):
+                rand_init_count = 0
+                x=[]
+                for j in range(0,num_dimensions):
+                    #x.append(random.uniform(bounds[0],bounds[1])) MODIFIED FOR BAYES BOT
+                    if (j == 0):
+                        sampled_number = random.uniform(0,bounds[rand_init_count + 1])
+
+                        if (sampled_number < bounds[rand_init_count]):
+                            x.append(sampled_number + bounds[rand_init_count])
+                        else:
+                            x.append(sampled_number)
                     else:
-                        x.append(sampled_number)
-                else:
-                    x.append(random.uniform(x0[j]/5,x0[j]*5)) #includes low excludes high
-            
-            swarm.append(Particle(x,bounds))
-        print("PSO_tocluster.py: This is the number of particles in swarm: " + str(len(swarm)) + "\n")
+                        x.append(random.uniform(bounds[rand_init_count],bounds[rand_init_count + 1])) #includes low excludes high
+                    rand_init_count = rand_init_count + 2
+                
+                swarm.append(Particle(x,bounds))
+            print("PSO_tocluster.py: Starting new PSO launch. This is the number of particles in swarm: " + str(len(swarm)) + "\n")
 
-        # begin optimization loop
-        iteration = 0
+            # begin optimization loop
+            iteration = 0
 
         while iteration < maxiter:
             particles_fit = []
@@ -255,9 +296,14 @@ class PSO():
                         os.chdir(run_dir)
                         print(iteration, particle, instance)
                         print(os.getcwd())
-                        # with open('/tmp/job' + str(iteration) + '_' + str(particle) + '_' + str(instance) + 'local_fitness.txt', 'w') as f:
-                        #     f.write(str(test_optimization_space(swarm[particle].position_i)))
-                        subprocess.check_call(['.././job_lily_parallel.sh', str(iteration), str(particle), str(instance), '4', str(test_optimization_space(swarm[particle].position_i)), dynamic, dub, dlb], stdout=f)
+                        # if (args.test_function):
+                        #     test_fit_file = "Generation_%d/local_fitness_%d_%d.txt" % (iteration, particle, instance)
+                        #     with open(test_fit_file, 'w') as f:
+                        #         test_fit = str(test_optimization_space(swarm[particle].position_i))
+                        #         print("Wrote test fitness: " + test_fit)
+                        #         f.write(test_fit)
+                        # else:
+                        subprocess.check_call(['.././job_parallel.sh', str(iteration), str(particle), str(instance), '4', str(test_optimization_space(swarm[particle].position_i)), str(dynamic), str(dub), str(dlb), str(args.test_function)], stdout=f)
                         
                         os.chdir("../")
                     
@@ -312,6 +358,60 @@ class PSO():
             with open(fileresults, mode='a') as myfile:
                 myfile.write(str(statistics.mean(particles_fit)) + '\t'+str(statistics.stdev(particles_fit))+'\n')
 
+            #WRITE BACK FOR PSO RESUME FEATURE
+
+            #Write back current positions
+            fileresults = run_dir + "Final_Results/positions.txt"
+            if (os.path.exists(fileresults)):
+                os.remove(fileresults)
+            os.makedirs(os.path.dirname(fileresults), exist_ok=True)
+            with open(fileresults, mode='a') as myfile:
+                for particle in range(0, num_particles):
+                    myfile.write(', '.join(str(pos) for pos in swarm[particle].position_i))
+                    myfile.write('\n')
+
+            #Write back best visited position
+            fileresults = run_dir + "Final_Results/positions_best.txt"
+            if (os.path.exists(fileresults)):
+                os.remove(fileresults)
+            os.makedirs(os.path.dirname(fileresults), exist_ok=True)
+            with open(fileresults, mode='a') as myfile:
+                for particle in range(0, num_particles):
+                    myfile.write(', '.join(str(pos) for pos in swarm[particle].pos_best_i))
+                    myfile.write('\n')
+
+            #Write back velocity
+            fileresults = run_dir + "Final_Results/velocity.txt"
+            if (os.path.exists(fileresults)):
+                os.remove(fileresults)      
+            os.makedirs(os.path.dirname(fileresults), exist_ok=True)
+            with open(fileresults, mode='a') as myfile:
+                for particle in range(0, num_particles):
+                    myfile.write(', '.join(str(vel) for vel in swarm[particle].velocity_i))
+                    myfile.write('\n')
+
+            fileresults = run_dir + "Final_Results/particle_fitness.txt"
+            if (os.path.exists(fileresults)):
+                os.remove(fileresults)
+            os.makedirs(os.path.dirname(fileresults), exist_ok=True)
+            with open(fileresults, mode='a') as myfile:
+                for particle in range(0, num_particles):
+                    myfile.write(str(swarm[particle].fit_best_i) + ', ' + str(swarm[particle].fit_i))
+                    myfile.write('\n')
+
+            fileresults = run_dir + "Final_Results/pso_fitness.txt"
+            if (os.path.exists(fileresults)):
+                os.remove(fileresults)
+            os.makedirs(os.path.dirname(fileresults), exist_ok=True)
+            with open(fileresults, mode='a') as myfile:
+                myfile.write(', '.join(str(pos) for pos in pos_best_g))
+                myfile.write('\n')
+                myfile.write(str(fit_best_g))
+                    
+            
+
+            
+
             # print("next iter")
             iteration += 1
 
@@ -336,49 +436,45 @@ parser.add_argument("-tf", "--test_function", required=False, type=int, default=
 parser.add_argument("-d", "--dynamic", required=True, type=int, default="0", help="Boolean to determine if using a dynamic enviornment")
 parser.add_argument("-dub", "--env_upper", required=True, type=float, default="0.55", help="Determines the upper bound of dynamic environment fill")
 parser.add_argument("-dlb", "--env_lower", required=True, type=float, default="0.45", help="Determines the lower bound of dynamic enviornment fill")
-
+parser.add_argument("-r", "--resume", required=True, type=int, help="Turns on or off the resume feature")
+parser.add_argument("-r_run", "--resume_run", required=False, type=int, help="Selects which run to resume from")
+parser.add_argument("-r_iter", "--resume_iteration", required=False, type=int, help="Selects which iteration to resume from")
 args = parser.parse_args()
 if args.nb_particles < 2:
     parser.error("Minimum number of particles is 2")
-dynamic = str(args.dynamic)
-dub = str(args.env_upper)
-dlb = str(args.env_lower)
-print("Dynamic Environment: " + dynamic + " [" + dlb + "," + dub + "]")
+dynamic = args.dynamic
+dub = args.env_upper
+dlb = args.env_lower
+if (dynamic):
+    print("Dynamic Environment: " + str(dynamic) + " [" + str(dlb) + "," + str(dub) + "]")
+
+
+resume = args.resume
+print(resume)
 # new result directory
 run_dirs = [x for x in os.listdir(".") if x.startswith('Run_')]
-if len(run_dirs): 
-  last_run_id = int(sorted(run_dirs).pop()[4:])
+if (resume):
+    run_dir = "Run_" + str(args.resume_run) + "/"
+    if not (os.path.exists(run_dir)):
+        print("PSO_tocluster.py: Cannot resume on previous run that does not exist!")
 else:
-  last_run_id = -1
-run_dir = "Run_" + str(last_run_id+1) + "/"
-os.mkdir(run_dir)
+    if len(run_dirs): 
+        last_run_id = int(sorted(run_dirs).pop()[4:])
+    else:
+        last_run_id = -1
+    run_dir = "Run_" + str(last_run_id+1) + "/"
+    os.mkdir(run_dir)
 
 # --- RUN PSO SETUP ----------------------------------------------------------------------+
 
 # initial=[5,5]               
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
-PARTICLE_SET = 5
+PARTICLE_SET = 7
 bounds = []
 num_dimensions = 6
 x0 = []
 # One Square = 0.0625 m. Rovable travels 0.0276816 m/s. Rovable travels one square in 2.257817 s
-#TAO NEEDS TO INCLUDE CROSSING ONE SQUARE BOTH UNDER AND OVER 
-#TIME STEPS TO CROSS ONE SQUARE
-#LB = TIME / NUM
-#UB = TIME * NUM
-# SET ALPHA TO ZERO, DO NOT INCLUDE 
-# SET PAUSE TO ZERO
-# RANDOM 
-# TAO SHOULD BE EQUAL OR LARGER THAN THE LB OF RANDOM FORWARD, UB SHOULD BE THE SIZE OF THE WHOLE ARENA
-# (UB RANDOM FORWARD / LB TAO) * NUM
-# RUN PARTICLE 1 AND PARTICLE 3 SET WITH THE PROPER BOUNDS
-# FIX ALPHA TO A NON-ZERO NUMBER
-# PORTION NEEDED TO TRAVEL IN UPPER BOUND OF RANDOM WALK : CA Trigger
-# BOUNDING OBSERVATION WAIT TIME TO ZERO
-# Hysterisis min number of samples we need to take before a new decision is made. 
-# CHECK CRASH FITNESS WHEN PLOTTING 
-# Filter best fitness by 1% increase\
 
 multiplier = 5
 robot_speed = 0.0276816 # m/s
@@ -424,7 +520,7 @@ WORST_FITNESS=100000
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
 # MODIFIED FOR NOISE RESISTANT PSO
-PSO(x0, fitness_evaluation, bounds, maxiter=2, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
+PSO(resume, args.resume_iteration, x0, fitness_evaluation, bounds, maxiter=30, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)

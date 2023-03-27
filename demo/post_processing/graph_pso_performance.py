@@ -23,13 +23,13 @@ sim_time_steps = sim_time / 8 #total time steps in a simulation
 max_num_obs = sim_time_steps / (tao_square/multiplier) # maximum number of observations in a simulation
 ###########################################################
 
-psodir = (str(os.getcwd())) + "/../jobfiles/Run_0"
+psodir = (str(os.getcwd())) + "/../../../id_1/jobfiles/Run_0"
 param_min = [0, tao_square/multiplier, tao_square/multiplier, 5, 0]
 param_max = [0, tao_square*multiplier, step_to_cross_arena, 145, max_num_obs]
 worst_case_fitess = 11200
 num_particles = 15
 num_noise = 10
-num_gen = 30
+num_gen = 20
 num_robots = 4
 particle_dim = 5
 param_names = ["Alpha", "Tao", "Random Forward", "CA Trigger", "Hysterisis", "Observation Wait Time"]

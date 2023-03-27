@@ -47,9 +47,9 @@ for i in range(n_robots):
 def cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std):
 
     fig=plt.figure()
-    ax=fig.add_subplot(211, label="1")
-    ax2=fig.add_subplot(211, label="2", frame_on=False)
-    h = fig.add_subplot(212, label="3", projection='3d')
+    ax=fig.add_subplot(111, label="1")
+    ax2=fig.add_subplot(111, label="2", frame_on=False)
+    # h = fig.add_subplot(212, label="3", projection='3d')
 
     ax.plot(np.arange(len(cov_avg)), cov_avg, color="C0")
     bottom = np.subtract(cov_avg, cov_std)
@@ -90,51 +90,63 @@ def cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std):
     # one entry from each array and plotting a bar to from
     # (x_data[i], y_data[i], 0) to (x_data[i], y_data[i], z_data[i]).
     #
-    x_data = x_data.flatten()
-    y_data = y_data.flatten()
-    z_data = data_array.flatten()
-    h.bar3d(x_data,
-            y_data,
-            np.zeros(len(z_data)),
-            1, 1, z_data )
-    # h.hist2d(x_data, y_data, cmap=plt.cm.jet)
+    # x_data = x_data.flatten()
+    # y_data = y_data.flatten()
+    # z_data = data_array.flatten()
+    # h.bar3d(x_data,
+    #         y_data,
+    #         np.zeros(len(z_data)),
+    #         1, 1, z_data )
+    # # h.hist2d(x_data, y_data, cmap=plt.cm.jet)
     plt.show()
 
 #################################### Gaussian Heat Map #############################
 # From this: https://zbigatron.com/generating-heatmaps-from-coordinates/ and https://stackoverflow.com/questions/50091591/plotting-seaborn-heatmap-on-top-of-a-background-picture
-def createGauss(run):
-    combined=1
+def createGauss(obs_run):
+    fig=plt.figure()
+    plt.xlim([0,1])
+    plt.ylim([0,1])
+    plt.title("Gaussian Heatmap")
+    x = []
+    y = []
+    for run in obs_run:
+        x.append(run[0])
+        y.append(run[1])
+    sns.kdeplot(x=x[0], y=y[0], fill=True, zorder = 1, cmap="magma", cbar=True, bw_adjust=.5)
+    sns.scatterplot(x=x[0], y=y[0], size=1, color='none', edgecolors='black', alpha=0.9, legend=False)
+    plt.show()
+    # combined=1
 
-    if not (combined):
-        plt.figure(4)
-        print("Creating Gaussian Heatmap...")
-        cmap = plt.cm.get_cmap('coolwarm')
-        xIndex = 0
-        yIndex = 1
-        for i in range(n_robots):
-            heatmap = sns.kdeplot(x=posData.loc[:,pos_column_names[xIndex]].to_list(), y=posData.loc[:,pos_column_names[yIndex]].to_list(), label='r{} path'.format(i), alpha=0.75, fill=True, zorder = 1)
-            xIndex = xIndex + 2
-            yIndex = yIndex + 2
-        heatmap.imshow(image, extent=[0,1,0,1], zorder = 0, cmap='gray')
-        plt.xlim([0, 1])
-        plt.ylim([0, 1])
-        plt.title('Run 92 Exploration Heatmap')
-        if(savePlots):
-            plt.savefig('GaussHeat.png')
-        plt.clf()
+    # if not (combined):
+    #     plt.figure(4)
+    #     print("Creating Gaussian Heatmap...")
+    #     cmap = plt.cm.get_cmap('coolwarm')
+    #     xIndex = 0
+    #     yIndex = 1
+    #     for i in range(n_robots):
+    #         heatmap = sns.kdeplot(x=posData.loc[:,pos_column_names[xIndex]].to_list(), y=posData.loc[:,pos_column_names[yIndex]].to_list(), label='r{} path'.format(i), alpha=0.75, fill=True, zorder = 1)
+    #         xIndex = xIndex + 2
+    #         yIndex = yIndex + 2
+    #     heatmap.imshow(image, extent=[0,1,0,1], zorder = 0, cmap='gray')
+    #     plt.xlim([0, 1])
+    #     plt.ylim([0, 1])
+    #     plt.title('Run 92 Exploration Heatmap')
+    #     if(savePlots):
+    #         plt.savefig('GaussHeat.png')
+    #     plt.clf()
         
-    else:
-        plt.figure(4)
-        cmap = plt.cm.get_cmap('coolwarm')
-        heatmap = sns.kdeplot(x=xPos, y=yPos, cmap=cmap, alpha=0.75, fill=True, zorder = 1)
-        heatmap.imshow(image, extent=[0,1,0,1], zorder = 0, cmap='gray')
-        plt.xlim([0, 1])
-        plt.ylim([0, 1])
-        plt.title('Run 92 Exploration Heatmap')
-        if(savePlots):
-            saveDest = 'Log/Run' + str(run) + '/GaussHeat.png'
-            plt.savefig(saveDest, transparent=True)
-        plt.clf()
+    # else:
+    #     plt.figure(4)
+    #     cmap = plt.cm.get_cmap('coolwarm')
+    #     heatmap = sns.kdeplot(x=xPos, y=yPos, cmap=cmap, alpha=0.75, fill=True, zorder = 1)
+    #     heatmap.imshow(image, extent=[0,1,0,1], zorder = 0, cmap='gray')
+    #     plt.xlim([0, 1])
+    #     plt.ylim([0, 1])
+    #     plt.title('Run 92 Exploration Heatmap')
+    #     if(savePlots):
+    #         saveDest = 'Log/Run' + str(run) + '/GaussHeat.png'
+    #         plt.savefig(saveDest, transparent=True)
+    #     plt.clf()
 
 print(home_dir)
 
@@ -155,8 +167,8 @@ def read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run,
             pos_y_run[run, robot] = posData['rov_{}_y'.format(i)].values.tolist()
             belief_run[run, robot] = beliefData['rov_{}'.format(i)].values.tolist()
         
-        obs_run[run, 0] = obsData["x"]
-        obs_run[run, 1] = obsData["y"]
+        obs_run[run, 0] = obsData["x"].tolist()
+        obs_run[run, 1] = obsData["y"].tolist()
 
         decTimeFile = home_dir + '/../' + folderName + '/Run' + str(run) + '/decTime.txt'
         with open(decTimeFile) as f:
@@ -205,4 +217,5 @@ def read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run,
 
 fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, belief_avg, belief_std, obs_run, cov_count, cov_avg, cov_std = read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std)
 # print(cov_count)
-cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std)
+#cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std)
+createGauss(obs_run)

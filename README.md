@@ -49,35 +49,34 @@ The goal is to deploy this distributed mechanism in the AWS cloud.
 The original file structure was made to deploy the different Webots instances to clusters of a local server. The structure provided is as follows:
 
 Two scripts, stored in the `jobfiles` directory, allow to deploy multiple Webots instances in a distributed way on a local server.
-* A main Python script, named `PSO_tocluster.py`, is used to run the complete PSO algorithm. It performs the particle initialization, update and writing of the final results. Current particles and final results are stored in `Generations` directories. During an iteration, when particles need to be evaluated, it runs the `job_lily_parallel.sub` script once for each instance of Webots to start on the clusters. The script is also responsible for detecting when all instances have successfully completed their work so that the algorithm can continue.
-* The `job_lily_parallel.sub` script is coded in bash. It receives the indexes of the current particle to evaluate. The particle values are stored in a `prob.txt` file. This file is moved to a local working folder so that the Webots instance can read input files and produce output files independently from the Python script. `job_lily_parallel.sub` starts Webots, and when the simulation is done, moves the resulting file (named `local_fitness.txt`) back to the `Generations` folders.
+* A main Python script, named `PSO_tocluster.py`, is used to run the complete PSO algorithm. It performs the particle initialization, update and writing of the final results. Current particles and final results are stored in `Generations` directories. During an iteration, when particles need to be evaluated, it runs the `job_parallel.sh` script once for each instance of Webots to start on the clusters. The script is also responsible for detecting when all instances have successfully completed their work so that the algorithm can continue.
+* The `job_parallel.sh` script is coded in bash. It receives the indexes of the current particle to evaluate. The particle values are stored in a `prob.txt` file. This file is moved to a local working folder so that the Webots instance can read input files and produce output files independently from the Python script. `job_parallel.sh` starts Webots, and when the simulation is done, moves the resulting file (named `local_fitness.txt`) back to the `Generations` folders.
 
 The actual simulation is made of the following important files.
-* `24Lilies_LaLn.wbt` is the world file. It contains the position of the different elements in the simulation.
-* `Lily.proto` is the PROTO file for the floating robot. It contains the structure, as well as the sensor configuration of the Lily.
-* There is a physics plugin, `15Lilies.c`, which recreates the fluid motion in Webots. At each timestep, it updates the forces applied on each robot to simulate a circular motion in the cylinder.
-* `lily_ack_epm_com_LaLn.c` is the controller of the Lilys. It communicates with neighbour robots and applies rules for the linking/unlinking process.
-* Finally, `supervisor_track_LaLn.c` is a supervisor responsible for reading the particle values to apply, for evaluating the fitness of the robot configurations, for writing the results back to .txt files and for quitting the simulation when the final configuration is reached or when the maximal time is reached. 
+* `bayes_pso_i_j.wbt` is the world file where i is the generation and j the instance id. This file contains simulation elements such as robots and physical elements. 
+* `Rovable.proto` is the PROTO file for the Rovables robot. It contains the structure, as well as the sensor configuration of the Rovable.
+* `bayes_fsm.c` is the controller of the Bayesian Inspection algorithm. Each Rovables runs the bayes_fsm controller.
+* Finally, `bayes_supervisor.py` is a supervisor responsible for reading the particle values to apply, for evaluating the fitness of the algorithm parameters, for writing the results back to .txt files and for quitting the simulation when the final configuration is reached or when the maximal time is reached. 
 
 <div align = center>
   
-<img src="https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/file_structure_orig.png"/>
+<img src="docs/images/file_structure_orig.png"/>
   
 </div>
 
 ## 3 Amazon account
 Create an account on the [AWS welcome page](https://aws.amazon.com/?nc1=h_ls).
 * Click on _Create an AWS account_ <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/create_account.png) 
+![](docs/images/create_account.png) 
 * Enter your email, password and username
 * Enter your personal informations
 * Enter your credit card information
 * Confirm your identity using your phone number
 * Choose a free or paying support plan
 * Head to the management console<br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/manage_console.png) 
+![](docs/images/manage_console.png) 
 * Lastly, set your region on the upper-right corner of the console <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/region_select1.png) 
+![](docs/images/region_select1.png) 
 
 ## 4 Global cloud solution
 ### 4.1 Diagram
@@ -85,7 +84,7 @@ The global implementation in the Amazon cloud is shown in the diagram below.
 
 <div align = center>
 
-<img src="https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/aws_solution_diagram.png" width=700/>
+<img src="docs/images/aws_solution_diagram.png" width=700/>
   
 </div>
 
@@ -96,13 +95,13 @@ The deployement of the distributed nodes on AWS Batch requires a few modificatio
 
 <div align = center>
 
-<img src="https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/aws_file_structure.png" width=800/>
+<img src="docs/images/aws_file_structure.png" width=800/>
   
 </div>
 
 The strategy is to use the _multi-node parallel jobs_ feature of AWS Batch. It allows to start several nodes, including a main one and all other children. Each node gets an environment variable with its index number and one with the index of the main node. The main node runs the PSO algorithm while the children nodes each evaluate one particle of the swarm. Therefore, the number of nodes deployed is equal to (N+1), with N the number of particles in the swarm.
 
-A new `run_experiment.sh` script is started in each node and is responsible for running the correct script in function of the node index. In the main node, the Python PSO script `PSO_tocluster.py` is started, while, in the children nodes, the `job_lily_parallel.sh` file is executed (see [comment1](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407227), [comment2](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407269) and [comment3](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407324)).  
+A new `run_experiment.sh` script is started in each node and is responsible for running the correct script in function of the node index. In the main node, the Python PSO script `PSO_tocluster.py` is started, while, in the children nodes, the `job_parallel.sh` file is executed (see [comment1](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407227), [comment2](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407269) and [comment3](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407324)).  
 
 As can be observed, the original `job_lily_parallel.sub` file has been replaced by an equivalent `job_lily_parallel.sh` file. The global code is kept the same. The local Webots working directory is now a `tmp/job#_#` directory defined by the generation and particles indexes ([comment1](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407091)). The command to start Webots is also adapted ([comment2](https://github.com/cyberbotics/pso_self-assembly_aws/commit/1e7eaca17a795653d8397f23d95d22884b79f40e#r72407126)). The script is still responsible for copying the `prob.txt` and `local_fitness.txt` files between the result directory and the temporary working directory.
 
@@ -124,6 +123,9 @@ The following steps taken from the [AWS documentation](https://docs.aws.amazon.c
  * Keep NAT Gateway as none. This is only needed if using private subnets. 
  * Change VPC Endpoint to None
  * Click on Create VPC to finish the process. 
+ * You can now see your newly created Virtual Private Cloud at [Your VPCs](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#vpcs:)
+ * Navigate to [Subnets](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#subnets:) and ensure that your newly created subnets auto-assign an IPv4 address. 
+ * If Auto-assign IPv4 is not enabled then click on the subnet and choose "Edit subnet settings" under the "Actions" drop down menu. Check "Enable auto assign IPv4 address."
 
 ## 6 Elastic Container Registry (ECR)
 ### 6.1 Description
@@ -164,47 +166,47 @@ These pieces of code should be put in a text file and named _Dockerfile_ for lat
 The first step consists in creating a repository on ECR. To do this head to the [ECR tool web page](https://console.aws.amazon.com/ecr/). 
 
 * You can choose either a public or private repository.
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ecr_public_private.png)
+![](docs/images/ecr_public_private.png)
 
 #### 6.3.1 Private repository
 * Click on the Create repository button. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/create_repo_ecr.png)
+![](docs/images/create_repo_ecr.png)
 
 * Enter the repository name. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ecr_private_infos.png)
+![](docs/images/ecr_private_infos.png)
 
 * Click on the Create repository button on the bottom of the page. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/create_repo_ecr.png)
+![](docs/images/create_repo_ecr.png)
 
 #### 6.3.2 Public repository
 * Click on the Create repository button. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/create_repo_ecr.png)
+![](docs/images/create_repo_ecr.png)
 * Enter the repository name. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ecr_public_infos.png)
+![](docs/images/ecr_public_infos.png)
 
     
 * Click on the Create repository button on the bottom of the page. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/create_repo_ecr.png)
+![](docs/images/create_repo_ecr.png)
 
 ### 6.4 IAM authorization
 To access to the repository from the local machine to upload the Docker image, a few authorizations must be enabled. To perform these operations, open the Identity and Access Management in the [AWS console](https://console.aws.amazon.com/iamv2/home?#/users). This manager allows you to create different users with different permissions on the account, allowing multiple persons to use the account across different computers for example.
 
 * Click on _Users_ in the left panel. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/iam_left_panel.png)
+![](docs/images/iam_left_panel.png)
 
 * Click on _Add users_. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/iam_add_user.png)
+![](docs/images/iam_add_user.png)
 
 * Enter an arbitrary name for the user which will get the permissions and tick the first box for the credentials. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/iam_name_credential.png)
+![](docs/images/iam_name_credential.png)
 
 * Add the permissions shown in the image below. One of the rule is for accessing public repositories, the other to access private ones. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/iam_add_permissions.png)
+![](docs/images/iam_add_permissions.png)
 
 * Skip the Tag and Review pages.
 
 * The user is now created. Download the credentials using the _Download .csv_ button. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/iam_download_credentials.png)
+![](docs/images/iam_download_credentials.png)
 
 ### 6.5 Configure AWS CLI
 AWS Command Line Interface (CLI) allows you to control your AWS account and services directly from the command line. The interface allows you to upload Docker image for example.
@@ -214,7 +216,7 @@ To install AWS CLI, read the following easy tutorial on this page: [AWS CLI - In
 Type `aws --version` in a local terminal to verify correct installation. If the command is not found, add this to your ~/bashrc file: `export PATH=/usr/local/bin:$PATH`
 
 In a local terminal run the following command to configure the CLI: `aws configure`. AWS will ask you for 4 informations. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/aws_cli_credentials.png)
+![](docs/images/aws_cli_credentials.png)
 
 The first two correspond to the credentials contained in the CSV file you downloaded in the last section. The third one must contain your geographic region you set at the beginning of this tutorial in the AWS console. The fourth one can be ignored.
 
@@ -238,10 +240,10 @@ sudo docker run hello-world
 ```
 
 To upload your Docker image to ECR, AWS provides a set of commands directly in the console. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ecr_push_commands.png)
+![](docs/images/ecr_push_commands.png)
 
 The following pop-up window opens. Note that you should use the commands given in your console and not the ones displayed on the following example figure. <br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ecr_push_popup.png)
+![](docs/images/ecr_push_popup.png)
 
 
 * The first command allows you to log Docker into ECR. You may have to call the docker command as super user (sudo docker [...]).
@@ -261,17 +263,17 @@ EFS are created in specific regions and must be assigned to a Virtual Private Cl
 
 <div align = center>
 
-  <img src="https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_structure.png" width="600"/>
+  <img src="docs/images/efs_structure.png" width="600"/>
   
   source: [EFS - How it works ?](https://docs.aws.amazon.com/efs/latest/ug/how-it-works.html)
 </div>
 
 ### 7.2 Create a file system
 To create a file system head to [Elastic File System](https://us-east-2.console.aws.amazon.com/efs/get-started?region=us-east-2#/get-started) and click on _Create file system_.<br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_create.png)
+![](docs/images/efs_create.png)
 
 In the pop-up window, indicate a name for your file system and select a VPC.<br>
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_create_popup.png)
+![](docs/images/efs_create_popup.png)
 
 If you want to use internet in your containers, choose the newly created _internet-vpc_. If not, you can choose the default one.<br>
 ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/efs_internet_vpc.png)
@@ -285,14 +287,14 @@ Now, to access our file system from a local machine, the following workflow must
 A created file system is automatically assigned to a default security group. Security groups act as firewalls to define authorized in and out connections and protocols. In our case, we need the NFS protocol to be activated to access the EFS via NFS from SSH or from the Docker container.
 
 * Get to your [Security Groups](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#securityGroups:) and click on the ID of your default security group. If you have multiple ones, choose the one associated with the VPC you have selected in the last step, when creating the file system.
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_default_list.png)
+    ![](docs/images/sg_default_list.png)
  
 * Click on _Edit inbound rules_. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_edit_inbound.png)
+    ![](docs/images/sg_edit_inbound.png)
 * Click on _Add Rule_. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_add_rule.png)
+    ![](docs/images/sg_add_rule.png)
 * Add a new NFS rule as shown in the illustration below. (Source = **Anywhere - IPv4**) <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/sg_nfs_rule.png)
+    ![](docs/images/sg_nfs_rule.png)
 * Click on _Save rules_.
     
 ### 7.4 EC2 Instance
@@ -301,34 +303,34 @@ Elastic Compute Cloud (EC2) is one of the main services provided by AWS. It allo
 For this work, only a simple Ubuntu server is needed to mount a file system. Keep in mind that this part is only about accessing the file system from a local machine and not running containers on these instances. Running the simulations is discussed in a further section.
 
 * To create an EC2 instance, head to [AWS EC2](https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#Instances:sort=desc:instanceState) and click on launch instances.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_launch_instances.png)
-* Choose a name for the instance, like _EFSMount_.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_name.png)
+    ![](docs/images/ec2_launch_instances.png)
+* Choose a name for the instance that would be remembered, like _EFSMount_.<br>
+    ![](docs/images/ec2_name.png)
 * Choose Ubuntu in the list of AMIs.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_AMI_choice.png)
+    ![](docs/images/ec2_AMI_choice.png)
     
 * Further, keep the default _t2.micro_ type of instance. We only need to mount a file system so no more resources are needed.<br>
 
 * Next, you can choose a SSH key pair. In case you already have an existing one and still have the .pem associated file you can choose it from the drop-down menu. If not, click on _Create new key pair_.<br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_key_pair.png)
 * A pop-up window will show up asking you to configure a new SSH key pair. Create a new RSA key pair, give it a name. The .pem associated file will be automatically downloaded and useful to access the instance via SSH. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_new_key_pair.png)
+    ![](docs/images/ec2_new_key_pair.png)
 * In the _Network settings_, click on _Edit_.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_edit_network_button.png)
+    ![](docs/images/ec2_edit_network_button.png)
     * Make sure the recently created VPC is selected. Choose auto-assign public IP.
 * Create a new security group, to allow SSH connections and the NFS protocol.
 
 * In _Configure storage_, click on _Edit_ next to _0x File system_ to add a file system.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_edit_fs.png)
+    ![](docs/images/ec2_edit_fs.png)
 * Click on _Add shared file system_.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_add_shared_file_system.png)
+    ![](docs/images/ec2_add_shared_file_system.png)
 * Select the file system you have created in EFS. Mount it to `/home/ubuntu/efs/` and uncheck the box about automatic security groups.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_efs_config.png)
+    ![](docs/images/ec2_efs_config.png)
     
 * Finally, click on _Launch instance_.<br>
 
 * Your EC2 console should now contain a launched instance. Note the public IPv4 address needed for SSH connection. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_launched_instance.png)
+    ![](docs/images/ec2_launched_instance.png)
 
 ### 7.5 Transfer files to EFS
 Now that the Ubuntu server is active, a SSH connection can be established.
@@ -376,7 +378,7 @@ Another way to proceed is to modify and compile the controllers locally. Once th
 ### 7.6 Important information about EC2 instances
 The only purpose of the EC2 instance here is to create a link to the EFS service and access the file system. The EC2 instance only needs to be started when the files need to be modified. It is not needed for running containers in parallel. Keeping even a small EC2 instance running costs money. Therefore, it is best to stop it when it is not needed. To do this, go to your [EC2 console](https://us-east-2.console.aws.amazon.com/ec2/v2/home?region=us-east-2#Instances:), select your running instance and stop it using the _Instance state_ drop-down menu and _Stop instance_ button.<br>
 
-![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/ec2_instance_state.png)<br>
+![](docs/images/ec2_instance_state.png)<br>
 
 The instance can be started again from this page when needed.
 
@@ -398,15 +400,14 @@ As mentioned earlier in the instuctions, for this project we use the _multi-node
 ### 8.2 Configuration
 #### 8.2.1 Compute environment
 * Under the batch environment click "compute environment" on the left column. The first step consists in creating a compute environment in the [AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#compute-environments) by clicking on the _Create_ button. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
+    ![](docs/images/batch_create_environment.png)
     
-* Select EC2 as the option, instead of Fargate.
+* Select EC2 as the option.
 
-* Choose an arbitrary name for your environment. Choose _Managed_ as environment type to let Amazon organize the jobs automatically. Choose the default _Batch service-linked role_ to give all the permissions to access other AWS services like ECS. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_compute_env_config.png)
+* Choose an arbitrary name for your environment. Choose _Managed_ as environment type to let Amazon organize the jobs automatically. Choose the default _AWSServiceRoleForBatch_ to give all the permissions to access other AWS services like ECS. <br>
     
 * Choose _On demand_ as instance type. Fargate is not compatible with multi-node execution. Choose the maximal number of vCPUs (CPU cores) that can be allocated for your jobs. As a reference, the selected instance (_m5.large_) type uses 2 vCPUS. Each node will run on 1 instance, meaning the number of required vCPUs is equal to `2 × (P+1)`, with P the number of particles. So for 15 particles, 16 parallel nodes are needed (including the PSO one), 32 vCPUS should be allocated. Note that if more resources are requested for started jobs than this limit, AWS Batch will simply queue them until a vCPU is free again. Also, unused resources are not charged at all. This field is only an indicative limit for the compute environment. As mentioned, _m5.large_ instances should be chosen as instance type, as they are cheaper and more powerful than the instances chosen if the field is kept to _optimal_. The default quota on the maximal number of vCPUs that can be allocated at the same time in your account can be found [here](https://us-east-2.console.aws.amazon.com/servicequotas/home/services/ec2/quotas), under the _Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances_ field.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_instance_config.png)
+    ![](docs/images/batch_instance_config.png)
     
 * In the _Networking_ part, choose the correct VPC. Again, if you went for the internet option, you should choose _internet-vpc_ VPC. If not, you can keep the default VPC. IMPORTANT: with the _internet-vpc_, remove all public subnets. Only private subnets are allowed for internet containers. <br>
 
@@ -416,128 +417,69 @@ As mentioned earlier in the instuctions, for this project we use the _multi-node
    
 
 * Create the environment with the confirmation button. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_comp_env.png)
+    ![](docs/images/batch_create_comp_env.png)
     
 #### 8.2.2 Job queue
 A job queue allows to define a space where our jobs are organized before being run in the compute environment. They are defined by priorities and can be affiliated to multiple compute environment.
 
 * Open the [job queues in the AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#queues) and click on the _Create_ button. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
+    ![](docs/images/batch_create_environment.png)
 
 * Choose an arbitrary name and a priority >0. It doesn't really matter here, as we only define one job queue. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_queue_config.png)
+    ![](hdocs/images/batch_job_queue_config.png)
 
 * Add the previously created environment to your job queue. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_queue_env.png)
+    ![](docs/images/batch_job_queue_env.png)
     
 * You can confirm the job queue creation by clicking on the _Create_ buttons. All unmentioned parameters can be left at their default values.<br>
-   ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
+   ![](docs/images/batch_create_environment.png)
 
 #### 8.2.3 Job definition
 A job definition allows to define a set of parameters for future job executions. It allows to define the container(s), the resources, mounted file systems and other features. The following explains the parameters to run the official Webots Docker image.
 
 * Open the [job definitions in the AWS Batch console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#job-definition) and click on the _Create_ button. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
-
-* Select EC2 and choose _multi-node parallel_ as job type. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_type.png)
+    ![](docs/images/batch_create_environment.png)
+* 
+* Select EC2 and enable _multi-node parallel_ after marking _Amazon EC2_ as the selected type.<br>
+    ![](docs/images/batch_job_def_type.png)
     
 * Choose and arbitrary name for the job definition, such as _multi-pso-job_. <br>
     ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_name.png)
 
 * In the _Multi-node configuration_ panel, choose the default number of nodes to be started. This parameter corresponds to the number of particles in the PSO algorithm + the main node. This number can be overriden later when starting the job. Also choose 0 as main node index.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_nodes.png)
+    ![](docs/images/batch_job_def_nodes.png)
 
 * Add a new node range. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_add_group.png)
+    ![](docs/images/batch_job_def_add_group.png)
     
-* In the new group panel, select all nodes as target nodes (0:). Write the URL of the latest official Webots Docker image. If a custom Docker image is needed, write the Image URI of your image in [ECR](https://us-east-2.console.aws.amazon.com/ecr/repositories?region=us-east-2). Also write the command to execute in each started container (`bash /usr/local/efs/pso_self-assembly_aws/run_experiment.sh`). This will start the `run_experiment.sh` script in each container. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config1.png)
+* In the new group panel, select all nodes as target nodes (0:). Write the URL of the latest official Webots Docker image. If a custom Docker image is needed, write the Image URI of your image in [ECR](https://us-east-2.console.aws.amazon.com/ecr/repositories?region=us-east-2). 
+* Write the command to execute in each started container (`bash /usr/local/efs/pso_self-assembly_aws/run_experiment.sh`). This will start the `run_experiment.sh` script in each container. If the command is written in the custom docker there is no need to include the command here. Leaving the text box blank is sufficient. <br>
+    ![](docs/images/batch_job_def_group_config1.png)
     
 * Select the compute resources to allocate for each container. Choose 2vCPUs and 4096 MiB of memory. No GPU is needed. _m5.large_ instances will be automatically launched with these parameters. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config2.png)
+    ![](docs/images/batch_job_def_group_config2.png)
     
 * Click expand additional configuration. The next step consists in mounting the EFS file system to the container. First add the mount point to the container. Then, choose the EFS file system as volume. Names defined in both sections must be the same. The file system ID can be found in the [EFS console](https://us-east-2.console.aws.amazon.com/efs/home?region=us-east-2#/file-systems) (see second illustration below). Check the enable EFS button. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config3.png)
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_filesystem_id.png)
+    ![](docs/images/batch_job_def_group_config3.png)
+    ![](docs/images/batch_filesystem_id.png)
     
 * Choose _awslog_ as Log driver in the log configuration part. This will allow you to access the console logs of the simulation jobs. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_group_config4.png)
-
-* In the _Retry strategies_ section, it is important to define what to do when an AGENT error comes up. _Multi-node parallel jobs_ is a very recent feature and everything is not perfect yet. Sometimes, when starting the containers, an AGENT error occurs, causing the job to crash and fail. With the retry strategy, we are sure the job is correctly launched. First click on _Add evaluate on exit_.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_retry_button.png)
+    ![](docs/images/batch_job_def_group_config4.png)
+* _Optional_. This is only desired if you are skeptical of AWS successfully launching nodes. If this is enabled, AWS will retry to launch failed nodes up to the specified attempts: 
+    * In the _Retry strategies_ section, it is important to define what to do when an AGENT error comes up. _Multi-node parallel jobs_ is a very recent feature and everything is not perfect yet. Sometimes, when starting the containers, an AGENT error occurs, causing the job to crash and fail. With the retry strategy, we are sure the job is correctly launched. First click on _Add evaluate on exit_.<br>
+    ![](docs/images/batch_job_def_retry_button.png)
     
-* Add the following strategy. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_def_retry.png)
+    * Add the following strategy. <br>
+    ![](docs/images/batch_job_def_retry.png)
     
 * You can confirm the job definition by clicking on the _Create_ buttons. All unmentioned parameters can be left at their default values.
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_create_environment.png)
+    ![](docs/images/batch_create_environment.png)
 
 ## 9 Run simulations
 Everything is now setup to run the parallel containers. 
 
-* To launch AWS Batch jobs, open the [AWS Batch Console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#jobs) and click the _Submit new job_ button.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_submit_new_job.png)
 
-* A configuration page opens. First, choose an arbitrary name for your job. The multiple nodes will be referenced under this name. Select the Job definition peviously created and select the Job queue previously created. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_config.png)
-    
-* You can overwrite the number of nodes (nb particles + 1) you need or simply keep it at the default number you defined in the job definition. Remember to still be in the limit of the vCPUs resources you allocated in the compute environment.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_nb_nodes.png)
-    
-* Other parameters can be left as default.
-    
-* Run your jobs by clicking the _Submit_ button. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_submit_button.png)
-
-* The new multi-node job should now appear in the jobs list in the RUNNABLE status. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_job_list.png)
-    
-* By clicking on the job, you can access the nodes list. In general, the job is stuck in RUNNABLE status for 1 minute but it can take even longer sometimes. Containers are deployed on EC2 and not Fargate, so it can take some time to start the instances. Once the instances are ready, the job switches to the STARTING state, during which the Docker image is downloaded and run. It takes approximatively 90 seconds to download the image. At this point, only the main node will start first. Once started, it has the RUNNING status and the other nodes are started too. Finally, they all become RUNNING, as shown in the illustration below.<br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_running_nodes.png)
-    
-* To display the console logs of the different nodes, you can select a node and open the logs stream in the right panel. By default, Webots logs won't be displayed in AWS, as they are redirected to a txt file. To change this behavior, comment the stdout and stderr redirection in `job_lily_parallel.sh` (see [this commit](https://github.com/cyberbotics/pso_self-assembly_aws/commit/d359c62a89066d2a70033848d23c7895c75f962b?diff=unified) for the precise line). <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_node_logs.png)
-
-* Once the PSO job is finished, the main node will successfully exit and automatically terminate all other secondary nodes. The job can also be terminated manually using the button at the top. <br>
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/batch_terminate_button.png)
-
-## 10 Additional information
-* Only EC2 is compatible with multi-node jobs. Fargate is not yet supported.
-
-* In general, to access the internet, public subnets use public IPv4 addresses and an elastic network interface. This is the case for classic single-node jobs or arrays of jobs in AWS Batch. When running the jobs in Fargate, a public IP can be assigned. But in the case of multi-node jobs, AWS is restricting the internet access to multiple conditions:
-  * Using public subnets is possible. The started instances have a public IP address or an elastic IP. But they don't allow to access the internet from inside the container.
-  * Internet access is therefore limited to private subnets. But private subnets cannot natively access internet. To create a bridge to internet, the private subnets need a NAT gateway deployed on a public subnet of the same VPC. This is why a new custom VPC needs to be created to access internet in the scope of this project. 
-
-* The NAT Gateway deployed in the VPC costs money. It costs 0.045$ per hour once the NAT Gateway is available. Also, it costs 0.045$ per GB of data that is transmitted between the nodes and internet. The Docker image pull also goes through NAT, which results in at least 2.5 GB of data being transferred per node started via NAT.
-
-* There is no real way to disable the NAT gateway. The only way to completely eliminate costs is to remove NAT when it is not needed and recreate it when it is needed.
-  * To delete the NAT, go to the [NAT Gateway console](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#NatGateways:) , select the NAT Gateway in the list and in the _Actions_ drop-down menu, choose _Delete NAT gateway_.
-  * To recreate it, go to the [NAT Gateway console](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#NatGateways:) , click on the _Create NAT gateway_ button. Don't give any name, choose the Public subnet of your _internet-VPC_. Choose the Elastic IP in the corresponding field. Click on _Create NAT gateway_.
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/nat_gateway_creation.png)
-  * The private subnets need to know the existence of the new NAT. To perform the update, open the [subnets console](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#subnets:) and select one of the _Private subnets_. In the _Route table_ column, click on the route table ID. This will redirect you to the Route table console.
-  * Click on _Edit routes_ in the _Routes_ tab.
-    ![](https://github.com/cyberbotics/pso_self-assembly_aws/blob/main/docs/images/nat_gateway_edit_routes.png)
-  * Replace the deleted NAT by the newly created one.
-  * You can now run the containers again with Internet access.
-
-  ## 11 Changing PSO Launch Parameters
-* Fitness Function
-    * The fitness function is found under evaluateFitness() of the bayes_supervisor.py -- changing the fitness is done by commenting of uncommenting the desired fitness function.
-* Particle Set
-    * The particle sets can be found under PSO_tocluster.py -- setting the PARTICLE_SET variable changes the corresponding particle types used. This variable can be found on line 303
-* Iterations
-    * The number of iterations can be set under PSO_tocluster.py -- this is done by changing the maxiter argument during the PSO object initialization on line 330. 
-* Evaluations
-    * Evaluations are set in the NB_NOISE_RES_EVALS variable under run_experiment_PSO.sh
-* Fill Ratio
-    * The fill rations of each evaluation are set within the fill_array.txt file. The number of lines must correspond to the number of iterations.
-* Plotting 
-    * Plotting is done by the evaluatePSOFit.py file. Changing the rootdir variable sets the filepath of the script to plot.
-
-## 12 Launching PSO
-
-On local directory:
+On your local directory pull the code:
 ```sh
 git clone https://github.com/BaharsGit/Rovables_Bayesian_Inspection_Optimization.git
 ```
@@ -554,16 +496,72 @@ git pull
 mv run_experiment_PSO.sh run_experiment.sh
 ```
 ```sh
-scp -r demo <EC2 INSTANCE NAME>:~/
+scp -r demo <EC2 INSTANCE NAME>:~/efs/
 ```
 ```sh
 ssh <EC2 INSTANCE NAME>
 ```
 
-On remote directory:
-```sh
-sudo mv demo ./efs/
-```
+* Now on your web browser, open the [AWS Batch Console](https://us-east-2.console.aws.amazon.com/batch/home?region=us-east-2#jobs) and click the _Submit new job_ button.<br>
+    ![](docs/images/batch_submit_new_job.png)
+
+* A configuration page opens. First, choose an arbitrary name for your job. The multiple nodes will be referenced under this name. Select the Job definition peviously created and select the Job queue previously created. <br>
+    ![](docs/images/batch_job_config.png)
+    
+* You can overwrite the number of nodes (nb particles + 1) you need or simply keep it at the default number you defined in the job definition. Remember to still be in the limit of the vCPUs resources you allocated in the compute environment.<br>
+    ![](docs/images/batch_nb_nodes.png)
+    
+* Other parameters can be left as default.
+    
+* Run your jobs by clicking the _Submit_ button. <br>
+    ![](docs/images/batch_submit_button.png)
+
+* The new multi-node job should now appear in the jobs list in the RUNNABLE status. <br>
+    ![](docs/images/batch_job_list.png)
+    
+* By clicking on the job, you can access the nodes list. In general, the job is stuck in RUNNABLE status for 1 minute but it can take even longer sometimes. Containers are deployed on EC2 and not Fargate, so it can take some time to start the instances. Once the instances are ready, the job switches to the STARTING state, during which the Docker image is downloaded and run. It takes approximatively 90 seconds to download the image. At this point, only the main node will start first. Once started, it has the RUNNING status and the other nodes are started too. Finally, they all become RUNNING, as shown in the illustration below.<br>
+    ![](docs/images/batch_running_nodes.png)
+    
+* To display the console logs of the different nodes, you can select a node and open the logs stream in the right panel. By default, Webots logs won't be displayed in AWS, as they are redirected to a txt file. To change this behavior, comment the stdout and stderr redirection in `job_lily_parallel.sh` (see [this commit](https://github.com/cyberbotics/pso_self-assembly_aws/commit/d359c62a89066d2a70033848d23c7895c75f962b?diff=unified) for the precise line). <br>
+    ![](docs/images/batch_node_logs.png)
+
+* Once the PSO job is finished, the main node will successfully exit and automatically terminate all other secondary nodes. The job can also be terminated manually using the button at the top. <br>
+    ![](docs/images/batch_terminate_button.png)
+
+## 10 Additional information
+* Only EC2 is compatible with multi-node jobs. Fargate is not yet supported.
+
+* In general, to access the internet, public subnets use public IPv4 addresses and an elastic network interface. This is the case for classic single-node jobs or arrays of jobs in AWS Batch. When running the jobs in Fargate, a public IP can be assigned. But in the case of multi-node jobs, AWS is restricting the internet access to multiple conditions:
+  * Using public subnets is possible. The started instances have a public IP address or an elastic IP. But they don't allow to access the internet from inside the container.
+  * Internet access is therefore limited to private subnets. But private subnets cannot natively access internet. To create a bridge to internet, the private subnets need a NAT gateway deployed on a public subnet of the same VPC. This is why a new custom VPC needs to be created to access internet in the scope of this project. 
+
+* The NAT Gateway deployed in the VPC costs money. It costs 0.045$ per hour once the NAT Gateway is available. Also, it costs 0.045$ per GB of data that is transmitted between the nodes and internet. The Docker image pull also goes through NAT, which results in at least 2.5 GB of data being transferred per node started via NAT.
+
+* There is no real way to disable the NAT gateway. The only way to completely eliminate costs is to remove NAT when it is not needed and recreate it when it is needed.
+  * To delete the NAT, go to the [NAT Gateway console](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#NatGateways:) , select the NAT Gateway in the list and in the _Actions_ drop-down menu, choose _Delete NAT gateway_.
+  * To recreate it, go to the [NAT Gateway console](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#NatGateways:) , click on the _Create NAT gateway_ button. Don't give any name, choose the Public subnet of your _internet-VPC_. Choose the Elastic IP in the corresponding field. Click on _Create NAT gateway_.
+    ![](docs/images/nat_gateway_creation.png)
+  * The private subnets need to know the existence of the new NAT. To perform the update, open the [subnets console](https://us-east-2.console.aws.amazon.com/vpc/home?region=us-east-2#subnets:) and select one of the _Private subnets_. In the _Route table_ column, click on the route table ID. This will redirect you to the Route table console.
+  * Click on _Edit routes_ in the _Routes_ tab.
+    ![](docs/images/nat_gateway_edit_routes.png)
+  * Replace the deleted NAT by the newly created one.
+  * You can now run the containers again with Internet access.
+
+  ## 11 Changing PSO Launch Parameters
+* Fitness Function
+    * The fitness function is found under evaluateFitness() of the bayes_supervisor.py -- changing the fitness is done by commenting and uncommenting the desired fitness function.
+* Particle Set
+    * The particle sets can be found under PSO_tocluster.py -- setting the PARTICLE_SET variable changes the corresponding particle types used. This variable can be found on line 303
+* Iterations
+    * The number of iterations can be set under PSO_tocluster.py -- this is done by changing the maxiter argument during the PSO object initialization on line 330. 
+* Evaluations
+    * Evaluations are set in the NB_NOISE_RES_EVALS variable under run_experiment_PSO.sh
+* Fill Ratio
+    * The fill rations of each evaluation are set within the fill_array.txt file. The number of lines must correspond to the number of iterations.
+* Plotting 
+    * Plotting is done by the evaluatePSOFit.py file. Changing the rootdir variable sets the filepath of the script to plot.
+
+
 
 
 

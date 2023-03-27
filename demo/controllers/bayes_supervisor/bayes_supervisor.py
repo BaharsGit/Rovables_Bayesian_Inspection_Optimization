@@ -104,7 +104,7 @@ def evaluateFitness(dec_time, last_belief):
     #         sign = 1
     # return math.exp(((MAX_TIME * 1.66667e-5)- (dec_time*1.66667e-5))*(sign))
 
-    #Linear Fitness Function
+    #Linear Fitness Function; For individual robot decisions 
     if (float(fill_ratio) > 0.5):
         if (last_belief < 0.5):
             return dec_time
@@ -117,6 +117,10 @@ def evaluateFitness(dec_time, last_belief):
         else: 
             print("Punished with max time")   
             return MAX_TIME
+
+    #Add another fitness evaluation for the swarm as a whole.
+    
+
 
 # Writes to the fitness file for the current iteration of particle
 def cleanup(time_arr, fitness):
@@ -253,12 +257,14 @@ while supervisor.step(timestep) != -1:
             if (currentData[8] != '-'):
                 if (fitness[i] == 0):
                     fitness[i] = fitness[i] + evaluateFitness(float(currentData[8:]), float(belief))
-                dec_time[i] = currentData[8:]
+                dec_time[i] = float(currentData[8:])
                 if (dec_time[i] != float(currentData[8:])):
+                    # print("Old decision time: ", dec_time[i])
+                    # print("New decision time: ", currentData)
                     decision_switch_count = decision_switch_count + 1
                     fitness[i] = (fitness[i] + evaluateFitness(float(currentData[8:]), float(belief))) / decision_switch_count
-                    dec_time[i] = currentData[8:]
-                print("Updated Robot Fitness: ", fitness)
+                    dec_time[i] = float(currentData[8:])
+                    print("Updated Robot Fitness: ", fitness)
 
         csvProbData.append(rowProbData)
         csvPosData.append(rowPosData)
