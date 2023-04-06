@@ -36,8 +36,10 @@ pos_column_names = [] #Format for describing the robots
 averages = pandas.DataFrame()
 pos_column_names.append('time_step')
 pos_run = []
+time_run = []
 home_dir = os.getcwd() + "/../.."
 folderName = "Log_x0"
+p_c = 0.95
 
 for i in range(n_robots):
     prob_column_names.append('rov_{}'.format(i))
@@ -45,7 +47,9 @@ for i in range(n_robots):
     pos_column_names.append('rov_{}_y'.format(i))
 
 def cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std):
-
+    """
+    This function graphs the average belief and coverage of all robots throughout 100 simulation runs.
+    """
     fig=plt.figure()
     ax=fig.add_subplot(111, label="1")
     ax2=fig.add_subplot(111, label="2", frame_on=False)
@@ -65,44 +69,24 @@ def cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std):
     bottom = np.subtract(belief_avg, belief_std)
     bottom[bottom<0] = 0
     ax2.fill_between(np.arange(len(belief_avg)), bottom, np.add(belief_avg, belief_std), color='C1', alpha=0.3)
+    ax2.axhline(y=p_c, color='r', linestyle='--', alpha=0.5)
+    ax2.axhline(y=1-p_c, color='r', linestyle='--', alpha=0.5)
     ax2.xaxis.tick_top()
     ax2.yaxis.tick_right()
     ax2.set_ylim(0,1)
-    ax2.set_xlabel('Simulation Time', color="C1") 
-    ax2.set_ylabel('Belief', color="C1")       
+    ax2.set_xlabel('Average Simulation Time (s)', color="C1") 
+    ax2.set_ylabel('Average Belief', color="C1")       
     ax2.xaxis.set_label_position('top') 
     ax2.yaxis.set_label_position('right') 
     ax2.tick_params(axis='x', colors="C1")
     ax2.tick_params(axis='y', colors="C1")
 
-    # Using this corresponding post: https://stackoverflow.com/questions/14061061/how-can-i-render-3d-histograms-in-python
-    data_array = np.array(cov_count)
-    #
-    # Create an X-Y mesh of the same dimension as the 2D data. You can
-    # think of this as the floor of the plot.
-    #
-    x_data, y_data = np.meshgrid(np.arange(data_array.shape[1]),
-                                np.arange(data_array.shape[0]) )
-    #
-    # Flatten out the arrays so that they may be passed to "ax.bar3d".
-    # Basically, ax.bar3d expects three one-dimensional arrays:
-    # x_data, y_data, z_data. The following call boils down to picking
-    # one entry from each array and plotting a bar to from
-    # (x_data[i], y_data[i], 0) to (x_data[i], y_data[i], z_data[i]).
-    #
-    # x_data = x_data.flatten()
-    # y_data = y_data.flatten()
-    # z_data = data_array.flatten()
-    # h.bar3d(x_data,
-    #         y_data,
-    #         np.zeros(len(z_data)),
-    #         1, 1, z_data )
-    # # h.hist2d(x_data, y_data, cmap=plt.cm.jet)
     plt.show()
+    fig.savefig(home_dir + "/../" + folderName + "/cov_belief.svg", format='svg', dpi='figure')
 
 #################################### Gaussian Heat Map #############################
 # From this: https://zbigatron.com/generating-heatmaps-from-coordinates/ and https://stackoverflow.com/questions/50091591/plotting-seaborn-heatmap-on-top-of-a-background-picture
-def createGauss(obs_run):
+def kde_coverage(obs_run):
     fig=plt.figure()
     plt.xlim([0,1])
     plt.ylim([0,1])
@@ -112,44 +96,23 @@ def createGauss(obs_run):
     for run in obs_run:
         x.append(run[0])
         y.append(run[1])
-    sns.kdeplot(x=x[0], y=y[0], fill=True, zorder = 1, cmap="magma", cbar=True, bw_adjust=.5)
-    sns.scatterplot(x=x[0], y=y[0], size=1, color='none', edgecolors='black', alpha=0.9, legend=False)
+    sns.scatterplot(x=x, y=y, size=1, color='none', edgecolors='black', alpha=0.9, legend=False)
+    sns.kdeplot(x=x, y=y, fill=True, zorder = 1, cmap="magma", cbar=True, bw_adjust=.5)
     plt.show()
-    # combined=1
+    fig.savefig(home_dir + "/../" + folderName + "/kde_coverage.svg", format='svg', dpi='figure')
 
-    # if not (combined):
-    #     plt.figure(4)
-    #     print("Creating Gaussian Heatmap...")
-    #     cmap = plt.cm.get_cmap('coolwarm')
-    #     xIndex = 0
-    #     yIndex = 1
-    #     for i in range(n_robots):
-    #         heatmap = sns.kdeplot(x=posData.loc[:,pos_column_names[xIndex]].to_list(), y=posData.loc[:,pos_column_names[yIndex]].to_list(), label='r{} path'.format(i), alpha=0.75, fill=True, zorder = 1)
-    #         xIndex = xIndex + 2
-    #         yIndex = yIndex + 2
-    #     heatmap.imshow(image, extent=[0,1,0,1], zorder = 0, cmap='gray')
-    #     plt.xlim([0, 1])
-    #     plt.ylim([0, 1])
-    #     plt.title('Run 92 Exploration Heatmap')
-    #     if(savePlots):
-    #         plt.savefig('GaussHeat.png')
-    #     plt.clf()
-        
-    # else:
-    #     plt.figure(4)
-    #     cmap = plt.cm.get_cmap('coolwarm')
-    #     heatmap = sns.kdeplot(x=xPos, y=yPos, cmap=cmap, alpha=0.75, fill=True, zorder = 1)
-    #     heatmap.imshow(image, extent=[0,1,0,1], zorder = 0, cmap='gray')
-    #     plt.xlim([0, 1])
-    #     plt.ylim([0, 1])
-    #     plt.title('Run 92 Exploration Heatmap')
-    #     if(savePlots):
-    #         saveDest = 'Log/Run' + str(run) + '/GaussHeat.png'
-    #         plt.savefig(saveDest, transparent=True)
-    #     plt.clf()
-
-print(home_dir)
-
+def time_distribution(time_run):
+    fig = plt.figure()
+    time_average_run = []
+    for run in time_run:
+        time_average_run.append(sum(run) / len(run))
+    print(time_average_run)
+    plt.hist(time_average_run, bins=30, edgecolor='black', alpha=0.9, color='y')
+    plt.title("Swarm Average Decision Distribution")
+    plt.xlabel("Average Swarm Decision Time (s)")
+    plt.ylabel("Absolute Frequency")
+    plt.show()
+    fig.savefig(home_dir + "/../" + folderName + "/time_distribution.svg", format='svg', dpi='figure')
 
 def read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std):
     #Iterate through and save data into corresponding arrays
@@ -176,6 +139,7 @@ def read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run,
         fitness_run[run] = float(lines[4])
         reset_run[run] = float(lines[5])
         pos_run.append(posData)
+        time_run.append([float(i) for i in lines[0:3]])
 
         swarm_bel_avg[str(run)] = beliefData.mean(axis=1)
     
@@ -216,6 +180,7 @@ def read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run,
 
 
 fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, belief_avg, belief_std, obs_run, cov_count, cov_avg, cov_std = read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std)
-# print(cov_count)
-#cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std)
-createGauss(obs_run)
+
+cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std)
+kde_coverage(obs_run)
+time_distribution(time_run)
