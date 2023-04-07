@@ -81,11 +81,11 @@ export NOISE_SEED=$INSTANCE_ID
 export FILL_RATIO=$FILL_RATIO
 
 
-if [ $RUN_TEST_FUNC -eq "1" ] 
-then
-   echo "Generating world and arena files..."
-   python3 -u $(pwd)/../../python_code/simSetupPSO.py -pid $PARTICLE_ID -iid $INSTANCE_ID -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS -d $DYNAMIC_ENV -dub $ENV_UB -dlb $ENV_LB 
-fi
+# if [ $RUN_TEST_FUNC -eq "1" ] 
+# then
+echo "Generating world and arena files..."
+python3 -u $(pwd)/../../python_code/simSetupPSO.py -pid $PARTICLE_ID -iid $INSTANCE_ID -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS -d $DYNAMIC_ENV -dub $ENV_UB -dlb $ENV_LB 
+# fi
 echo "(`date`) Performing a total of $N_RUNS runs for particle $PARTICLE_ID"
 
 # PATH : This line defines the path to the Webots world to be launched, each instance will open a unique world file. 

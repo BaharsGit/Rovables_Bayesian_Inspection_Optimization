@@ -348,13 +348,8 @@ int main(int argc, char **argv) {
       }
       case FSM_CHECK_O:
       { 
-        // First time we pass credibility thresdhold.
-        if (obs_initial == 0) {
-          obs_initial = observationCount;
-          std::cout << robotNum << " Initial Hysteresis Start " << obs_initial << std::endl;
-        } 
-        if ((observationCount - obs_initial >= obs_hysteresis) && (obs_initial != 0)) {
-          //Passed hysteresis determine which decision.
+        // Signals that we are not using hysteresis
+        if (obs_hysteresis == 0) {
           if (p > p_c) {
             std::cout << "Decision Made - Black" << std::endl;
             d_f = 0;
@@ -362,10 +357,28 @@ int main(int argc, char **argv) {
             std::cout << robotNum << " Decision Made - White" << std::endl;
             d_f = 1;
           }
-
           decision_time = robot->getTime();
           std::cout << robotNum << " Decision time: " << decision_time << std::endl;
-          obs_initial = 0;
+        } else {
+        // First time we pass credibility thresdhold.
+          if (obs_initial == 0) {
+            obs_initial = observationCount;
+            std::cout << robotNum << " Initial Hysteresis Start " << obs_initial << std::endl;
+          } 
+          if ((observationCount - obs_initial >= obs_hysteresis) && (obs_initial != 0)) {
+            //Passed hysteresis determine which decision.
+            if (p > p_c) {
+              std::cout << "Decision Made - Black" << std::endl;
+              d_f = 0;
+            } else if ((1 - p) > p_c) {
+              std::cout << robotNum << " Decision Made - White" << std::endl;
+              d_f = 1;
+            }
+
+            decision_time = robot->getTime();
+            std::cout << robotNum << " Decision time: " << decision_time << std::endl;
+            obs_initial = 0;
+          }
         }
         FSM_STATE = FSM_RW;
         break;

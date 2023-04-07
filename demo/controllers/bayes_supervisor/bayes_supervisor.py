@@ -36,7 +36,6 @@ accuracy = []
 reset_flag = 0
 defArray = []
 defIndex = 0
-decision_switch_count = 1
 f_change = 10 # number of times the fill arena changes during the simulation
 
 print(os.name)
@@ -255,14 +254,17 @@ while supervisor.step(timestep) != -1:
             check_robbot_bound(robot_x, robot_y, i)
 
             if (currentData[8] != '-'):
+
+                #First time fitness evaluation
                 if (fitness[i] == 0):
-                    fitness[i] = fitness[i] + evaluateFitness(float(currentData[8:]), float(belief))
+                    fitness[i] = evaluateFitness(float(currentData[8:]), float(belief))
                 dec_time[i] = float(currentData[8:])
+
+                # Evaluate fitness to new time. 
                 if (dec_time[i] != float(currentData[8:])):
                     # print("Old decision time: ", dec_time[i])
                     # print("New decision time: ", currentData)
-                    decision_switch_count = decision_switch_count + 1
-                    fitness[i] = (fitness[i] + evaluateFitness(float(currentData[8:]), float(belief))) / decision_switch_count
+                    fitness[i] = evaluateFitness(float(currentData[8:]), float(belief))
                     dec_time[i] = float(currentData[8:])
                     print("Updated Robot Fitness: ", fitness)
 
@@ -278,7 +280,7 @@ while supervisor.step(timestep) != -1:
                 if dec_time[k] == 0:
                     print("Robot did not make decision in time!")
                     dec_time[k] = supervisor.getTime()
-                    fitness[i] = fitness[i] + supervisor.getTime()
+                    fitness[k] = supervisor.getTime()
             print("Final Robot Fitness: ", fitness)
             cleanup(dec_time, fitness)
                 

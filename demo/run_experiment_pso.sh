@@ -3,20 +3,20 @@
 home_path="$(pwd)/efs/demo"
 
 #USE LINE 6 FOR RUNNING ON LOCAL COMPUTER
-home_path="$(pwd)"
+#home_path="$(pwd)"
 
 # MODIFIED FOR NOISE RESISTANT PSO
 NB_NOISE_RES_EVALS=10
 NUM_ROBOTS=4
 
 #Set below variables if resuming a previous run
-RESUME=1
+RESUME=0
 RESUME_NB_RUN=0 #Which run number to resume from
 RESUME_NB_ITER=8 #Which COMPLETE iteration to resume from
 
 #FLIP TO TEST PSO IN SERIES ON LOCAL OR USE TEST FUNCTION
-TEST_PSO=1
-TEST_FUNC=1
+TEST_PSO=0
+TEST_FUNC=0
 
 #RUN DYNAMIC ENVIORNMENT
 DYNAMIC_ENV=0
