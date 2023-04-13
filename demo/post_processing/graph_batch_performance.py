@@ -17,10 +17,10 @@ squares_per_side=int(pic_dim/square_size)
 arena_squares = np.empty([squares_per_side, squares_per_side])
 distance_per_square = 1/squares_per_side
 
-
 #Data structures used to graph and store data
 num_batch = 100 # This dictates the number of batch launches used.
-fitness_run = np.empty(num_batch) #Describes the fitness of each batch launch
+fitness_run_xo = np.empty(num_batch) #Describes the fitness of each batch launch
+fitness_run_p = np.empty(num_batch)
 reset_run = np.empty(num_batch) #Describes the number of times the robots reset at each batch launch
 pos_x_run = np.empty((num_batch, n_robots), object) #Describes the positions at each run: Position log of Robot 2 in Run 7 is pos_x_run[7, 2]
 pos_y_run = np.empty((num_batch, n_robots), object) #Describes the positions at each run
@@ -36,9 +36,9 @@ pos_column_names = [] #Format for describing the robots
 averages = pandas.DataFrame()
 pos_column_names.append('time_step')
 pos_run = []
-time_run = []
+time_run_p = []
+time_run_xo = []
 home_dir = os.getcwd() + "/../.."
-folderName = "Log_x0"
 p_c = 0.95
 
 for i in range(n_robots):
@@ -96,25 +96,49 @@ def kde_coverage(obs_run):
     for run in obs_run:
         x.append(run[0])
         y.append(run[1])
-    sns.scatterplot(x=x, y=y, size=1, color='none', edgecolors='black', alpha=0.9, legend=False)
-    sns.kdeplot(x=x, y=y, fill=True, zorder = 1, cmap="magma", cbar=True, bw_adjust=.5)
+    print("Number of obs: " + str(len(x[0])))
+    #bw_adjusted=0.9
+    sns.kdeplot(x=x[0], y=y[0], fill=True, zorder = 1, cmap="magma", cbar=True)
+    sns.scatterplot(x=x[0], y=y[0], size=1,color='green', edgecolors='black', alpha=0.9, legend=False)
     plt.show()
     fig.savefig(home_dir + "/../" + folderName + "/kde_coverage.svg", format='svg', dpi='figure')
 
-def time_distribution(time_run):
-    fig = plt.figure()
-    time_average_run = []
-    for run in time_run:
-        time_average_run.append(sum(run) / len(run))
-    print(time_average_run)
-    plt.hist(time_average_run, bins=30, edgecolor='black', alpha=0.9, color='y')
-    plt.title("Swarm Average Decision Distribution")
-    plt.xlabel("Average Swarm Decision Time (s)")
-    plt.ylabel("Absolute Frequency")
+def time_distribution(time_run_one, time_run_two):
+    fig, ax = plt.subplots()
+    time_average_run_one = []
+    time_average_run_two = []
+
+    for run in time_run_one:
+        time_average_run_one.append(sum(run) / len(run))
+
+    for run in time_run_two:
+        time_average_run_two.append(sum(run) / len(run))
+
+    ax.hist(time_average_run_one, color='lightblue', edgecolor='black', alpha=0.5, label='Empirical Parameters')
+    ax.hist(time_average_run_two, color='salmon', edgecolor='black', alpha=0.5, label='Optimized Parameters')
+    ax.set_title("Average Swarm Decision Times")
+    ax.set_xlabel("Simulation Time (s)")
+    ax.legend()
+    ax.set_ylabel("Absolute Frequency")
     plt.show()
     fig.savefig(home_dir + "/../" + folderName + "/time_distribution.svg", format='svg', dpi='figure')
 
-def read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std):
+def fitness_distribution(fitness_run_one, fitness_run_two):
+    fig, ax = plt.subplots()
+
+    ax.hist(fitness_run_one, color='lightblue', edgecolor='black', alpha=0.5, label='Empirical Parameters')
+    ax.hist(fitness_run_two, color='salmon', edgecolor='black', alpha=0.5, label='Optimized Parameters')
+    ax.set_title("Swarm Fitness Distributions")
+    ax.set_xlabel("Fitness")
+    ax.legend()
+    ax.set_ylabel("Absolute Frequency")
+    plt.show()
+    fig.savefig(home_dir + "/../" + folderName + "/fitness_distribution.svg", format='svg', dpi='figure')
+
+
+
+
+def read_data(folderName, time_run, fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std):
     #Iterate through and save data into corresponding arrays
     swarm_bel_avg = pandas.DataFrame() #I believe it is more efficient when storing in a dataframe 
     for run in range(num_batch):
@@ -143,17 +167,22 @@ def read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run,
 
         swarm_bel_avg[str(run)] = beliefData.mean(axis=1)
     
+    swarm_bel_avg.to_csv('swarm_bel_avg.csv')
     #Belief average and standard deviation
     belief_avg = swarm_bel_avg.mean(axis=1)
     belief_std = swarm_bel_avg.std(axis=1)
+    print(belief_avg)
+    # print(swarm_bel_avg)
 
     #Store the arena coverage
-
+    batch_calc = range(num_batch)
     for time in range(1, len(obs_run[0, 0]), 1):
+        # print(time /len(obs_run[0, 0]) )
         cov = 0
         std_arr = np.empty(num_batch)
         # bel = 0
-        for run in range(num_batch):
+        for run in batch_calc:
+            # print("Calculating Run: ", run)
             #Place observations into binnings based on tiles
             cov_t = (stats.binned_statistic_2d(obs_run[run, 0][:time], obs_run[run, 1][:time],
                     values=None,statistic='count',bins=[np.arange(0,1+distance_per_square,distance_per_square),
@@ -163,9 +192,13 @@ def read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run,
             cov_bin = np.where(cov_t > 0, 1, 0)
             #Calculate Average coverage
             cov = cov + (np.sum(cov_bin)/(squares_per_side * squares_per_side))
-            if ((np.sum(cov_bin)/(squares_per_side * squares_per_side)) < 1) and (time > len(obs_run[0, 0])*0.95):
-                print("Run: ", run)
-                print(cov_bin)
+            # if ((np.sum(cov_bin)/(squares_per_side * squares_per_side)) < 1) and (time > len(obs_run[0, 0])*0.95):
+            #     print("Run: ", run)
+            #     print(cov_bin)
+            # if (np.sum(cov_bin)/(squares_per_side * squares_per_side) >= 1):
+            #     print("Coverage Reached: ", cov)
+            #     del batch_calc[run]
+            #     break
             std_arr[run] = (np.sum(cov_bin)/(squares_per_side * squares_per_side))
 
         cov_avg.append(cov/num_batch)
@@ -176,11 +209,14 @@ def read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run,
     belief_avg = np.asarray(belief_avg)
     belief_std = np.asarray(belief_std)
 
-    return fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, belief_avg, belief_std, obs_run, np.divide(cov_count,num_batch), cov_avg, cov_std
+    return time_run, fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, belief_avg, belief_std, obs_run, np.divide(cov_count,num_batch), cov_avg, cov_std
 
+folderName = "xo_baseline/Log"
+time_run_p, fitness_run_p, reset_run, pos_x_run, pos_y_run, belief_run, belief_avg, belief_std, obs_run, cov_count, cov_avg, cov_std = read_data(folderName, time_run_p, fitness_run_p, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std)
 
-fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, belief_avg, belief_std, obs_run, cov_count, cov_avg, cov_std = read_data(fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std)
-
+# folderName = "xo_baseline/Log"
+# time_run_xo, fitness_run_xo, reset_run, pos_x_run, pos_y_run, belief_run, belief_avg, belief_std, obs_run, cov_count, cov_avg, cov_std = read_data(folderName, time_run_xo, fitness_run_xo, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std)
+# time_distribution(time_run_xo, time_run_p)
+# fitness_distribution(fitness_run_xo, fitness_run_p)
 cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std)
-kde_coverage(obs_run)
-time_distribution(time_run)
+# kde_coverage(obs_run)

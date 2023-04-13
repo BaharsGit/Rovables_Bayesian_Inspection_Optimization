@@ -23,13 +23,13 @@ sim_time_steps = sim_time / 8 #total time steps in a simulation
 max_num_obs = sim_time_steps / (tao_square/multiplier) # maximum number of observations in a simulation
 ###########################################################
 
-psodir = (str(os.getcwd())) + "/../../../id_1/jobfiles/Run_0"
+psodir = (str(os.getcwd())) + "/../../../id_2/demo/jobfiles/Run_0"
 param_min = [0, tao_square/multiplier, tao_square/multiplier, 5, 0]
 param_max = [0, tao_square*multiplier, step_to_cross_arena, 145, max_num_obs]
 worst_case_fitess = 11200
 num_particles = 15
 num_noise = 10
-num_gen = 20
+num_gen = 30
 num_robots = 4
 particle_dim = 5
 param_names = ["Alpha", "Tao", "Random Forward", "CA Trigger", "Hysterisis", "Observation Wait Time"]
@@ -122,12 +122,15 @@ def psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen):
                 plt.axvline(x = i, linestyle='--', linewidth=0.5, color = 'k', label = 'Best Particle Found' if i == 0 else "")  
     bottom = avg_gen - std_gen
     bottom[bottom<0] = 0
+    plt.title("Particle Swarm Optimization Performance")
     plt.fill_between(np.arange(num_gen), bottom, avg_gen + std_gen, where=(avg_gen + std_gen)>0, color='blue', alpha=0.3)
-    plt.twinx()
-    plt.ylabel("Fitness (F)")
+    plt.ylabel("Fitness (F)", c='blue')
+    # plt.twinx()
+    # plt.ylabel("Swarm L2", c='orange')
     plt.xlabel("Iteration")
-    plt.plot(l2_gen, color='darkorange', label='L2 Norm')
-    plt.savefig(psodir + '/graph.png', bbox_inches='tight')
+    # plt.plot(l2_gen, color='darkorange', label='L2 Norm')
+    plt.legend()
+    plt.savefig(psodir + '/graph.svg', format='svg', dpi='figure')
     plt.show()
 
 
@@ -194,7 +197,7 @@ for i in range(num_gen):
 print("Best Particle Parameters: ", raw_param_gen[global_best_gen, global_best])
 print("Best Particle Parameters Normalized: ", param_gen[global_best_gen, global_best])
 print("Fitness: ", fit_gen[global_best_gen, global_best])
-print("Best Particle: " + str(global_best) + " Generation: " + str(global_best_gen))
+print("Best Particle: " + str(global_best) + " Generation: " + str(global_best_gen) + str(raw_param_gen[global_best_gen, global_best]))
 print("Best Particle Evoluation: ")
 for i in range(num_gen):
     print("Generation: " + str(i) + " : " + str(raw_param_gen[i, global_best]))

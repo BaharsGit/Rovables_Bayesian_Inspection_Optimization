@@ -105,13 +105,13 @@ def evaluateFitness(dec_time, last_belief):
 
     #Linear Fitness Function; For individual robot decisions 
     if (float(fill_ratio) > 0.5):
-        if (last_belief < 0.5):
+        if (last_belief < 0.05):
             return dec_time
         else: 
             print("Punished with max time")   
             return MAX_TIME
     else:
-        if (last_belief > 0.5):
+        if (last_belief > 0.95):
             return dec_time
         else: 
             print("Punished with max time")   
