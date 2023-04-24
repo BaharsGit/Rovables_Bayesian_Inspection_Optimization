@@ -288,7 +288,7 @@ class PSO():
                 else:
                     if (args.test_pso):
                         #RUNS PSO IN SERIES
-                        f = open("outputFile","wb")
+                        # f = open("outputFile","wb")
                         #Start webots
                         os.system('echo RUNNING TEST')
                         print(os.getcwd())
@@ -303,7 +303,7 @@ class PSO():
                         #         print("Wrote test fitness: " + test_fit)
                         #         f.write(test_fit)
                         # else:
-                        subprocess.check_call(['.././job_parallel.sh', str(iteration), str(particle), str(instance), '4', str(test_optimization_space(swarm[particle].position_i)), str(dynamic), str(dub), str(dlb), str(args.test_function)], stdout=f)
+                        subprocess.check_call(['.././job_parallel.sh', str(iteration), str(particle), str(instance), '4', str(test_optimization_space(swarm[particle].position_i)), str(dynamic), str(dub), str(dlb), str(args.test_function)])
                         
                         os.chdir("../")
                     

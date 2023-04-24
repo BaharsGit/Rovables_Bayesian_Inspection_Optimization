@@ -1,6 +1,8 @@
 """vibration_controller controller."""
 
 from cgitb import reset
+from textwrap import fill
+from turtle import filling
 from controller import Supervisor
 import os
 import platform
@@ -18,6 +20,7 @@ MAX_TIME = 2700 #unit is in seconds, 2700 is around 45 minutes.
 WALL_TIME = 600
 #2700 45 min good?
 reset_counter = 0
+fill_ratio = 0
 seedIn = 0
 baseline = int(sys.argv[2])
 run = 0
@@ -36,15 +39,13 @@ accuracy = []
 reset_flag = 0
 defArray = []
 defIndex = 0
+fillIndex = 0
 f_change = 10 # number of times the fill arena changes during the simulation
 
 print(os.name)
 print(platform.system())
+working_dir = os.getenv("WB_WORKING_DIR")
 
-fill_ratio = os.getenv("FILL_RATIO")
-if (fill_ratio is None):
-    fill_ratio = 0.70
-print("Supervisor Fill Ratio: ", fill_ratio)
 
 # create the Robot instance.
 supervisor = Supervisor()
@@ -163,10 +164,9 @@ def cleanup(time_arr, fitness):
 
         # USED ONLY FOR PSO LAUNCH
 
-        value = os.getenv("WB_WORKING_DIR")
-        if (value is not None):
-            os.chdir(value)
-            with open(value + "/local_fitness.txt", 'w') as f:
+        if (working_dir is not None):
+            os.chdir(working_dir)
+            with open(working_dir + "/local_fitness.txt", 'w') as f:
                 f.write(str(fitOut))
                 f.write('\n')
         else:
@@ -176,8 +176,8 @@ def cleanup(time_arr, fitness):
         
 
         #Write the fitness file into the local dir only when number of runs are done
-        if (value is not None):
-            print("Wrote file: " +  value + "/local_fitness")
+        if (working_dir is not None):
+            print("Wrote file: " +  working_dir + "/local_fitness")
         else:
             print("wrote file: local_fitness")
 
@@ -225,13 +225,21 @@ for i in range(nRobot):
     rot_field_array[i] = rov_node_array[i].getField("rotation")
     trans_value_array[i] = trans_field_array[i].getSFVec3f()
     data_array[i] = rov_node_array[i].getField("customData")
-    init_data = '0.500000-'
-    data_array[i].setSFString(init_data) #Init custom data to required format
 
 sim_time = supervisor.getTime()
+
+with open(working_dir + '/fill_log.txt') as file:
+    input = [line.rstrip() for line in file]
+fill_array = [float(i) for i in input]
+print("Fill Array: ", fill_array)
+print("Fill Index: ", fillIndex)
+fillratio = fill_array[fillIndex]
+print("Initial fill ratio: ", fillratio)
+
 setSeed()
 
 while supervisor.step(timestep) != -1:
+
     if reset_flag:
         randomizePosition()
         supervisor.simulationResetPhysics()
@@ -249,25 +257,32 @@ while supervisor.step(timestep) != -1:
             rowPosData.append(robot_x)
             rowPosData.append(robot_y)
             currentData = data_array[i].getSFString()
-            belief = currentData[0:7]
+            belief = currentData[1:8]
             rowProbData.append(float(belief))
             check_robbot_bound(robot_x, robot_y, i)
 
-            if (currentData[8] != '-'):
+
+            if (currentData[9] != '-'):
 
                 #First time fitness evaluation
                 if (fitness[i] == 0):
-                    fitness[i] = evaluateFitness(float(currentData[8:]), float(belief))
-                dec_time[i] = float(currentData[8:])
+                    fitness[i] = evaluateFitness(float(currentData[9:]), float(belief))
+                dec_time[i] = float(currentData[9:])
 
                 # Evaluate fitness to new time. 
-                if (dec_time[i] != float(currentData[8:])):
+                if (dec_time[i] != float(currentData[9:])):
                     # print("Old decision time: ", dec_time[i])
                     # print("New decision time: ", currentData)
-                    fitness[i] = evaluateFitness(float(currentData[8:]), float(belief))
-                    dec_time[i] = float(currentData[8:])
+                    fitness[i] = evaluateFitness(float(currentData[9:]), float(belief))
+                    dec_time[i] = float(currentData[9:])
                     print("Updated Robot Fitness: ", fitness)
-
+        
+        if (fillIndex != int(currentData[0])):
+                fillIndex = int(currentData[0])
+                print("Using Fill Index: ", fillIndex)
+                fill_ratio = fill_array[fillIndex]
+                print("Changing fill ratio to: ", fill_ratio)
+        
         csvProbData.append(rowProbData)
         csvPosData.append(rowPosData)
         control_count = control_count + 1

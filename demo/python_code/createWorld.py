@@ -99,7 +99,7 @@ class WorldGenerator():
                   i = i + 1
 
           #Save arena file to instance id specific path
-          np.savetxt(self.path + 'fill_log.txt', fill_log, delimiter=',')
+          np.savetxt(self.path + '/fill_log.txt', fill_log, delimiter=',')
           np.savetxt(self.path + '/arena_' + str(j) + '.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
 
 
@@ -196,7 +196,7 @@ Wall {
     def createRobots(self, file):
         arg = "\"" + str(self.instance_id) + "\""
         arg2 = "\"" + str(self.dynamic_env) + "\""
-        baselineArg = "\"" + str(self.dynamic_env) + "\""
+        baselineArg = "\"" + str(self.baseline) + "\""
         file.write(
         """Robot {
   name "Bayes Bot Supervisor"
@@ -223,7 +223,7 @@ Wall {
     """ + arg2 + """
   ]
   supervisor TRUE
-  customData "0.500000-"
+  customData "00.500000-" 
   extensionSlot [
     Receiver {
     }
@@ -233,7 +233,8 @@ Wall {
 }\n""")
 
     def createWorld(self):
-        random.seed(self.instance_id) 
+        random.seed(self.instance_id)
+        np.random.seed(self.instance_id)
 
         file = open(r"../../worlds" + self.createTitle() + ".wbt", 'w')
         #file = open(r"/usr/local/efs/demo/worlds" + self.createTitle() + ".wbt", 'w')

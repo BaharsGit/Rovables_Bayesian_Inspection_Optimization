@@ -75,10 +75,10 @@ DEF rov_0 Rovable {
   controller "bayes_fsm"
   controllerArgs [
     "1"
-    "0"
+    "5"
   ]
   supervisor TRUE
-  customData "0.500000-"
+  customData "00.500000-" 
   extensionSlot [
     Receiver {
     }
@@ -88,15 +88,15 @@ DEF rov_0 Rovable {
 }
 DEF rov_1 Rovable {
   translation 0.7373971570789526 0.023 0.2795621231654795
-  rotation 0 0.707106 0.707107 3.14159
+  rotation 0.577 -0.577 -0.577 -2.09
   name "r1"
   controller "bayes_fsm"
   controllerArgs [
     "1"
-    "0"
+    "5"
   ]
   supervisor TRUE
-  customData "0.500000-"
+  customData "00.500000-" 
   extensionSlot [
     Receiver {
     }
@@ -106,15 +106,15 @@ DEF rov_1 Rovable {
 }
 DEF rov_2 Rovable {
   translation 0.4958915783827468 0.023 0.45454195830986427
-  rotation 0.577 -0.577 -0.577 -2.09
+  rotation 1 0 0 -1.57
   name "r2"
   controller "bayes_fsm"
   controllerArgs [
     "1"
-    "0"
+    "5"
   ]
   supervisor TRUE
-  customData "0.500000-"
+  customData "00.500000-" 
   extensionSlot [
     Receiver {
     }
@@ -124,15 +124,15 @@ DEF rov_2 Rovable {
 }
 DEF rov_3 Rovable {
   translation 0.6364336754504867 0.023 0.7598510160219618
-  rotation 0 0.707106 0.707107 3.14159
+  rotation 1 0 0 -1.57
   name "r3"
   controller "bayes_fsm"
   controllerArgs [
     "1"
-    "0"
+    "5"
   ]
   supervisor TRUE
-  customData "0.500000-"
+  customData "00.500000-" 
   extensionSlot [
     Receiver {
     }

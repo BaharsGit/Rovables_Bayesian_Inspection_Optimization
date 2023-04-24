@@ -87,7 +87,7 @@ static int pause_count;
 static int turn_count;
 static int control_count = 0;
 static int arena_count = 0;
-static int arena_index = 1;
+static int arena_index = 0;
 static double decision_time = 0;
 static int obs_initial = 0;
 static int observationCount = 0;
@@ -392,9 +392,9 @@ int main(int argc, char **argv) {
     p = incbeta(alpha, beta, 0.5);   
 
     if (d_f == -1) {
-      myDataField->setSFString(std::to_string(p) + "-");
+      myDataField->setSFString(std::to_string(arena_index) + std::to_string(p) + "-");
     } else {
-      myDataField->setSFString(std::to_string(p) + std::to_string(decision_time));
+      myDataField->setSFString(std::to_string(arena_index) + std::to_string(p) + std::to_string(decision_time));
     }
     
     //Increment control count used with observation interval
@@ -484,7 +484,7 @@ static int getColor(int dynamicEnvironment) {
   // Once the number of simulation time steps have passed, then change the arena. 
   if (dynamicEnvironment > 0) {
     if (control_count - arena_count > 75000) { //75000 simulation steps is equivalent to 10 minutes of time.
-        if (arena_index > dynamicEnvironment) {
+        if (arena_index == dynamicEnvironment) {
           arena_index = 0; //loop back around if there ever needs to be. 
         } else {
           arena_index++;
