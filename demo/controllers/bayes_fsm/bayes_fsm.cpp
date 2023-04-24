@@ -481,10 +481,11 @@ double incbeta(double a, double b, double x) {
 }
 
 static int getColor(int dynamicEnvironment) {
+  // Once the number of simulation time steps have passed, then change the arena. 
   if (dynamicEnvironment > 0) {
-    if (control_count - arena_count > 200) {
+    if (control_count - arena_count > 75000) { //75000 simulation steps is equivalent to 10 minutes of time.
         if (arena_index > dynamicEnvironment) {
-          arena_index = 1;
+          arena_index = 0; //loop back around if there ever needs to be. 
         } else {
           arena_index++;
         }
@@ -554,7 +555,7 @@ static int readArena(int dynamicEnvironment) {
   } else {
     char arena_name[256];
     if (pPath != NULL) {
-      sprintf(arena_name, "%s/arena%d.txt", pPath, arena_index);
+      sprintf(arena_name, "%s/arena_%d.txt", pPath, arena_index);
     } else {
       sprintf(arena_name, "arena.txt");
     }

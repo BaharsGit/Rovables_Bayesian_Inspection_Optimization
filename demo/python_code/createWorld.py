@@ -73,12 +73,13 @@ class WorldGenerator():
         #Save arena file to instance id specific path
         np.savetxt(self.path + '/arena.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
       else:
-        for j in range(1, self.dynamic_env+1, 1):
+        fill_log = []
+        for j in range(0, int(self.dynamic_env), 1):
 
           picDim = 128
           fill = np.random.uniform(self.env_lower, self.env_upper)
           print("Generating Arena with Fill Ratio: ", fill)
-
+          fill_log.append(fill)
           sqSize = 8
           picArea = picDim * picDim
           sqArea = sqSize * sqSize
@@ -98,8 +99,8 @@ class WorldGenerator():
                   i = i + 1
 
           #Save arena file to instance id specific path
-          
-          np.savetxt(self.path + '/arena' + str(j) + '.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
+          np.savetxt(self.path + 'fill_log.txt', fill_log, delimiter=',')
+          np.savetxt(self.path + '/arena_' + str(j) + '.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
 
 
     def createPos(self):
