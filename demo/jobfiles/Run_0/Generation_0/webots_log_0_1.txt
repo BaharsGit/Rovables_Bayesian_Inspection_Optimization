@@ -8,9 +8,9 @@ INFO: bayes_fsm: Starting controller: /home/darren/Documents/ICRA_LAUNCH/Rovable
 posix
 Linux
 ['rov_0', 'rov_1', 'rov_2', 'rov_3']
-Fill Array:  [0.4500114374817345, 0.480233257263184, 0.4646755890817113, 0.4592338594768798, 0.4686260211377671]
+Fill Array:  [0.3, 0.4, 0.6, 0.7, 0.8]
 Fill Index:  0
-Initial fill ratio:  0.4500114374817345
+Initial fill ratio:  0.3
 Using Supervisor Seed:  1
 Controller Seed: 1
 Using Dynamic Enviornment: 5
@@ -20,13 +20,13 @@ Reading in Parameters:
 282.227
 564.454
 50
-128
+25
 0
 Alpha Prior: 0
 Tao: 282
 Random Forward: 564
 Collision Avoidance Trigger: 50
-Hysteresis Timer: 128
+Hysteresis Timer: 25
 Observation Wait Time: 0
 Positive Feedback: 0
 Credibility Thresdhold: 0.95
@@ -40,13 +40,13 @@ Reading in Parameters:
 282.227
 564.454
 50
-128
+25
 0
 Alpha Prior: 0
 Tao: 282
 Random Forward: 564
 Collision Avoidance Trigger: 50
-Hysteresis Timer: 128
+Hysteresis Timer: 25
 Observation Wait Time: 0
 Positive Feedback: 0
 Credibility Thresdhold: 0.95
@@ -60,13 +60,13 @@ Reading in Parameters:
 282.227
 564.454
 50
-128
+25
 0
 Alpha Prior: 0
 Tao: 282
 Random Forward: 564
 Collision Avoidance Trigger: 50
-Hysteresis Timer: 128
+Hysteresis Timer: 25
 Observation Wait Time: 0
 Positive Feedback: 0
 Credibility Thresdhold: 0.95
@@ -80,13 +80,13 @@ Reading in Parameters:
 282.227
 564.454
 50
-128
+25
 0
 Alpha Prior: 0
 Tao: 282
 Random Forward: 564
 Collision Avoidance Trigger: 50
-Hysteresis Timer: 128
+Hysteresis Timer: 25
 Observation Wait Time: 0
 Positive Feedback: 0
 Credibility Thresdhold: 0.95
@@ -96,227 +96,367 @@ FSM State: 0 Robot 0 Belief: 1 -> 0, 1
 FSM State: 0 Robot 1 Belief: 1 -> 0, 1
 FSM State: 0 Robot 2 Belief: 1 -> 0, 1
 FSM State: 0 Robot 3 Belief: 1 -> 0, 1
-FSM State: 0 Robot 0 Belief: 0.465854 -> 69, 68
-FSM State: 0 Robot 1 Belief: 0.431708 -> 69, 67
-FSM State: 0 Robot 2 Belief: 0.363438 -> 68, 64
-FSM State: 1 Robot 3 Belief: 0.397814 -> 69, 66
-FSM State: 0 Robot 0 Belief: 0.427851 -> 138, 135
-FSM State: 0 Robot 1 Belief: 0.451666 -> 137, 135
-FSM State: 0 Robot 2 Belief: 0.427588 -> 137, 134
-FSM State: 0 Robot 3 Belief: 0.403688 -> 137, 133
-FSM State: 0 Robot 0 Belief: 0.327188 -> 207, 198
-FSM State: 0 Robot 1 Belief: 0.345153 -> 206, 198
-FSM State: 0 Robot 2 Belief: 0.36352 -> 205, 198
-FSM State: 1 Robot 3 Belief: 0.382253 -> 204, 198
-FSM State: 0 Robot 0 Belief: 0.131811 -> 284, 258
-FSM State: 0 Robot 1 Belief: 0.140996 -> 283, 258
-FSM State: 0 Robot 2 Belief: 0.150623 -> 282, 258
-FSM State: 0 Robot 3 Belief: 0.160697 -> 281, 258
-FSM State: 0 Robot 0 Belief: 0.0832178 -> 357, 321
-FSM State: 0 Robot 1 Belief: 0.0891048 -> 356, 321
-FSM State: 0 Robot 2 Belief: 0.0953052 -> 355, 321
-FSM State: 0 Robot 3 Belief: 0.101827 -> 354, 321
-FSM State: 0 Robot 0 Belief: 0.209801 -> 418, 395
-FSM State: 0 Robot 1 Belief: 0.209226 -> 416, 393
-FSM State: 0 Robot 2 Belief: 0.19969 -> 418, 394
-FSM State: 0 Robot 3 Belief: 0.209514 -> 417, 394
-FSM State: 0 Robot 0 Belief: 0.155982 -> 486, 455
-FSM State: 0 Robot 1 Belief: 0.148176 -> 486, 454
-FSM State: 0 Robot 2 Belief: 0.155724 -> 485, 454
-FSM State: 0 Robot 3 Belief: 0.16353 -> 484, 454
+0 Initial Hysteresis Start 1
+3 Initial Hysteresis Start 1
+2 Initial Hysteresis Start 1
+1 Initial Hysteresis Start 1
+2 Initial Hysteresis Start 4
+1 Initial Hysteresis Start 3
+3 Initial Hysteresis Start 5
+0 Initial Hysteresis Start 5
+Decision Made - Black
+2 Decision time: 67.752
+Supervisor: Correct Decision was made
+Decision Made - Black
+1 Decision time: 67.76
+Supervisor: Correct Decision was made
+Decision Made - Black
+3 Decision time: 70
+Supervisor: Correct Decision was made
+Decision Made - Black
+0 Decision time: 70.024
+Supervisor: Correct Decision was made
+FSM State: 0 Robot 0 Belief: 0.999994 -> 42, 92
+FSM State: 0 Robot 1 Belief: 0.999992 -> 42, 91
+FSM State: 0 Robot 2 Belief: 0.999971 -> 42, 87
+FSM State: 1 Robot 3 Belief: 0.999989 -> 42, 90
+FSM State: 0 Robot 0 Belief: 1 -> 80, 191
+FSM State: 0 Robot 1 Belief: 1 -> 79, 191
+FSM State: 0 Robot 2 Belief: 1 -> 78, 191
+FSM State: 0 Robot 3 Belief: 1 -> 78, 190
+FSM State: 0 Robot 0 Belief: 1 -> 119, 289
+FSM State: 0 Robot 1 Belief: 1 -> 118, 289
+FSM State: 0 Robot 2 Belief: 1 -> 117, 289
+FSM State: 0 Robot 3 Belief: 1 -> 117, 288
+Grid X size before read: 77
+Grid Y size before read: 77
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_1.txt
+Grid X size after read: 103
+Grid Y size after read: 103
 Using Fill Index:  1
-Changing fill ratio to:  0.480233257263184
+Changing fill ratio to:  0.4
+Grid X size before read: 77
+Grid Y size before read: 77
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_1.txt
+Grid X size after read: 103
+Grid Y size after read: 103
+Grid X size before read: 77
+Grid Y size before read: 77
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_1.txt
+Grid X size after read: 103
+Grid Y size after read: 103
+Grid X size before read: 77
+Grid Y size before read: 77
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_1.txt
-FSM State: 0 Robot 0 Belief: 0.25132 -> 550, 528
-FSM State: 0 Robot 1 Belief: 0.241608 -> 550, 527
-FSM State: 0 Robot 2 Belief: 0.232094 -> 550, 526
-FSM State: 0 Robot 3 Belief: 0.241404 -> 549, 526
-FSM State: 0 Robot 0 Belief: 0.365225 -> 613, 601
-FSM State: 0 Robot 1 Belief: 0.354428 -> 613, 600
-FSM State: 0 Robot 2 Belief: 0.365118 -> 612, 600
-FSM State: 0 Robot 3 Belief: 0.375922 -> 611, 600
-FSM State: 0 Robot 0 Belief: 0.321681 -> 683, 666
-FSM State: 0 Robot 1 Belief: 0.331445 -> 682, 666
-FSM State: 0 Robot 2 Belief: 0.321558 -> 682, 665
-FSM State: 0 Robot 3 Belief: 0.311789 -> 682, 664
-FSM State: 0 Robot 0 Belief: 0.266439 -> 753, 729
-FSM State: 0 Robot 1 Belief: 0.274975 -> 752, 729
-FSM State: 0 Robot 2 Belief: 0.266301 -> 752, 728
-FSM State: 0 Robot 3 Belief: 0.27484 -> 751, 728
-FSM State: 0 Robot 0 Belief: 0.102132 -> 833, 782
-FSM State: 0 Robot 1 Belief: 0.106568 -> 832, 782
-FSM State: 0 Robot 2 Belief: 0.101991 -> 832, 781
-FSM State: 0 Robot 3 Belief: 0.106426 -> 831, 781
-FSM State: 0 Robot 0 Belief: 0.0863789 -> 903, 846
-FSM State: 0 Robot 1 Belief: 0.0901461 -> 902, 846
-FSM State: 0 Robot 2 Belief: 0.0940362 -> 901, 846
-FSM State: 2 Robot 3 Belief: 0.0900214 -> 901, 845
-1 Initial Hysteresis Start 463
-0 Initial Hysteresis Start 457
-3 Initial Hysteresis Start 455
-1 Initial Hysteresis Start 466
-1 Initial Hysteresis Start 469
-0 Initial Hysteresis Start 463
-3 Initial Hysteresis Start 461
-2 Initial Hysteresis Start 458
-FSM State: 0 Robot 0 Belief: 0.0533443 -> 977, 907
-FSM State: 0 Robot 1 Belief: 0.0510238 -> 979, 908
-FSM State: 0 Robot 2 Belief: 0.0534373 -> 978, 908
-FSM State: 0 Robot 3 Belief: 0.0559418 -> 977, 908
-3 Initial Hysteresis Start 471
-2 Initial Hysteresis Start 468
-1 Initial Hysteresis Start 480
-3 Initial Hysteresis Start 476
-1 Initial Hysteresis Start 484
-2 Initial Hysteresis Start 474
-0 Initial Hysteresis Start 480
-1 Initial Hysteresis Start 488
-0 Initial Hysteresis Start 482
-3 Initial Hysteresis Start 481
-1 Initial Hysteresis Start 503
-3 Initial Hysteresis Start 491
-1 Initial Hysteresis Start 505
-FSM State: 0 Robot 0 Belief: 0.0570733 -> 1046, 975
-FSM State: 0 Robot 1 Belief: 0.0545248 -> 1046, 974
-FSM State: 0 Robot 2 Belief: 0.0569837 -> 1045, 974
-FSM State: 0 Robot 3 Belief: 0.0544371 -> 1045, 973
+Grid X size after read: 103
+Grid Y size after read: 103
+FSM State: 0 Robot 0 Belief: 1 -> 152, 357
+FSM State: 0 Robot 1 Belief: 1 -> 151, 357
+FSM State: 0 Robot 2 Belief: 1 -> 150, 355
+FSM State: 0 Robot 3 Belief: 1 -> 150, 357
+FSM State: 0 Robot 0 Belief: 1 -> 207, 432
+FSM State: 0 Robot 1 Belief: 1 -> 207, 431
+FSM State: 1 Robot 2 Belief: 1 -> 205, 428
+FSM State: 0 Robot 3 Belief: 1 -> 199, 425
+FSM State: 0 Robot 0 Belief: 1 -> 260, 506
+FSM State: 0 Robot 1 Belief: 1 -> 259, 506
+FSM State: 0 Robot 2 Belief: 1 -> 259, 505
+FSM State: 0 Robot 3 Belief: 1 -> 259, 504
+FSM State: 0 Robot 0 Belief: 1 -> 317, 583
+FSM State: 0 Robot 1 Belief: 1 -> 315, 581
+FSM State: 0 Robot 2 Belief: 1 -> 316, 583
+FSM State: 0 Robot 3 Belief: 1 -> 315, 583
+Grid X size before read: 103
+Grid Y size before read: 103
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_2.txt
+Grid X size after read: 154
+Grid Y size after read: 154
 Using Fill Index:  2
-Changing fill ratio to:  0.4646755890817113
+Changing fill ratio to:  0.6
+Grid X size before read: 103
+Grid Y size before read: 103
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_2.txt
+Grid X size after read: 154
+Grid Y size after read: 154
+Grid X size before read: 103
+Grid Y size before read: 103
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_2.txt
+Grid X size after read: 154
+Grid Y size after read: 154
+Grid X size before read: 103
+Grid Y size before read: 103
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_2.txt
-2 Initial Hysteresis Start 505
-1 Initial Hysteresis Start 516
-0 Initial Hysteresis Start 511
-3 Initial Hysteresis Start 505
-3 Initial Hysteresis Start 507
-2 Initial Hysteresis Start 510
-1 Initial Hysteresis Start 523
-0 Initial Hysteresis Start 518
-3 Initial Hysteresis Start 512
-FSM State: 0 Robot 0 Belief: 0.10192 -> 1108, 1049
-FSM State: 0 Robot 1 Belief: 0.0980877 -> 1108, 1048
-FSM State: 0 Robot 2 Belief: 0.0943601 -> 1108, 1047
-FSM State: 0 Robot 3 Belief: 0.0979839 -> 1107, 1047
-FSM State: 0 Robot 0 Belief: 0.0871777 -> 1178, 1113
-FSM State: 0 Robot 1 Belief: 0.0904917 -> 1177, 1113
-FSM State: 0 Robot 2 Belief: 0.0870836 -> 1177, 1112
-FSM State: 0 Robot 3 Belief: 0.0837708 -> 1177, 1111
-FSM State: 0 Robot 0 Belief: 0.0747989 -> 1250, 1179
-FSM State: 0 Robot 1 Belief: 0.0776659 -> 1249, 1179
-FSM State: 0 Robot 2 Belief: 0.074715 -> 1249, 1178
-FSM State: 0 Robot 3 Belief: 0.0775807 -> 1248, 1178
-FSM State: 0 Robot 0 Belief: 0.102991 -> 1313, 1249
-FSM State: 0 Robot 1 Belief: 0.106535 -> 1312, 1249
-FSM State: 0 Robot 2 Belief: 0.102903 -> 1312, 1248
-FSM State: 0 Robot 3 Belief: 0.0993604 -> 1312, 1247
-FSM State: 0 Robot 0 Belief: 0.0641323 -> 1389, 1310
-FSM State: 0 Robot 1 Belief: 0.0617166 -> 1389, 1309
-FSM State: 0 Robot 2 Belief: 0.0593716 -> 1389, 1308
-FSM State: 0 Robot 3 Belief: 0.061647 -> 1388, 1308
-3 Initial Hysteresis Start 680
-FSM State: 0 Robot 0 Belief: 0.0909916 -> 1451, 1380
-FSM State: 0 Robot 1 Belief: 0.0879139 -> 1451, 1379
-FSM State: 0 Robot 2 Belief: 0.0849136 -> 1451, 1378
-FSM State: 0 Robot 3 Belief: 0.0819896 -> 1451, 1377
-FSM State: 0 Robot 0 Belief: 0.0733741 -> 1522, 1443
-FSM State: 0 Robot 1 Belief: 0.0708171 -> 1522, 1442
-FSM State: 1 Robot 2 Belief: 0.0811795 -> 1518, 1442
-FSM State: 0 Robot 3 Belief: 0.0733059 -> 1521, 1442
+Grid X size after read: 154
+Grid Y size after read: 154
+FSM State: 0 Robot 0 Belief: 1 -> 376, 657
+FSM State: 0 Robot 1 Belief: 1 -> 376, 656
+FSM State: 0 Robot 2 Belief: 1 -> 376, 655
+FSM State: 1 Robot 3 Belief: 1 -> 376, 654
+FSM State: 0 Robot 0 Belief: 1 -> 462, 710
+FSM State: 0 Robot 1 Belief: 1 -> 461, 710
+FSM State: 0 Robot 2 Belief: 1 -> 461, 709
+FSM State: 0 Robot 3 Belief: 1 -> 460, 709
+FSM State: 0 Robot 0 Belief: 1 -> 541, 763
+FSM State: 0 Robot 1 Belief: 1 -> 540, 763
+FSM State: 0 Robot 2 Belief: 1 -> 540, 762
+FSM State: 0 Robot 3 Belief: 1 -> 539, 762
+FSM State: 0 Robot 0 Belief: 1 -> 622, 819
+FSM State: 0 Robot 1 Belief: 1 -> 622, 818
+FSM State: 0 Robot 2 Belief: 1 -> 622, 817
+FSM State: 0 Robot 3 Belief: 1 -> 621, 817
+Grid X size before read: 154
+Grid Y size before read: 154
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_3.txt
+Grid X size after read: 180
+Grid Y size after read: 180
+Grid X size before read: 154
+Grid Y size before read: 154
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_3.txt
+Grid X size after read: 180
+Grid Y size after read: 180
+Grid X size before read: 154
+Grid Y size before read: 154
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_3.txt
+Grid X size after read: 180
+Grid Y size after read: 180
 Using Fill Index:  3
-Changing fill ratio to:  0.4592338594768798
+Changing fill ratio to:  0.7
+Grid X size before read: 154
+Grid Y size before read: 154
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_3.txt
-Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_3.txt
-Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_3.txt
-0 Initial Hysteresis Start 781
-3 Initial Hysteresis Start 760
-2 Initial Hysteresis Start 768
-1 Initial Hysteresis Start 781
-FSM State: 0 Robot 0 Belief: 0.0422513 -> 1597, 1501
-FSM State: 0 Robot 1 Belief: 0.0438701 -> 1596, 1501
-FSM State: 0 Robot 2 Belief: 0.0455391 -> 1595, 1501
-FSM State: 0 Robot 3 Belief: 0.0472593 -> 1594, 1501
-0 Initial Hysteresis Start 816
-3 Initial Hysteresis Start 797
-2 Initial Hysteresis Start 805
-FSM State: 0 Robot 0 Belief: 0.0470424 -> 1658, 1563
-FSM State: 1 Robot 1 Belief: 0.0407974 -> 1633, 1535
-FSM State: 0 Robot 2 Belief: 0.0487734 -> 1657, 1563
-FSM State: 0 Robot 3 Belief: 0.0469913 -> 1657, 1562
-3 Initial Hysteresis Start 800
-FSM State: 0 Robot 0 Belief: 0.0778093 -> 1709, 1627
-FSM State: 0 Robot 1 Belief: 0.0803301 -> 1708, 1627
-FSM State: 0 Robot 2 Belief: 0.0777473 -> 1708, 1626
-FSM State: 0 Robot 3 Belief: 0.0752272 -> 1708, 1625
-FSM State: 0 Robot 0 Belief: 0.0633521 -> 1782, 1692
-FSM State: 0 Robot 1 Belief: 0.0654612 -> 1781, 1692
-FSM State: 0 Robot 2 Belief: 0.0676249 -> 1780, 1692
-FSM State: 0 Robot 3 Belief: 0.069844 -> 1779, 1692
-0 Initial Hysteresis Start 915
-3 Initial Hysteresis Start 893
-2 Initial Hysteresis Start 902
-2 Initial Hysteresis Start 904
-1 Initial Hysteresis Start 885
-0 Initial Hysteresis Start 918
-2 Initial Hysteresis Start 906
-1 Initial Hysteresis Start 887
-0 Initial Hysteresis Start 920
-3 Initial Hysteresis Start 898
-FSM State: 0 Robot 0 Belief: 0.0497928 -> 1857, 1758
-FSM State: 0 Robot 1 Belief: 0.0480829 -> 1857, 1757
-FSM State: 0 Robot 2 Belief: 0.0497459 -> 1856, 1757
-FSM State: 0 Robot 3 Belief: 0.0480368 -> 1856, 1756
-FSM State: 0 Robot 0 Belief: 0.0643645 -> 1921, 1828
-FSM State: 0 Robot 1 Belief: 0.0623091 -> 1921, 1827
-FSM State: 0 Robot 2 Belief: 0.0643135 -> 1920, 1827
-FSM State: 0 Robot 3 Belief: 0.0663682 -> 1919, 1827
-FSM State: 0 Robot 0 Belief: 0.0813558 -> 1986, 1899
-FSM State: 0 Robot 1 Belief: 0.0837718 -> 1985, 1899
-FSM State: 0 Robot 2 Belief: 0.0862419 -> 1984, 1899
-FSM State: 0 Robot 3 Belief: 0.083717 -> 1984, 1898
-FSM State: 0 Robot 0 Belief: 0.0609257 -> 2056, 1958
-FSM State: 0 Robot 1 Belief: 0.0590226 -> 2056, 1957
-FSM State: 0 Robot 2 Belief: 0.0571659 -> 2056, 1956
-FSM State: 0 Robot 3 Belief: 0.0553551 -> 2056, 1955
+Grid X size after read: 180
+Grid Y size after read: 180
+FSM State: 0 Robot 0 Belief: 0.999938 -> 710, 862
+FSM State: 0 Robot 1 Belief: 0.999944 -> 709, 862
+FSM State: 0 Robot 2 Belief: 0.999939 -> 709, 861
+FSM State: 0 Robot 3 Belief: 0.999932 -> 709, 860
+FSM State: 0 Robot 0 Belief: 0.995575 -> 798, 906
+FSM State: 0 Robot 1 Belief: 0.99589 -> 797, 906
+FSM State: 0 Robot 2 Belief: 0.996184 -> 796, 906
+FSM State: 2 Robot 3 Belief: 0.996459 -> 795, 906
+FSM State: 0 Robot 0 Belief: 0.94654 -> 882, 951
+FSM State: 0 Robot 1 Belief: 0.943999 -> 882, 950
+FSM State: 0 Robot 2 Belief: 0.941362 -> 882, 949
+FSM State: 0 Robot 3 Belief: 0.938627 -> 882, 948
+FSM State: 0 Robot 0 Belief: 0.698202 -> 970, 993
+FSM State: 0 Robot 1 Belief: 0.674064 -> 973, 993
+FSM State: 0 Robot 2 Belief: 0.682194 -> 972, 993
+FSM State: 0 Robot 3 Belief: 0.690241 -> 971, 993
+Grid X size before read: 180
+Grid Y size before read: 180
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_4.txt
+Grid X size after read: 205
+Grid Y size after read: 205
+Grid X size before read: 180
+Grid Y size before read: 180
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_4.txt
+Grid X size after read: 205
+Grid Y size after read: 205
+Grid X size before read: 180
+Grid Y size before read: 180
 Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_4.txt
-Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_4.txt
+Grid X size after read: 205
+Grid Y size after read: 205
 Using Fill Index:  4
-Changing fill ratio to:  0.4686260211377671
-2 Initial Hysteresis Start 1019
-1 Initial Hysteresis Start 1000
-0 Initial Hysteresis Start 1036
-3 Initial Hysteresis Start 1012
-2 Initial Hysteresis Start 1025
-0 Initial Hysteresis Start 1041
-1 Initial Hysteresis Start 1005
-FSM State: 0 Robot 0 Belief: 0.0397004 -> 2132, 2019
-FSM State: 0 Robot 1 Belief: 0.0383709 -> 2132, 2018
-FSM State: 0 Robot 2 Belief: 0.0396642 -> 2131, 2018
-FSM State: 0 Robot 3 Belief: 0.0383353 -> 2131, 2017
-FSM State: 0 Robot 0 Belief: 0.0322461 -> 2203, 2082
-FSM State: 0 Robot 1 Belief: 0.0311425 -> 2203, 2081
-FSM State: 0 Robot 2 Belief: 0.0300702 -> 2203, 2080
-FSM State: 0 Robot 3 Belief: 0.0290284 -> 2203, 2079
-FSM State: 0 Robot 0 Belief: 0.0310898 -> 2273, 2149
-FSM State: 0 Robot 1 Belief: 0.0300358 -> 2273, 2148
-FSM State: 0 Robot 2 Belief: 0.0290114 -> 2273, 2147
-FSM State: 0 Robot 3 Belief: 0.0300068 -> 2272, 2147
+Changing fill ratio to:  0.8
+Grid X size before read: 180
+Grid Y size before read: 180
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_4.txt
+Grid X size after read: 205
+Grid Y size after read: 205
+FSM State: 0 Robot 0 Belief: 0.106992 -> 1081, 1024
+FSM State: 0 Robot 1 Belief: 0.11101 -> 1080, 1024
+FSM State: 0 Robot 2 Belief: 0.115138 -> 1079, 1024
+FSM State: 0 Robot 3 Belief: 0.119376 -> 1078, 1024
+3 Initial Hysteresis Start 533
+2 Initial Hysteresis Start 544
+1 Initial Hysteresis Start 510
+0 Initial Hysteresis Start 539
+3 Decision Made - White
+3 Decision time: 1351.41
+Supervisor: Correct Decision was made
+Updated Robot Fitness:  [  70.024   67.76    67.752 1351.408]
+2 Decision Made - White
+2 Decision time: 1351.42
+Supervisor: Correct Decision was made
+Updated Robot Fitness:  [  70.024   67.76  1351.416 1351.408]
+1 Decision Made - White
+1 Decision time: 1351.42
+Supervisor: Correct Decision was made
+Updated Robot Fitness:  [  70.024 1351.424 1351.416 1351.408]
+0 Decision Made - White
+0 Decision time: 1351.43
+Supervisor: Correct Decision was made
+Updated Robot Fitness:  [1351.432 1351.424 1351.416 1351.408]
+FSM State: 0 Robot 0 Belief: 0.000814527 -> 1194, 1045
+FSM State: 0 Robot 1 Belief: 0.000873457 -> 1193, 1045
+FSM State: 0 Robot 2 Belief: 0.000936311 -> 1192, 1045
+FSM State: 0 Robot 3 Belief: 0.00100333 -> 1191, 1045
+FSM State: 0 Robot 0 Belief: 2.52903e-06 -> 1297, 1075
+FSM State: 0 Robot 1 Belief: 2.77632e-06 -> 1296, 1075
+FSM State: 0 Robot 2 Belief: 3.04678e-06 -> 1295, 1075
+FSM State: 0 Robot 3 Belief: 3.34247e-06 -> 1294, 1075
+Grid X size before read: 205
+Grid Y size before read: 205
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_0.txt
+Grid X size after read: 77
+Grid Y size after read: 77
+Grid X size before read: 205
+Grid Y size before read: 205
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_0.txt
+Grid X size after read: 77
+Grid Y size after read: 77
+Grid X size before read: 205
+Grid Y size before read: 205
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_0.txt
+Grid X size after read: 77
+Grid Y size after read: 77
+Using Fill Index:  0
+Changing fill ratio to:  0.3
+FSM State: 0 Robot 0 Belief: 3.30552e-09 -> 1398, 1108
+FSM State: 0 Robot 1 Belief: 2.91204e-09 -> 1398, 1107
+FSM State: 0 Robot 2 Belief: 4.25287e-09 -> 1398, 1110
+FSM State: 0 Robot 3 Belief: 3.75032e-09 -> 1398, 1109
+Grid X size before read: 205
+Grid Y size before read: 205
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_0.txt
+Grid X size after read: 77
+Grid Y size after read: 77
+FSM State: 0 Robot 0 Belief: 2.81114e-07 -> 1450, 1193
+FSM State: 0 Robot 1 Belief: 3.09479e-07 -> 1449, 1193
+FSM State: 0 Robot 2 Belief: 2.78353e-07 -> 1449, 1192
+FSM State: 0 Robot 3 Belief: 2.50246e-07 -> 1449, 1191
+FSM State: 0 Robot 0 Belief: 9.13466e-05 -> 1486, 1289
+FSM State: 0 Robot 1 Belief: 9.82473e-05 -> 1485, 1289
+FSM State: 0 Robot 2 Belief: 9.08564e-05 -> 1485, 1288
+FSM State: 0 Robot 3 Belief: 8.39881e-05 -> 1485, 1287
+FSM State: 0 Robot 0 Belief: 0.00304715 -> 1531, 1383
+FSM State: 0 Robot 1 Belief: 0.00287526 -> 1531, 1382
+FSM State: 0 Robot 2 Belief: 0.00271211 -> 1531, 1381
+FSM State: 0 Robot 3 Belief: 0.00286691 -> 1530, 1381
+Grid X size before read: 77
+Grid Y size before read: 77
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_1.txt
+Grid X size after read: 103
+Grid Y size after read: 103
+Grid X size before read: 77
+Grid Y size before read: 77
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_1.txt
+Grid X size after read: 103
+Grid Y size after read: 103
+Grid X size before read: 77
+Grid Y size before read: 77
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_1.txt
+Grid X size after read: 103
+Grid Y size after read: 103
+Using Fill Index:  1
+Changing fill ratio to:  0.4
+Grid X size before read: 77
+Grid Y size before read: 77
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_1.txt
+Grid X size after read: 103
+Grid Y size after read: 103
+FSM State: 0 Robot 0 Belief: 0.0220729 -> 1577, 1466
+FSM State: 0 Robot 1 Belief: 0.0211187 -> 1577, 1465
+FSM State: 0 Robot 2 Belief: 0.0201664 -> 1576, 1463
+FSM State: 0 Robot 3 Belief: 0.0192498 -> 1575, 1461
+FSM State: 1 Robot 0 Belief: 0.0851715 -> 1616, 1539
+FSM State: 0 Robot 1 Belief: 0.0799537 -> 1620, 1541
+FSM State: 0 Robot 2 Belief: 0.0825973 -> 1619, 1541
+FSM State: 0 Robot 3 Belief: 0.0853069 -> 1618, 1541
+FSM State: 0 Robot 0 Belief: 0.265032 -> 1662, 1626
+FSM State: 0 Robot 1 Belief: 0.270746 -> 1661, 1626
+FSM State: 1 Robot 2 Belief: 0.26497 -> 1661, 1625
+FSM State: 0 Robot 3 Belief: 0.259255 -> 1661, 1624
+FSM State: 0 Robot 0 Belief: 0.411943 -> 1713, 1700
+FSM State: 0 Robot 1 Belief: 0.418653 -> 1714, 1702
+FSM State: 0 Robot 2 Belief: 0.411968 -> 1714, 1701
+FSM State: 0 Robot 3 Belief: 0.418629 -> 1713, 1701
+Grid X size before read: 103
+Grid Y size before read: 103
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_2.txt
+Grid X size after read: 154
+Grid Y size after read: 154
+Grid X size before read: 103
+Grid Y size before read: 103
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_2.txt
+Grid X size after read: 154
+Grid Y size after read: 154
+Grid X size before read: 103
+Grid Y size before read: 103
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_2.txt
+Grid X size after read: 154
+Grid Y size after read: 154
+Using Fill Index:  2
+Changing fill ratio to:  0.6
+Grid X size before read: 103
+Grid Y size before read: 103
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_2.txt
+Grid X size after read: 154
+Grid Y size after read: 154
+FSM State: 0 Robot 0 Belief: 0.420182 -> 1781, 1769
+FSM State: 0 Robot 1 Belief: 0.41362 -> 1781, 1768
+FSM State: 0 Robot 2 Belief: 0.407079 -> 1781, 1767
+FSM State: 0 Robot 3 Belief: 0.413596 -> 1780, 1767
+FSM State: 0 Robot 0 Belief: 0.224296 -> 1866, 1820
+FSM State: 0 Robot 1 Belief: 0.229228 -> 1865, 1820
+FSM State: 0 Robot 2 Belief: 0.234221 -> 1864, 1820
+FSM State: 0 Robot 3 Belief: 0.239276 -> 1863, 1820
+FSM State: 0 Robot 0 Belief: 0.0795617 -> 1953, 1866
+FSM State: 0 Robot 1 Belief: 0.0819578 -> 1952, 1866
+FSM State: 0 Robot 2 Belief: 0.0795071 -> 1952, 1865
+FSM State: 0 Robot 3 Belief: 0.0819026 -> 1951, 1865
+FSM State: 0 Robot 0 Belief: 0.0400904 -> 2032, 1922
+FSM State: 0 Robot 1 Belief: 0.0414635 -> 2031, 1922
+FSM State: 0 Robot 2 Belief: 0.0400522 -> 2031, 1921
+FSM State: 0 Robot 3 Belief: 0.0414246 -> 2030, 1921
+Grid X size before read: 154
+Grid Y size before read: 154
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_3.txt
+Grid X size after read: 180
+Grid Y size after read: 180
+Grid X size before read: 154
+Grid Y size before read: 154
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_3.txt
+Grid X size after read: 180
+Grid Y size after read: 180
+Grid X size before read: 154
+Grid Y size before read: 154
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_3.txt
+Grid X size after read: 180
+Grid Y size after read: 180
+Using Fill Index:  3
+Changing fill ratio to:  0.7
+Grid X size before read: 154
+Grid Y size before read: 154
+Reading in Dynamic Arena: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/arena_3.txt
+Grid X size after read: 180
+Grid Y size after read: 180
+FSM State: 0 Robot 0 Belief: 0.00645107 -> 2125, 1966
+FSM State: 0 Robot 1 Belief: 0.0061676 -> 2125, 1965
+FSM State: 0 Robot 2 Belief: 0.00589514 -> 2125, 1964
+FSM State: 0 Robot 3 Belief: 0.00615693 -> 2124, 1964
+FSM State: 0 Robot 0 Belief: 0.000224638 -> 2226, 1998
+FSM State: 0 Robot 1 Belief: 0.000211643 -> 2226, 1997
+FSM State: 0 Robot 2 Belief: 0.000223936 -> 2225, 1997
+FSM State: 0 Robot 3 Belief: 0.00021031 -> 2224, 1995
+FSM State: 0 Robot 0 Belief: 2.46895e-05 -> 2316, 2048
+FSM State: 1 Robot 1 Belief: 2.62894e-05 -> 2315, 2048
+FSM State: 0 Robot 2 Belief: 2.79876e-05 -> 2314, 2048
+FSM State: 0 Robot 3 Belief: 2.97898e-05 -> 2313, 2048
 INFO: bayes_supervisor: Terminating.
 INFO: bayes_fsm: Terminating.
 INFO: bayes_fsm: Terminating.
 INFO: bayes_fsm: Terminating.
 INFO: bayes_fsm: Terminating.
-Robot did not make decision in time!
-Robot did not make decision in time!
-Robot did not make decision in time!
-Robot did not make decision in time!
-Final Robot Fitness:  [2700.008 2700.008 2700.008 2700.008]
+Supervisor: Final evaluation of Robot 0
+Supervisor: Correct Decision was made
+Supervisor: Final evaluation of Robot 1
+Supervisor: Correct Decision was made
+Supervisor: Final evaluation of Robot 2
+Supervisor: Correct Decision was made
+Supervisor: Final evaluation of Robot 3
+Supervisor: Correct Decision was made
+Supervisor: Final Robot Fitness:  [1351.408 1351.408 1351.408 1351.408]
 Wrote file: /home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/jobfiles/Run_0/tmp/job0_0_1/local_fitness
 Ceaning up simulation

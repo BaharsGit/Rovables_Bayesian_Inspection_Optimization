@@ -470,7 +470,7 @@ else:
 # initial=[5,5]               
 # initial starting location [x1,x2...]
 # input bounds [(x1_min,x1_max)]
-PARTICLE_SET = 5
+PARTICLE_SET = 7
 bounds = []
 num_dimensions = 6
 x0 = []
@@ -510,7 +510,10 @@ if (PARTICLE_SET == 5): # SET ONE
 if (PARTICLE_SET == 6): # SET ONE 
     bounds = [0, 0, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, distance_sensor_max-5, 0, 0, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[0, tao_square, tao_square*2, 50, 0, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
-if (PARTICLE_SET == 7):
+if (PARTICLE_SET == 7): # Testing this for dynamic environment. Hysteresis is preventing from making changes fast. 
+    bounds = [0, 0, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, distance_sensor_max-5, 0, max_num_obs, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
+    x0=[0, tao_square, tao_square*2, 50, int(num_squares_in_arena/5), 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
+if (PARTICLE_SET == 8):
     # THIS IS USED WITH THE TEST OPTIMIZATION FUNCTION
     bounds = [0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
     x0=[10, 200, 200, 30, 0, 15] 

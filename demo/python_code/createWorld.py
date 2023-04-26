@@ -73,17 +73,19 @@ class WorldGenerator():
         #Save arena file to instance id specific path
         np.savetxt(self.path + '/arena.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
       else:
-        fill_log = []
+        fill_log = [0.3, 0.4, 0.6, 0.7, 0.8]
         for j in range(0, int(self.dynamic_env), 1):
 
           picDim = 128
-          fill = np.random.uniform(self.env_lower, self.env_upper)
+          # fill = np.random.uniform(self.env_lower, self.env_upper)
+          # fill_log.append(fill)
+          fill = fill_log[j]
           print("Generating Arena with Fill Ratio: ", fill)
-          fill_log.append(fill)
           sqSize = 8
           picArea = picDim * picDim
           sqArea = sqSize * sqSize
-          fillCount = math.ceil((self.fill_ratio * picArea) / sqArea)
+          fillCount = math.ceil((fill * picArea) / sqArea)
+          #print("Number of white squares: ", fillCount)
           startArray = np.zeros((fillCount,2)) #Defines bottom left of white square
           possibleX = list(range(0, picDim, sqSize))
           possibleY = list(range(0, picDim, sqSize))

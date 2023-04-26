@@ -119,11 +119,12 @@ int main(int argc, char **argv) {
   std::string seed = argv[1];
 
   std::cout << "Controller Seed: " << atoi(argv[1]) << std::endl;
-  srand(atoi(argv[1]) + robotNum); // Seed is set during world fild generation
+  srand(atoi(argv[1]) + robotNum); // Seed is set during world file generation
   obs_log = "Data/Temp" + seed + "/observation_log.txt";
 
   dynamicEnvironment = atoi(argv[2]);
   std::cout << "Using Dynamic Enviornment: " << dynamicEnvironment << std::endl;
+  arena_index = rand()%dynamicEnvironment;
   
   const char *motors_names[2] = {"left motor", "right motor"};
   const char *distance_sensors_names[12] = {"left distance sensor", "right distance sensor", 
@@ -483,16 +484,22 @@ double incbeta(double a, double b, double x) {
 static int getColor(int dynamicEnvironment) {
   // Once the number of simulation time steps have passed, then change the arena. 
   if (dynamicEnvironment > 0) {
-    if (control_count - arena_count > 75000) { //75000 simulation steps is equivalent to 10 minutes of time.
-        if (arena_index == dynamicEnvironment) {
-          arena_index = 0; //loop back around if there ever needs to be. 
-        } else {
-          arena_index++;
-        }
+    if (control_count - arena_count > 37500) { //37500 simulation steps is equivalent to 5 minutes of time.
+        std::cout << "Grid X size before read: " << grid_x.size() << std::endl;
+        std::cout << "Grid Y size before read: " << grid_y.size() << std::endl;
         grid_x.clear();
         grid_y.clear();
-        arena_count = control_count;
+        // std::cout << "Arena Index: " << arena_index << std::endl;
+        // std::cout << "Dynamimic Environment: " << dynamicEnvironment << std::endl;
+        arena_index = rand()%dynamicEnvironment;
+        // arena_index++;
+        if (arena_index == dynamicEnvironment) {
+          arena_index = 0; //loop back around if there ever needs to be. 
+        }
         readArena(dynamicEnvironment);
+        arena_count = control_count;
+        std::cout << "Grid X size after read: " << grid_x.size() << std::endl;
+        std::cout << "Grid Y size after read: " << grid_y.size() << std::endl;
     }
   }
   Field *meField = me->getField("translation");
