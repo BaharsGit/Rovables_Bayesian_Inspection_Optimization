@@ -147,7 +147,7 @@ def cov_belief(cov_count, cov_avg, cov_std, belief_avg, belief_std):
     ax2.xaxis.set_label_position('bottom') 
 
     plt.show()
-    fig.savefig(home_dir + "/../" + folderName + "/cov_belief.svg", format='svg', dpi='figure')
+    fig.savefig(home_dir + "/../" + folderName + "/cov_belief.png", format='png', dpi='figure')
 
 def hist_coveage(obs_run):
     # fig=plt.figure()
@@ -244,6 +244,15 @@ def fitness_distribution(fitness_run_one, fitness_run_two):
     plt.show()
     fig.savefig(home_dir + "/../" + folderName + "/fitness_distribution.svg", format='svg', dpi='figure')
 
+def single_belief(belief_avg, belief_std):
+    fig=plt.figure()
+    plt.grid()
+    plt.plot(np.arange(len(belief_avg)), belief_avg, color="b", label='Empirical')
+    bottom = np.subtract(belief_avg, belief_std)
+    bottom[bottom<0] = 0
+    plt.fill_between(np.arange(len(belief_avg)), bottom, np.add(belief_avg, belief_std), color='b', alpha=0.3)
+    plt.show()
+
 def read_data(folderName, time_run, fitness_run, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std):
     #Iterate through and save data into corresponding arrays
     swarm_bel_avg = pandas.DataFrame() #I believe it is more efficient when storing in a dataframe 
@@ -284,34 +293,34 @@ def read_data(folderName, time_run, fitness_run, reset_run, pos_x_run, pos_y_run
     batch_calc = range(num_batch)
     cov_avg = []
     cov_std = []
-    for time in range(1, len(obs_run[0, 0]), 1):
-        # print(time /len(obs_run[0, 0]) )
-        cov = 0
-        std_arr = np.empty(num_batch)
-        # bel = 0
-        for run in batch_calc:
-            # print("Calculating Run: ", run)
-            #Place observations into binnings based on tiles
-            cov_t = (stats.binned_statistic_2d(obs_run[run, 0][:time], obs_run[run, 1][:time],
-                    values=None,statistic='count',bins=[np.arange(0,1+distance_per_square,distance_per_square),
-                        np.arange(0,1+distance_per_square,distance_per_square)],expand_binnumbers='True')).statistic
-            #Convert counts into binary values
-            cov_count = np.add(cov_count, cov_t)
-            cov_bin = np.where(cov_t > 0, 1, 0)
-            #Calculate Average coverage
-            cov = cov + (np.sum(cov_bin)/(squares_per_side * squares_per_side))
-            # print(cov_count)
-            # if ((np.sum(cov_bin)/(squares_per_side * squares_per_side)) < 1) and (time > len(obs_run[0, 0])*0.95):
-            #     print("Run: ", run)
-            #     print(cov_bin)
-            # if (np.sum(cov_bin)/(squares_per_side * squares_per_side) >= 1):
-            #     print("Coverage Reached: ", cov)
-            #     del batch_calc[run]
-            #     break
-            std_arr[run] = (np.sum(cov_bin)/(squares_per_side * squares_per_side))
+    # for time in range(1, len(obs_run[0, 0]), 1):
+    #     # print(time /len(obs_run[0, 0]) )
+    #     cov = 0
+    #     std_arr = np.empty(num_batch)
+    #     # bel = 0
+    #     for run in batch_calc:
+    #         # print("Calculating Run: ", run)
+    #         #Place observations into binnings based on tiles
+    #         cov_t = (stats.binned_statistic_2d(obs_run[run, 0][:time], obs_run[run, 1][:time],
+    #                 values=None,statistic='count',bins=[np.arange(0,1+distance_per_square,distance_per_square),
+    #                     np.arange(0,1+distance_per_square,distance_per_square)],expand_binnumbers='True')).statistic
+    #         #Convert counts into binary values
+    #         cov_count = np.add(cov_count, cov_t)
+    #         cov_bin = np.where(cov_t > 0, 1, 0)
+    #         #Calculate Average coverage
+    #         cov = cov + (np.sum(cov_bin)/(squares_per_side * squares_per_side))
+    #         # print(cov_count)
+    #         # if ((np.sum(cov_bin)/(squares_per_side * squares_per_side)) < 1) and (time > len(obs_run[0, 0])*0.95):
+    #         #     print("Run: ", run)
+    #         #     print(cov_bin)
+    #         # if (np.sum(cov_bin)/(squares_per_side * squares_per_side) >= 1):
+    #         #     print("Coverage Reached: ", cov)
+    #         #     del batch_calc[run]
+    #         #     break
+    #         std_arr[run] = (np.sum(cov_bin)/(squares_per_side * squares_per_side))
 
-        cov_avg.append(cov/num_batch)
-        cov_std.append(np.std(std_arr))
+    #     cov_avg.append(cov/num_batch)
+    #     cov_std.append(np.std(std_arr))
 
     cov_avg = np.asarray(cov_avg)
     cov_std = np.asarray(cov_std)
@@ -323,15 +332,17 @@ def read_data(folderName, time_run, fitness_run, reset_run, pos_x_run, pos_y_run
 sns.set_theme(style="white", palette=None)
 cmap =sns.color_palette("Blues", as_cmap=True)
 
-folderName = "xo_baseline/Log"
+folderName = "ICRA_DATA/xo_95_baseline/Log"
 time_run_xo, fitness_run_xo, reset_run, pos_x_run, pos_y_run, belief_run, belief_avg_xo, belief_std_xo, obs_run, cov_count, cov_avg_xo, cov_std_xo = read_data(folderName, time_run_xo, fitness_run_xo, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std)
-folderName = "p_baseline/Log"
+folderName = "ICRA_DATA/p_95_baseline/Log"
 time_run_p, fitness_run_p, reset_run, pos_x_run, pos_y_run, belief_run, belief_avg_p, belief_std_p, obs_run, cov_count_p, cov_avg_p, cov_std_p = read_data(folderName, time_run_p, fitness_run_p, reset_run, pos_x_run, pos_y_run, belief_run, obs_run, cov_count, cov_avg, cov_std)
 
 # time_distribution(time_run_xo, time_run_p)
 # fitness_distribution(fitness_run_xo, fitness_run_p)
 belief_distribution(cov_avg_xo, cov_std_xo, belief_avg_xo, belief_std_xo, cov_avg_p, cov_std_p, belief_avg_p, belief_std_p)
 
-# cov_belief(cov_count, cov_avg_p, cov_std_p, belief_avg_p, belief_std_p)
+# cov_belief(cov_count, cov_avg_xo, cov_std_xo, belief_avg_xo, belief_std_xo)
 # kde_coverage(obs_run)
 # hist_coveage(obs_run)
+
+# single_belief(belief_avg_xo, belief_std_xo)

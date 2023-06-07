@@ -24,7 +24,7 @@ sim_time = 2700 * 1000 #max sim time in ms
 sim_time_steps = sim_time / 8 #total time steps in a simulation
 max_num_obs = sim_time_steps / (tao_square/multiplier) # maximum number of observations in a simulation
 ###########################################################
-psodir = (str(os.getcwd())) + "/demo/jobfiles/Run_0"
+psodir = (str(os.getcwd())) + "/../jobfiles/Run_0"
 # psodir = (str(os.getcwd())) + "/../../../id_2/demo/jobfiles/Run_0"
 param_min = [0, tao_square/multiplier, tao_square/multiplier, 5, 0]
 param_max = [0, tao_square*multiplier, step_to_cross_arena, 145, max_num_obs]
@@ -166,57 +166,64 @@ def psoFitnessScatter(best_fit_avg_gen, best_fit_std_gen, std_gen, avg_gen, fit_
     plt.show()
 
 
-def animateParameter(l, param_gen, avg_gen, best_gen):
+def animateParameter(l2_gen, std_gen, avg_gen, best_gen):
     #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Obs Wait Time]
 
     colors=['blue', 'red', 'green', 'yellow', 'orange']
     fig = plt.figure(figsize=(12, 7))
-    axProjection = fig.add_subplot(1,2,1,projection='3d')
-    axFitness = fig.add_subplot(1,2,2)
-    axProjection.view_init(20, 60)
+    axFitness = plt.gca()
+    axFitness.set_ylim(0, 11800)
+    axFitness.set_xlim(0, num_gen)
+    axFitness.set_xlabel("Iteration")
+    axFitness.set_ylabel("Fitness Value")
+    axFitness.yaxis.set_label_position("right")
+    axFitness.set_ylim(0, 15000)
+    axFitness.set_xlim(0, num_gen)
+    # axProjection = fig.add_subplot(1,2,1,projection='3d')
+    # axFitness = fig.add_subplot(1,2,2)
+    # axProjection.view_init(20, 60)
 
     def animate(frame):
-        axProjection.clear()
-        axFitness.clear()
+        # axProjection.clear()
+        fig.clear()
+        plt.grid()
         fig.suptitle('Iteration: {}'.format(frame))
 
         # axProjection.set_xlim(0, 1)
         # axProjection.set_ylim(0, 1)
         # axProjection.set_zlim(0, 1)
-        axProjection.set_xlabel("Tau")
-        axProjection.set_ylabel("Random Forward")
-        axProjection.set_zlabel("Hysteresis")
+        # axProjection.set_xlabel("Tau")
+        # axProjection.set_ylabel("Random Forward")
+        # axProjection.set_zlabel("Hysteresis")
         # axProjection.set_ylim(0, 1)
         # axProjection.set_xlim(0, 1)
         # axProjection.set_zlim(0, 1)
-        axFitness.set_ylim(0, 1500)
-        # axFitness.set_xlim(0, num_gen)
-        axFitness.set_xlabel("Iteration")
-        axFitness.set_ylabel("Fitness Value")
-        axFitness.yaxis.set_label_position("right")
-        axFitness.set_ylim(0, 15000)
-        axFitness.set_xlim(0, num_gen)
+        plt.ylim(4000, 11800)
+        plt.xlim(0, num_gen)
+        plt.xlabel("Iteration")
+        plt.ylabel("Simulated Fitness")
 
         for j in range(num_particles):
             #s=(param_gen[:frame, j,4]*100)
             #axProjection.scatter(param_gen[:frame, j, 1], param_gen[:frame, j, 2], param_gen[:frame, j, 4], s=10, color='black', alpha=0.3, label='Previous 3 Iteration Particles' if j == 0 else "")           
-            axProjection.scatter(param_gen[frame, j, 1], param_gen[frame, j, 2], param_gen[frame, j, 4], s=25, color='green', label='Current Particle Location' if j == 0 else "")  
-            axFitness.plot(avg_gen[:frame], color='blue', label="Average Fitness" if j == 0 else "")
-            axFitness.plot(best_gen[:frame], color='red', label='Best Fitness' if j == 0 else "")
-            axFitness.plot(std_gen[:frame], linestyle='dashed', label='Standard Dev.' if j == 0 else "", color='purple' )
+            # axProjection.scatter(param_gen[frame, j, 1], param_gen[frame, j, 2], param_gen[frame, j, 4], s=25, color='green', label='Current Particle Location' if j == 0 else "")  
+            # plt.plot(l2_gen[:frame], color='darkorange', label='L2 Norm' if j==0 else "") 
+            plt.plot(avg_gen[:frame], color='blue', label="Average Personal Best Fitness" if j == 0 else "")
+            plt.plot(best_gen[:frame], color='red', label='Global Best Fitness' if j == 0 else "")
+            # plt.plot(std_gen[:frame], linestyle='dashed', label='Standard Dev.' if j == 0 else "", color='purple' )
             for k in range(frame):
                 x = [k]*num_particles
                 plt.scatter(x, fit_gen[k], color='green', s=10)
             bottom = avg_gen - std_gen
             bottom[bottom<0] = 0
-            axFitness.fill_between(np.arange(frame), bottom[:frame], avg_gen[:frame] + std_gen[:frame], where=(avg_gen[:frame] + std_gen[:frame])>0, facecolor='C0', alpha=0.1)
-        #axProjection.scatter(param_gen[frame, best_id_gen[frame], 0], param_gen[frame, best_id_gen[frame], 1], param_gen[:frame, best_id_gen[frame], 5], s=(param_gen[:frame, best_id_gen[frame],4]*100), color='red', label='Gloabl Best' if j == 0 else "")
-        axFitness.legend()
+            plt.fill_between(np.arange(frame), bottom[:frame], avg_gen[:frame] + std_gen[:frame], where=(avg_gen[:frame] + std_gen[:frame])>0, facecolor='C0', alpha=0.1)
+        # axProjection.scatter(param_gen[frame, best_id_gen[frame], 0], param_gen[frame, best_id_gen[frame], 1], param_gen[:frame, best_id_gen[frame], 5], s=(param_gen[:frame, best_id_gen[frame],4]*100), color='red', label='Gloabl Best' if j == 0 else "")
+        # plt.legend()
 
     # run the animation
     ani = FuncAnimation(fig, animate, frames=num_gen, interval=1000, repeat=True)
 
-    #plt.show()
+    # plt.show()
     ani.save('animation.gif', writer='imagemagick', fps=1)
 
 sns.set_theme(style='white', palette=None)
@@ -236,8 +243,9 @@ print("Best Particle: " + str(global_best) + " Generation: " + str(global_best_g
 print("Best Particle Evoluation: ")
 for i in range(num_gen):
     print("Generation: " + str(i) + " : " + str(raw_param_gen[i, global_best]))
-print(l2_gen)
+# print(l2_gen)
 # psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen)
 # #animateParameter(0, param_gen, avg_gen, best_gen)
-
-psoFitnessScatter(best_fit_avg_gen, best_fit_std_gen, std_gen, avg_gen, fit_gen, best_gen)
+print(l2_gen)
+animateParameter(l2_gen, best_fit_std_gen, best_fit_avg_gen, best_gen)
+# psoFitnessScatter(best_fit_avg_gen, best_fit_std_gen, std_gen, avg_gen, fit_gen, best_gen)
