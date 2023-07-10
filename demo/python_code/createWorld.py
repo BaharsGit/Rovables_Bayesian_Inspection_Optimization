@@ -205,6 +205,7 @@ Wall {
   controller "bayes_supervisor"
   controllerArgs [
     """ + arg + """
+    """ + arg2 + """
     """ + baselineArg + """
   ]
   supervisor TRUE

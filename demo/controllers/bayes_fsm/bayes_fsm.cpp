@@ -393,9 +393,9 @@ int main(int argc, char **argv) {
     p = incbeta(alpha, beta, 0.5);   
 
     if (d_f == -1) {
-      myDataField->setSFString(std::to_string(arena_index) + std::to_string(p) + "-");
+      myDataField->setSFString(std::to_string(arena_index) + "2" + std::to_string(p) + "-");
     } else {
-      myDataField->setSFString(std::to_string(arena_index) + std::to_string(p) + std::to_string(decision_time));
+      myDataField->setSFString(std::to_string(arena_index) + std::to_string(d_f) + std::to_string(p) + std::to_string(decision_time));
     }
     
     //Increment control count used with observation interval
@@ -491,8 +491,8 @@ static int getColor(int dynamicEnvironment) {
         grid_y.clear();
         // std::cout << "Arena Index: " << arena_index << std::endl;
         // std::cout << "Dynamimic Environment: " << dynamicEnvironment << std::endl;
-        arena_index = rand()%dynamicEnvironment;
-        // arena_index++;
+        //arena_index = rand()%dynamicEnvironment;
+        arena_index++;
         if (arena_index == dynamicEnvironment) {
           arena_index = 0; //loop back around if there ever needs to be. 
         }
