@@ -4,7 +4,7 @@ import time
 import os
 import shutil
 from datetime import datetime
-from createWorldParallel import WorldGenerator
+from createWorld import WorldGenerator
 
 from subprocess import Popen, PIPE
 
@@ -17,6 +17,9 @@ parser.add_argument("-s", "--seed", required=True, type=int, default="0")
 parser.add_argument("-fr", "--fill_ratio", required=True, type=float, default="0.52")
 parser.add_argument("-p", "--path", required=True)
 parser.add_argument("-r", "--num_robots", required=True, type=int, default="4")
+parser.add_argument("-d", "--dynamic_env", required=True, type=int, default="1")
+parser.add_argument("-dub", "--env_upper", required=True, type=float, default="0.55")
+parser.add_argument("-dlb", "--env_lower", required=True, type=float, default="0.45")
 
 args = parser.parse_args()
 
@@ -35,7 +38,7 @@ if not os.path.exists(tempDirObs):
 
 # #Create World file with randomized positions and walks based on robot seed
 # # world_seed not used in this case as the texture is fixed. 
-WG = WorldGenerator(baseline=1, particle_id=args.seed, instance_id=args.seed, fill_ratio=args.fill_ratio, robot_number=args.num_robots, path=args.path, dynamic_env=0)
+WG = WorldGenerator(baseline=1, particle_id=args.seed, instance_id=args.seed, fill_ratio=args.fill_ratio, robot_number=args.num_robots, path=args.path, dynamic_env=args.dynamic_env, env_upper=args.env_upper, env_lower=args.env_lower)
 WG.createWorld()
 
 # #Run the Webots simulation

@@ -1,0 +1,143 @@
+#VRML_SIM R2021b utf8
+
+# Author: Johannes Boghaert, Darren Chiu
+
+WorldInfo {
+  CFM 0.1
+  ERP 0.1
+  basicTimeStep 8
+  coordinateSystem "NUE"
+  contactProperties [
+    ContactProperties {
+      material2 "WheelMat"
+    }
+  ]
+}
+Viewpoint {
+  orientation -0.37410009861715926 -0.8017314106520007 -0.4661285888985836 2.0110979679680656
+  position -0.4573118151367981 1.0734694097374347 0.21413139964469322
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+DEF surface Solid {
+  translation 0.5 0 0.5
+  rotation 0 -0.9999999999999999 0 1.5707953071795862
+  children [
+    Shape {
+      appearance Appearance {
+        texture ImageTexture {
+        }
+      }
+      geometry Plane {
+      }
+    }
+  ]
+  contactMaterial "Metal"
+  boundingObject Plane {
+  }
+}
+Wall {
+  translation 0.5 0 -0.015
+  size 1 0.05 0.025
+}
+Wall {
+  translation 0.5 0 1.015
+  name "wall(1)"
+  size 1 0.05 0.025
+}
+Wall {
+  translation 1.015 0 0.5
+  rotation 0 1 0 1.5708
+  name "wall(2)"
+  size 1 0.05 0.025
+}
+Wall {
+  translation -0.015 0 0.5
+  rotation 0 1 0 1.5708
+  name "wall(3)"
+  size 1 0.05 0.025
+}
+Robot {
+  name "Bayes Bot Supervisor"
+  controller "bayes_supervisor"
+  controllerArgs [
+    "28"
+    "1"
+    "1"
+  ]
+  supervisor TRUE
+}
+DEF rov_0 Rovable {
+  translation 0.15166145315854673 0.023 0.16776695021308924
+  rotation 0.577 0.577 0.577 -2.09
+  name "r0"
+  controller "bayes_fsm"
+  controllerArgs [
+    "28"
+    "1"
+  ]
+  supervisor TRUE
+  customData "020.500000-" 
+  extensionSlot [
+    Receiver {
+    }
+    Emitter {
+    }
+  ]
+}
+DEF rov_1 Rovable {
+  translation 0.5875348012215089 0.023 0.2102408811730589
+  rotation 0.577 0.577 0.577 -2.09
+  name "r1"
+  controller "bayes_fsm"
+  controllerArgs [
+    "28"
+    "1"
+  ]
+  supervisor TRUE
+  customData "020.500000-" 
+  extensionSlot [
+    Receiver {
+    }
+    Emitter {
+    }
+  ]
+}
+DEF rov_2 Rovable {
+  translation 0.1692470474104652 0.023 0.46768870046207034
+  rotation 0.577 0.577 0.577 -2.09
+  name "r2"
+  controller "bayes_fsm"
+  controllerArgs [
+    "28"
+    "1"
+  ]
+  supervisor TRUE
+  customData "020.500000-" 
+  extensionSlot [
+    Receiver {
+    }
+    Emitter {
+    }
+  ]
+}
+DEF rov_3 Rovable {
+  translation 0.42581117294601684 0.023 0.24199623040768764
+  rotation 0 0.707106 0.707107 3.14159
+  name "r3"
+  controller "bayes_fsm"
+  controllerArgs [
+    "28"
+    "1"
+  ]
+  supervisor TRUE
+  customData "020.500000-" 
+  extensionSlot [
+    Receiver {
+    }
+    Emitter {
+    }
+  ]
+}

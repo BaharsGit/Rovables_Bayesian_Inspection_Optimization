@@ -73,7 +73,7 @@ class WorldGenerator():
         #Save arena file to instance id specific path
         np.savetxt(self.path + '/arena.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
       else:
-        fill_log = [0.3, 0.4, 0.6, 0.7, 0.8]
+        fill_log = [0.4, 0.6]
         for j in range(0, int(self.dynamic_env), 1):
 
           picDim = 128
@@ -226,7 +226,7 @@ Wall {
     """ + arg2 + """
   ]
   supervisor TRUE
-  customData "00.500000-" 
+  customData "020.500000-" 
   extensionSlot [
     Receiver {
     }
@@ -238,8 +238,10 @@ Wall {
     def createWorld(self):
         random.seed(self.instance_id)
         np.random.seed(self.instance_id)
-
-        file = open(r"../../worlds" + self.createTitle() + ".wbt", 'w')
+        if (self.baseline):
+          file = open(r"../worlds" + self.createTitle() + ".wbt", 'w')
+        else:
+          file = open(r"../../worlds" + self.createTitle() + ".wbt", 'w')
         #file = open(r"/usr/local/efs/demo/worlds" + self.createTitle() + ".wbt", 'w')
         #file = open(r"/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/worlds" + self.createTitle() + ".wbt", 'w')
         #Start with Header

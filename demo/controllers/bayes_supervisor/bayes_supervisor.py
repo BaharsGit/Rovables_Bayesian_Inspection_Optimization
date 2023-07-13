@@ -107,20 +107,24 @@ def evaluateFitness(dec_time, decision):
     #         sign = 1
     # return math.exp(((MAX_TIME * 1.66667e-5)- (dec_time*1.66667e-5))*(sign))
 
-    #Linear Fitness Function; For individual robot decisions 
-    if (float(fill_ratio) > 0.5):
-        if (decision == 1):
+    #Linear Fitness Function; For individual robot decisions
+    robot_decision = int(decision)
+    current_fill = float(fill_ratio)
+    print("Supervisor: Reading Decision,", robot_decision)
+    print("Supervisor: Checking for fill ratio,", current_fill)
+    if (current_fill > 0.5):
+        if (robot_decision == 1):
             print("Supervisor: Correct Decision was made")
             return dec_time
         else: 
-            print("Supervisor: Assigned max time")   
+            print("Supervisor: Incorrect decision, assigned max time")   
             return MAX_TIME
     else:
-        if (decision == 0):
+        if (robot_decision == 0):
             print("Supervisor: Correct Decision was made")
             return dec_time
         else: 
-            print("Supervisor: Assigned max time")   
+            print("Supervisor: Incorrect decision, assigned max time")   
             return MAX_TIME
 
     #Add another fitness evaluation for the swarm as a whole.
@@ -236,10 +240,10 @@ sim_time = supervisor.getTime()
 with open(working_dir + '/fill_log.txt') as file:
     input = [line.rstrip() for line in file]
 fill_array = [float(i) for i in input]
-print("Fill Array: ", fill_array)
-print("Fill Index: ", fillIndex)
-fillratio = fill_array[fillIndex]
-print("Initial fill ratio: ", fillratio)
+print("Supervisor: Fill Array, ", fill_array)
+print("Supervisor: Fill Index, ", fillIndex)
+fill_ratio = fill_array[fillIndex]
+print("Supervisor: Initial fill ratio, ", fill_ratio)
 
 setSeed()
 
@@ -264,7 +268,7 @@ while supervisor.step(timestep) != -1:
             currentData = data_array[i].getSFString()
             belief = currentData[2:9]
             rowProbData.append(float(belief))
-            dec_arr[i] = currentData[1]
+            dec_arr[i] = int(currentData[1])
             check_robot_bound(robot_x, robot_y, i)
 
             if (currentData[10] != '-'):
@@ -273,6 +277,7 @@ while supervisor.step(timestep) != -1:
                 #First time fitness evaluation
                 if (fitness[i] == 0):
                     fitness[i] = evaluateFitness(float(currentData[10:]), dec_arr[i])
+                    print("Supervisor: Initial decision", str(fitness[i]))
                     dec_time[i] = float(currentData[9:])
                     dec_counter[i] = dec_counter[i] + 1
 
@@ -282,15 +287,15 @@ while supervisor.step(timestep) != -1:
                     # print("New decision time: ", currentData)
                     fitness[i] = evaluateFitness(float(currentData[10:]), dec_arr[i])
                     dec_time[i] = float(currentData[10:])
-                    print("Updated Robot Fitness: ", fitness)
+                    print("Supervisor: Updated Robot Fitness, ", fitness)
                     dec_counter[i] = dec_counter[i] + 1
 
         # print(currentData)
         if (fillIndex != int(currentData[0])):
                 fillIndex = int(currentData[0])
-                print("Using Fill Index: ", fillIndex)
+                print("Supervisor: Using Fill Index, ", fillIndex)
                 fill_ratio = fill_array[fillIndex]
-                print("Changing fill ratio to: ", fill_ratio)
+                print("Supervisor: Changing fill ratio to, ", fill_ratio)
         
         csvProbData.append(rowProbData)
         csvPosData.append(rowPosData)
@@ -305,7 +310,7 @@ while supervisor.step(timestep) != -1:
                     print("Supervisor: Robot " + str(k) + " did not make a decision in time!")
                     dec_time[k] = supervisor.getTime()
                     fitness[k] = supervisor.getTime()
-                    dec_counter = 1
+                    dec_counter[k] = 1
                 elif (dec_time[i] != float(currentData[10:])):
                     print("Supervisor: Final evaluation of Robot " + str(k))
                     fitness[k] = evaluateFitness(float(currentData[10:]), float(belief))

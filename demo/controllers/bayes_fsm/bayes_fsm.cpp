@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
 
   dynamicEnvironment = atoi(argv[2]);
   std::cout << "Using Dynamic Enviornment: " << dynamicEnvironment << std::endl;
-  arena_index = rand()%dynamicEnvironment;
+  // arena_index = rand()%dynamicEnvironment;
   
   const char *motors_names[2] = {"left motor", "right motor"};
   const char *distance_sensors_names[12] = {"left distance sensor", "right distance sensor", 
