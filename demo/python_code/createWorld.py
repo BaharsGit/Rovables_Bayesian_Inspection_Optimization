@@ -73,7 +73,7 @@ class WorldGenerator():
         #Save arena file to instance id specific path
         np.savetxt(self.path + '/arena.txt', startArray.astype(int), delimiter=',', fmt='%d', footer="-1")
       else:
-        fill_log = [0.4, 0.6]
+        fill_log = [0.52]
         for j in range(0, int(self.dynamic_env), 1):
 
           picDim = 128

@@ -8,8 +8,8 @@
 #       b.) Run the simulation. Producing -> runPos.csv and runProb.csv
 #       c.) Move the output files into the previously created log folder.
 echo Starting script. . . ${BASH_VERSION}
-# home_path="$(pwd)/efs/demo"
-home_path="$(pwd)"
+home_path="$(pwd)/efs/demo"
+# home_path="$(pwd)"
 cd $home_path # Used for correct path in batch launch on AWS. Disable if using on local test.
 
 #RUN DYNAMIC ENVIORNMENT
@@ -35,35 +35,36 @@ cd $home_path
 
 # Get the current AWS job index
 # line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
-for i in {1..100}
-do
-   line=${i} #Used this in a for loop for local test.
-   SEED=$(sed -n ${line}p ${home_path}/seed_array.txt)
-   FILL_RATIO=$(sed -n ${line}p ${home_path}/fill_array.txt)
-   NUM_ROBOTS=4
+line=$((INSTANCE_ID + 1))
+# for i in {1..100}
+# do
+# line=${i} #Used this in a for loop for local test.
+SEED=$(sed -n ${line}p ${home_path}/seed_array.txt)
+FILL_RATIO=$(sed -n ${line}p ${home_path}/fill_array.txt)
+NUM_ROBOTS=4
 
-   JOB_BASE_DIR=${home_path}/tmp/job_${line}
-   if [ ! -d $JOB_BASE_DIR ]
+JOB_BASE_DIR=${home_path}/tmp/job_${line}
+if [ ! -d $JOB_BASE_DIR ]
 
-   then
+then
 
-      echo "(`date`) Create job base directory for the Webots instance of this job_lily_parallel.sh script as $JOB_BASE_DIR"
-      mkdir -p $JOB_BASE_DIR
+   echo "(`date`) Create job base directory for the Webots instance of this job_lily_parallel.sh script as $JOB_BASE_DIR"
+   mkdir -p $JOB_BASE_DIR
 
-   fi
+fi
 
-   export WB_WORKING_DIR=$JOB_BASE_DIR
-   export FILL_RATIO=$FILL_RATIO
+export WB_WORKING_DIR=$JOB_BASE_DIR
+export FILL_RATIO=$FILL_RATIO
 
-   # Run experiment according to the seed and simulation parameters
-   echo "Running experiment version $SEED"
-   # MODIFIED FOR AWS LAUNCH, LINES 48, USING PY_PATH
-   pwd
-   echo "Using Parameters File: "
-   cat ${home_path}/baseline_param.txt
-   cp ${home_path}/baseline_param.txt ${JOB_BASE_DIR}/prob.txt
+# Run experiment according to the seed and simulation parameters
+echo "Running experiment version $SEED"
+# MODIFIED FOR AWS LAUNCH, LINES 48, USING PY_PATH
+pwd
+echo "Using Parameters File: "
+cat ${home_path}/baseline_param.txt
+cp ${home_path}/baseline_param.txt ${JOB_BASE_DIR}/prob.txt
 
-   cd ${home_path}/python_code
-   python3 -u simSetupParallel.py -s $SEED -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS -d $DYNAMIC_ENV -dub $ENV_UB -dlb $ENV_LB #Setup directories and run the simulation
-   cd ${home_path}
-done
+cd ${home_path}/python_code
+python3 -u simSetupParallel.py -s $SEED -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS -d $DYNAMIC_ENV -dub $ENV_UB -dlb $ENV_LB #Setup directories and run the simulation
+cd ${home_path}
+# done
