@@ -29,9 +29,9 @@ psodir = (str(os.getcwd())) + "/../jobfiles/Run_0"
 param_min = [0, tao_square/multiplier, tao_square/multiplier, 5, 0]
 param_max = [0, tao_square*multiplier, step_to_cross_arena, 145, max_num_obs]
 worst_case_fitess = 11200
-num_particles = 5
-num_noise = 2
-num_gen = 21
+num_particles = 15
+num_noise = 10
+num_gen = 5
 num_robots = 4
 particle_dim = 5
 param_names = ["Alpha", "Tao", "Random Forward", "CA Trigger", "Hysterisis", "Observation Wait Time"]
@@ -79,7 +79,7 @@ def read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, r
                 noise_list[k] = float(fit[0])
 
             #Holds the particle fitness for this iteration
-            particle_fit = statistics.mean(noise_list) + statistics.stdev(noise_list)
+            particle_fit = statistics.mean(noise_list)
 
             if (particle_fit < best_fitness):
                 best_fitness = particle_fit

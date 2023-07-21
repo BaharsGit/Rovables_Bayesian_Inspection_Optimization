@@ -512,7 +512,8 @@ if (PARTICLE_SET == 6): # SET ONE
     x0=[0, tao_square, tao_square*2, 50, 0, 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
 if (PARTICLE_SET == 7): # Testing this for dynamic environment. Hysteresis is preventing from making changes fast. 
     bounds = [0, 0, tao_square/multiplier, tao_square*multiplier, tao_square/multiplier, step_to_cross_arena, 5, distance_sensor_max-5, 0, max_num_obs, 0, 0]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
-    x0=[0, tao_square, tao_square*2, 50, int(num_squares_in_arena/5), 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
+    # x0=[0, tao_square, tao_square*2, 50, int(num_squares_in_arena/5), 0] #[Alpha, Tao, Random Forward, CA Trigger, Hysterisis, Observation Wait Time]
+    x0=[0, tao_square, tao_square*2, 50, 0, 0]
 if (PARTICLE_SET == 8):
     # THIS IS USED WITH THE TEST OPTIMIZATION FUNCTION
     bounds = [0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000, 0, 10000]  # input bounds [(x1_min,x1_max, x2_min, x2_max, . . .)]
@@ -523,7 +524,7 @@ WORST_FITNESS=100000
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
 # MODIFIED FOR NOISE RESISTANT PSO
-PSO(resume, args.resume_iteration, x0, fitness_evaluation, bounds, maxiter=30, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
+PSO(resume, args.resume_iteration, x0, fitness_evaluation, bounds, maxiter=5, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)

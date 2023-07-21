@@ -1,8 +1,4 @@
 """vibration_controller controller."""
-
-from cgitb import reset
-from textwrap import fill
-from turtle import filling
 from controller import Supervisor
 import os
 import platform
@@ -91,21 +87,7 @@ def setSeed():
     print("Supervisor: Using Seed, ", seedIn)
     random.seed(seedIn)
 
-def evaluateFitness(dec_time, decision):
-    # Exp Fitness Function
-    # if (float(fill_ratio) > 0.5):
-    #     if (last_belief < 0.01):
-    #         sign = -1
-    #     else:
-    #         print("Robot: " + str(i) + " incorrect decision")
-    #         sign = 1
-    # else:
-    #     if (last_belief > 0.99):
-    #         sign = -1
-    #     else:
-    #         print("Robot: " + str(i) + " incorrect decision")
-    #         sign = 1
-    # return math.exp(((MAX_TIME * 1.66667e-5)- (dec_time*1.66667e-5))*(sign))
+def evaluateFitness(dec_time, decision, fill_ratio):
 
     #Linear Fitness Function; For individual robot decisions
     robot_decision = int(decision)
@@ -118,14 +100,14 @@ def evaluateFitness(dec_time, decision):
             return dec_time
         else: 
             print("Supervisor: Incorrect decision, assigned max time")   
-            return MAX_TIME
+            return MAX_TIME + nRobot
     else:
         if (robot_decision == 0):
             print("Supervisor: Correct Decision was made")
             return dec_time
         else: 
             print("Supervisor: Incorrect decision, assigned max time")   
-            return MAX_TIME
+            return MAX_TIME + nRobot
 
     #Add another fitness evaluation for the swarm as a whole.
     
@@ -134,6 +116,30 @@ def evaluateFitness(dec_time, decision):
 # Writes to the fitness file for the current iteration of particle
 def cleanup(time_arr, fitness):
     global seedIn
+    current_fill = float(fill_ratio)
+
+    for k in range(nRobot):
+        if (current_fill > 0.5):
+            if (int(dec_arr[k]) != 1):
+                print("Supervisor: Incorrect final decision")
+                fitness[k] = MAX_TIME + nRobot
+                dec_counter[k] = 1
+        else:
+            if (int(dec_arr[k]) != 0):
+                print("Supervisor: Incorrect final decision")
+                fitness[k] = MAX_TIME + nRobot
+                dec_counter[k] = 1
+
+        if (dec_time[k] == 0) or (currentData[10] != '-'):
+            print("Supervisor: Robot " + str(k) + " did not make a decision in time!")
+            dec_time[k] = MAX_TIME
+            fitness[k] = MAX_TIME + nRobot
+            dec_counter[k] = 1
+
+        fitness[k] = fitness[k] / dec_counter[k] 
+
+    fitOut = sum(fitness)
+    print("Supervisor: Final robot fitness array, ", fitness)
 
     #Used for baseline 
     if (baseline):
@@ -155,21 +161,12 @@ def cleanup(time_arr, fitness):
 
             # writing the data rows
             csvwriter.writerows(csvPosData)
-
-        fitOut = sum(fitness)
-        if (fitOut > MAX_TIME*nRobot):
-            fitOut = (MAX_TIME*nRobot) + (100 * nRobot)
-        print("Fitness of particle: ", fitOut)
         
         time_arr = np.append(time_arr, fitOut)
         time_arr = np.append(time_arr, reset_counter)
         np.savetxt(decname, time_arr, delimiter=',')
  
     else:
-        fitOut = sum(fitness)
-        # if (fitOut > MAX_TIME*nRobot):
-        #     fitOut = (MAX_TIME*nRobot) + (100 * nRobot)
-        # print("Fitness of particle: ", fitOut)
 
         # USED ONLY FOR PSO LAUNCH
 
@@ -270,32 +267,41 @@ while supervisor.step(timestep) != -1:
             rowProbData.append(float(belief))
             dec_arr[i] = int(currentData[1])
             check_robot_bound(robot_x, robot_y, i)
+            
+            #Check the robots current environment, change if needed. 
+            fillIndex = int(currentData[0])
+            fill_ratio = fill_array[fillIndex]
 
             if (currentData[10] != '-'):
                 # print("Current decision time: ", float(currentData[9:]))
 
                 #First time fitness evaluation
                 if (fitness[i] == 0):
-                    fitness[i] = evaluateFitness(float(currentData[10:]), dec_arr[i])
+                    fitness[i] = evaluateFitness(float(currentData[10:]), dec_arr[i], fill_ratio)
                     print("Supervisor: Initial decision", str(fitness[i]))
-                    dec_time[i] = float(currentData[9:])
+                    dec_time[i] = float(currentData[10:])
                     dec_counter[i] = dec_counter[i] + 1
 
                 # Evaluate fitness to new time. 
-                if (dec_time[i] != float(currentData[10:])):
+                elif (dec_time[i] != float(currentData[10:])):
                     # print("Old decision time: ", dec_time[i])
                     # print("New decision time: ", currentData)
-                    fitness[i] = evaluateFitness(float(currentData[10:]), dec_arr[i])
+                    fitness[i] = fitness[i] + evaluateFitness(float(currentData[10:]), dec_arr[i], fill_ratio)
                     dec_time[i] = float(currentData[10:])
                     print("Supervisor: Updated Robot Fitness, ", fitness)
                     dec_counter[i] = dec_counter[i] + 1
 
-        # print(currentData)
-        if (fillIndex != int(currentData[0])):
-                fillIndex = int(currentData[0])
-                print("Supervisor: Using Fill Index, ", fillIndex)
-                fill_ratio = fill_array[fillIndex]
-                print("Supervisor: Changing fill ratio to, ", fill_ratio)
+            # if (fillIndex != int(currentData[0])):
+            #     fillIndex = int(currentData[0])
+            #     print("Supervisor: Using fill index, ", fillIndex)
+                
+        # print("Supervisor: supervisor fill index, ", fillIndex)
+        # print("Supervisor: robot fill index, ", currentData[0])
+        # if (fillIndex != int(currentData[0])):
+        #         fillIndex = int(currentData[0])
+        #         print("Supervisor: Using Fill Index, ", fillIndex)
+        #         fill_ratio = fill_array[fillIndex]
+        #         print("Supervisor: Changing fill ratio to, ", fill_ratio)
         
         csvProbData.append(rowProbData)
         csvPosData.append(rowPosData)
@@ -304,22 +310,21 @@ while supervisor.step(timestep) != -1:
 
 
         if (supervisor.getTime() - sim_time > MAX_TIME) or (time.time()-start_time > WALL_TIME):
+            print("Supervisor: Simulation ending. . . cleaning up")
             #if the robots have not decided then assigned 15 min to decision times.
-            for k in range(nRobot):
-                if dec_time[k] == 0:
-                    print("Supervisor: Robot " + str(k) + " did not make a decision in time!")
-                    dec_time[k] = supervisor.getTime()
-                    fitness[k] = supervisor.getTime()
-                    dec_counter[k] = 1
-                elif (dec_time[i] != float(currentData[10:])):
-                    print("Supervisor: Final evaluation of Robot " + str(k))
-                    fitness[k] = evaluateFitness(float(currentData[10:]), float(belief))
-                # else:
-                #     print("Supervisor: Final evaluation of Robot " + str(k))
-                #     fitness[k] = evaluateFitness(float(currentData[9:]), float(belief))
-                # The final fitness is the average of fitnesses over all the decisions made.
-                fitness[k] = fitness[k] / dec_counter[k]
+            # for k in range(nRobot):
+            #     if dec_time[k] == 0:
+            #         print("Supervisor: Robot " + str(k) + " did not make a decision in time!")
+            #         dec_time[k] = supervisor.getTime()
+            #         fitness[k] = supervisor.getTime()
+            #         dec_counter[k] = 1
+            #     elif (dec_time[i] != float(currentData[10:])):
+            #         print("Supervisor: Final evaluation of Robot " + str(k))
+            #         fitness[k] = evaluateFitness(float(currentData[10:]), float(belief))
+            #     # else:
+            #     #     print("Supervisor: Final evaluation of Robot " + str(k))
+            #     #     fitness[k] = evaluateFitness(float(currentData[9:]), float(belief))
+            #     # The final fitness is the average of fitnesses over all the decisions made.
 
-            print("Supervisor: Final Robot Fitness: ", fitness)
             cleanup(dec_time, fitness)
                 

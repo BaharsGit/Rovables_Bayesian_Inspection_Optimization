@@ -1,9 +1,9 @@
 #!/bin/sh
 #USE LINE 3 FOR RUNNING ON AWS
-#home_path="$(pwd)/efs/demo"
+home_path="$(pwd)/efs/demo"
 
 #USE LINE 6 FOR RUNNING ON LOCAL COMPUTER
-home_path="$(pwd)"
+# home_path="$(pwd)"
 
 # MODIFIED FOR NOISE RESISTANT PSO
 NB_NOISE_RES_EVALS=10
@@ -15,11 +15,11 @@ RESUME_NB_RUN=0 #Which run number to resume from
 RESUME_NB_ITER=8 #Which COMPLETE iteration to resume from
 
 #FLIP TO TEST PSO IN SERIES ON LOCAL OR USE TEST FUNCTION
-TEST_PSO=1
+TEST_PSO=0
 TEST_FUNC=0
 
 #RUN DYNAMIC ENVIORNMENT
-DYNAMIC_ENV=5
+DYNAMIC_ENV=1 #The number of environments to use. Setting to one means a static environment
 ENV_LB=0.3
 ENV_UB=0.7
 

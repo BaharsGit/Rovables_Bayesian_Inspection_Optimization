@@ -34,8 +34,9 @@ make
 cd $home_path
 
 # Get the current AWS job index
-# line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
-line=$((INSTANCE_ID + 1))
+line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
+
+echo "This node index =" $line
 # for i in {1..100}
 # do
 # line=${i} #Used this in a for loop for local test.
