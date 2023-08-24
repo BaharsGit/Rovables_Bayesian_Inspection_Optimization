@@ -10,13 +10,13 @@ NB_NOISE_RES_EVALS=10
 NUM_ROBOTS=4
 
 #Set below variables if resuming a previous run
-RESUME=0
+RESUME=1
 RESUME_NB_RUN=0 #Which run number to resume from
-RESUME_NB_ITER=8 #Which COMPLETE iteration to resume from
+RESUME_NB_ITER=75 #Which COMPLETE iteration to resume from
 
 #FLIP TO TEST PSO IN SERIES ON LOCAL OR USE TEST FUNCTION
-TEST_PSO=0
-TEST_FUNC=0
+TEST_PSO=1
+TEST_FUNC=1
 
 #RUN DYNAMIC ENVIORNMENT
 DYNAMIC_ENV=1 #The number of environments to use. Setting to one means a static environment
@@ -90,6 +90,10 @@ else
     # Run particle evaluation on other nodes
     echo "Waiting for next particle evaluation"
     GEN_ID=0
+    if [ $RESUME -eq 1 ]
+    then 
+      GEN_ID=$RESUME_NB_ITER
+    fi
     # Run PSO Python script on main node
     # MODIFIED FOR NOISE RESISTANT PSO
     PARTICLE_ID=$((($MY_ID-1)%$NB_PARTICLES))

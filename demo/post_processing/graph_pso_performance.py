@@ -20,18 +20,18 @@ time_step = 8 # this is in ms
 tao_square = square_time / time_step 
 time_to_cross_arena = 36125.079475174839899 #ms
 step_to_cross_arena = time_to_cross_arena / time_step
-sim_time = 2700 * 1000 #max sim time in ms
+sim_time = 3600 * 1000 #max sim time in ms
 sim_time_steps = sim_time / 8 #total time steps in a simulation
 max_num_obs = sim_time_steps / (tao_square/multiplier) # maximum number of observations in a simulation
 ###########################################################
-psodir = (str(os.getcwd())) + "/../jobfiles/Run_0"
+psodir = (str(os.getcwd())) + "/../../paper_data/nofb_dynamic_cont"
 # psodir = (str(os.getcwd())) + "/../../../id_2/demo/jobfiles/Run_0"
 param_min = [0, tao_square/multiplier, tao_square/multiplier, 5, 0]
 param_max = [0, tao_square*multiplier, step_to_cross_arena, 145, max_num_obs]
-worst_case_fitess = 11200
+worst_case_fitess = 16000
 num_particles = 15
 num_noise = 10
-num_gen = 5
+num_gen = 150
 num_robots = 4
 particle_dim = 5
 param_names = ["Alpha", "Tao", "Random Forward", "CA Trigger", "Hysterisis", "Observation Wait Time"]
@@ -79,7 +79,7 @@ def read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, r
                 noise_list[k] = float(fit[0])
 
             #Holds the particle fitness for this iteration
-            particle_fit = statistics.mean(noise_list)
+            particle_fit = statistics.mean(noise_list)+ (1.1*statistics.stdev(noise_list))
 
             if (particle_fit < best_fitness):
                 best_fitness = particle_fit
@@ -110,12 +110,15 @@ def read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, r
         fit_gen[i] = fitness_temp
         avg_gen[i] = statistics.mean(fit_gen[i])
         std_gen[i] = statistics.stdev(fit_gen[i])
+    print(best_gen)
     with(open(psodir + '/Final_Results' + '/average_results.txt')) as f:
-        best_fit_gen = f.read().split()
+        average_results = f.read().split()
     
-    
-    best_fit_avg_gen = np.array([float(x) for x in best_fit_gen[::2]])
-    best_fit_std_gen = np.array([float(x) for x in best_fit_gen[1::2]])
+    with(open(psodir + '/Final_Results' + '/best_results.txt')) as f:
+        best_results = f.read().split()
+    best_gen = np.array([float(x) for x in best_results[7::8]])
+    best_fit_avg_gen = np.array([float(x) for x in average_results[::2]])
+    best_fit_std_gen = np.array([float(x) for x in average_results[1::2]])
 
     return best_fit_avg_gen, best_fit_std_gen, std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, raw_param_gen, param_gen, param_avg_gen, best_param_gen, l2_gen
 
@@ -141,27 +144,49 @@ def psoFitnessScatter(best_fit_avg_gen, best_fit_std_gen, std_gen, avg_gen, fit_
         # plt.plot(l2_gen, color='darkorange', label='L2 Norm')
 
     else:
-        plt.plot(best_fit_avg_gen[:num_gen], color='blue', label='Personal Best')
-        print(best_fit_avg_gen)
-        plt.plot(best_gen, color='red', label='Global Best')
+        # plt.plot(best_fit_avg_gen[:num_gen], color='blue', label='Average Personal Best')
+        # plt.plot(avg_gen, color='purple', label='Average Swarm Fitness')
+        # plt.plot(best_gen, color='red', label='Global Best')
+        # print(best_gen)
+        # bottom = best_fit_avg_gen - best_fit_std_gen
+        # bottom[bottom<0] = 0
+        # # plt.ylabel("Swarm L2", c='orange')
+        # plt.fill_between(np.arange(num_gen), bottom[:num_gen], best_fit_avg_gen[:num_gen] + best_fit_std_gen[:num_gen], where=(best_fit_avg_gen[:num_gen] + best_fit_std_gen[:num_gen])>0, color='blue', alpha=0.3)
+        # for i in range(num_gen):
+        #     x = [i]*num_particles
+        #     plt.scatter(x, fit_gen[i], color='green', label='Particle' if i == 0 else "", s=5, alpha=0.3)
+        #     # if (i > 0):
+        #     #     if (best_gen[i] < best_gen[i-1]):
+        #     #         plt.axvline(x = i, linestyle='--', linewidth=0.5, color = 'k', label = 'Best Particle Found' if i == 0 else "")
+        # plt.legend()
+        # plt.ylabel("Fitness Value")
+        # # plt.twinx()
+        # # plt.plot(l2_gen, color='darkorange', label='L2 Norm') 
+
+        sns.lineplot(best_fit_avg_gen[:num_gen], color='blue', label='Average Personal Best')
+        sns.lineplot(avg_gen, color='purple', label='Average Swarm Fitness')
+        sns.lineplot(best_gen, color='red', label='Global Best')
         bottom = best_fit_avg_gen - best_fit_std_gen
         bottom[bottom<0] = 0
         # plt.ylabel("Swarm L2", c='orange')
         plt.fill_between(np.arange(num_gen), bottom[:num_gen], best_fit_avg_gen[:num_gen] + best_fit_std_gen[:num_gen], where=(best_fit_avg_gen[:num_gen] + best_fit_std_gen[:num_gen])>0, color='blue', alpha=0.3)
         for i in range(num_gen):
             x = [i]*num_particles
-            plt.scatter(x, fit_gen[i], color='green', label='Particle' if i == 0 else "", s=5, alpha=0.3)
-            if (i > 0):
-                if (best_gen[i] < best_gen[i-1]):
-                    plt.axvline(x = i, linestyle='--', linewidth=0.5, color = 'k', label = 'Best Particle Found' if i == 0 else "")
+            sns.scatterplot(x=x, y=fit_gen[i], color='green', label='Particle' if i == 0 else "", s=5, alpha=0.3)
+            # if (i > 0):
+            #     if (best_gen[i] < best_gen[i-1]):
+            #         plt.axvline(x = i, linestyle='--', linewidth=0.5, color = 'k', label = 'Best Particle Found' if i == 0 else "")
+        plt.legend()
         plt.ylabel("Fitness Value")
-        plt.twinx()
-        plt.plot(l2_gen, color='darkorange', label='L2 Norm') 
-    plt.title("Particle Swarm Optimization Progression")
+
+        # plt.twinx()
+        # plt.plot(l2_gen, color='darkorange', label='L2 Norm') 
+    plt.title("Dynamic Environment with 15 Noise Evaluations")
     plt.xlabel("Iteration")
-    
-    plt.legend()
+    plt.ylim(5000,20000)
+    plt.legend(loc='upper right')
     plt.grid()
+    sns.despine(bottom=True, left=True)
     plt.savefig(psodir + '/graph.svg', format='svg', dpi='figure')
     plt.show()
 
@@ -225,8 +250,8 @@ def animateParameter(l2_gen, std_gen, avg_gen, best_gen):
 
     # plt.show()
     ani.save('animation.gif', writer='imagemagick', fps=1)
-
-sns.set_theme(style='white', palette=None)
+sns.set_style({'axes.facecolor':'white', 'grid.color': '.8', 'font.family':'Times New Roman'})
+# sns.set_theme(style='white', palette=None)
 np.set_printoptions(suppress=True)
 best_fit_avg_gen, best_fit_std_gen, std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, raw_param_gen, param_gen, param_avg_gen, best_param_gen, l2_gen = read_data(std_gen, std_param_gen, avg_gen, fit_gen, best_gen, best_id_gen, raw_param_gen, param_gen, param_avg_gen, best_param_gen, l2_gen)
 
@@ -246,6 +271,6 @@ for i in range(num_gen):
 # print(l2_gen)
 # psoFitnessScatter(std_gen, avg_gen, fit_gen, best_gen)
 # #animateParameter(0, param_gen, avg_gen, best_gen)
-print(l2_gen)
-animateParameter(l2_gen, best_fit_std_gen, best_fit_avg_gen, best_gen)
-# psoFitnessScatter(best_fit_avg_gen, best_fit_std_gen, std_gen, avg_gen, fit_gen, best_gen)
+# print(l2_gen)
+# animateParameter(l2_gen, best_fit_std_gen, best_fit_avg_gen, best_gen)
+psoFitnessScatter(best_fit_avg_gen, best_fit_std_gen, std_gen, avg_gen, fit_gen, best_gen)

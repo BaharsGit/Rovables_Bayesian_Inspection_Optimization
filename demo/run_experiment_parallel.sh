@@ -9,11 +9,19 @@
 #       c.) Move the output files into the previously created log folder.
 echo Starting script. . . ${BASH_VERSION}
 home_path="$(pwd)/efs/demo"
+
+
+# Get the current AWS job index
+line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
+
+echo "This node index =" $line
+
 # home_path="$(pwd)"
 cd $home_path # Used for correct path in batch launch on AWS. Disable if using on local test.
 
 #RUN DYNAMIC ENVIORNMENT
 DYNAMIC_ENV=1
+# BELOW ARE NOT USED. LOOK INSIDE createworld.py for dynamic arena.
 ENV_LB=0.4
 ENV_UB=0.7
 
@@ -23,20 +31,30 @@ py_path="${home_path}/python_code"
 # UNCOMMENT BELOW TO TEST ON LOCAL MACHINE
 #py_path="/home/darren/Documents/ICRA_LAUNCH/Rovables_Bayesian_Inspection_Optimization/demo/python_code"
 
-echo Compiling Code. . .
-cd ${home_path}/controllers/bayes_fsm
-export WEBOTS_HOME=/usr/local/webots
-make clean
-make
+if  [ $line = "1" ]
+then 
+   echo Compiling Code. . .
+   cd ${home_path}/controllers/bayes_fsm
+   export WEBOTS_HOME=/usr/local/webots
+   make clean
+   make
+
+   cd $home_path
+   echo 'Complete compile.' > complete.txt
+fi
 
 
 # Move to home path
 cd $home_path
 
-# Get the current AWS job index
-line=$((AWS_BATCH_JOB_ARRAY_INDEX + 1))
 
-echo "This node index =" $line
+until [ -f complete.txt ]
+do
+     sleep 1
+done
+echo "Compile file found"
+
+
 # for i in {1..100}
 # do
 # line=${i} #Used this in a for loop for local test.
@@ -68,4 +86,5 @@ cp ${home_path}/baseline_param.txt ${JOB_BASE_DIR}/prob.txt
 cd ${home_path}/python_code
 python3 -u simSetupParallel.py -s $SEED -fr $FILL_RATIO -p $JOB_BASE_DIR -r $NUM_ROBOTS -d $DYNAMIC_ENV -dub $ENV_UB -dlb $ENV_LB #Setup directories and run the simulation
 cd ${home_path}
+rm complete.txt
 # done

@@ -12,7 +12,7 @@ import time
 import sys
 
 # MODIFIED FOR AWS LAUNCH, MAX_TIME IS IN SECONDS, FROM PREVIOUS EXPERIMENTS 140 SECONDS IS ROUGHLY ENOUGH
-MAX_TIME = 2700 #unit is in seconds, 2700 is around 45 minutes.
+MAX_TIME = 3600 #unit is in seconds, 2700 is around 45 minutes.
 WALL_TIME = 600
 #2700 45 min good?
 reset_counter = 0
@@ -100,14 +100,14 @@ def evaluateFitness(dec_time, decision, fill_ratio):
             return dec_time
         else: 
             print("Supervisor: Incorrect decision, assigned max time")   
-            return MAX_TIME + nRobot
+            return MAX_TIME + (100*nRobot)
     else:
         if (robot_decision == 0):
             print("Supervisor: Correct Decision was made")
             return dec_time
         else: 
             print("Supervisor: Incorrect decision, assigned max time")   
-            return MAX_TIME + nRobot
+            return MAX_TIME + (100*nRobot)
 
     #Add another fitness evaluation for the swarm as a whole.
     
@@ -122,18 +122,18 @@ def cleanup(time_arr, fitness):
         if (current_fill > 0.5):
             if (int(dec_arr[k]) != 1):
                 print("Supervisor: Incorrect final decision")
-                fitness[k] = MAX_TIME + nRobot
+                fitness[k] = MAX_TIME + (100*nRobot)
                 dec_counter[k] = 1
-        else:
+        elif (current_fill < 0.5):
             if (int(dec_arr[k]) != 0):
                 print("Supervisor: Incorrect final decision")
-                fitness[k] = MAX_TIME + nRobot
+                fitness[k] = MAX_TIME + (100*nRobot)
                 dec_counter[k] = 1
 
-        if (dec_time[k] == 0) or (currentData[10] != '-'):
+        if (dec_time[k] == 0) or (currentData[10] == '-'):
             print("Supervisor: Robot " + str(k) + " did not make a decision in time!")
             dec_time[k] = MAX_TIME
-            fitness[k] = MAX_TIME + nRobot
+            fitness[k] = MAX_TIME + (100*nRobot)
             dec_counter[k] = 1
 
         fitness[k] = fitness[k] / dec_counter[k] 
@@ -280,6 +280,7 @@ while supervisor.step(timestep) != -1:
                     fitness[i] = evaluateFitness(float(currentData[10:]), dec_arr[i], fill_ratio)
                     print("Supervisor: Initial decision", str(fitness[i]))
                     dec_time[i] = float(currentData[10:])
+                    print("Supervisor: Decision time set as, ", dec_time[i])
                     dec_counter[i] = dec_counter[i] + 1
 
                 # Evaluate fitness to new time. 

@@ -61,8 +61,8 @@ char *pPath = getenv("WB_WORKING_DIR");
 
 //DEFAULT Algorithm parameters -> read in algorithm parameters from file / Part of the world file. 
 static int nParam = 6;
-static double alpha = 89; //Alpha Prior
-static double beta = 1; //Beta Prior
+static double alpha = 0; //Alpha Prior
+static double beta = 0; //Beta Prior
 static int d_f = -1; //Decision Flag
 static int tao = 100; //Observation interval
 static double p_c = 0.95; //Credibility Threshold 

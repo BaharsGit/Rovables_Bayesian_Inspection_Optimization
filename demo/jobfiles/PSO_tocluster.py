@@ -488,7 +488,7 @@ num_squares_in_arena = 128
 # F(R_FWD, TAO, Velicty) - Max samples taken when crossing arena
 # CHECK INITIAL VALUES
 # time steps / obs
-sim_time = 2700 * 1000 #max sim time in ms
+sim_time = 3600 * 1000 #max sim time in ms
 sim_time_steps = sim_time / 8 #total time steps in a simulation
 max_num_obs = sim_time_steps / (tao_square/multiplier) # maximum number of observations in a simulation
 distance_sensor_max = 150 #this is in mm
@@ -524,7 +524,7 @@ WORST_FITNESS=100000
 # ------------------------------------------------------------------------------+
 startTime=datetime.now() 
 # MODIFIED FOR NOISE RESISTANT PSO
-PSO(resume, args.resume_iteration, x0, fitness_evaluation, bounds, maxiter=5, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
+PSO(resume, args.resume_iteration, x0, fitness_evaluation, bounds, maxiter=75, num_particles=args.nb_particles, noise_resistance_evals=args.nb_noise_res_evals)
 print (datetime.now()-startTime)
 duration = run_dir + "Final_Results/time_performance.txt"
 os.makedirs(os.path.dirname(duration), exist_ok=True)
